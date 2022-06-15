@@ -27,7 +27,7 @@ const FormBase = ({ children, loading, lang, setLang }: { children: ComponentChi
                         </div> */}
                     </div>
                     <div>
-                        <select className='rounded-md p-2' onChange={e => {
+                        <select className='rounded-md p-2 mt-5' onChange={e => {
                             setLang((e.target as HTMLSelectElement).value);
                             localStorage.setItem("lang", (e.target as HTMLSelectElement).value);
                         }} value={lang}>
