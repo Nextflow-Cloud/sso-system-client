@@ -88,9 +88,9 @@ const App = () => {
             
             setLoading(false);
             if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
-            await new Promise(r => setTimeout(r, 900));
+            await new Promise(r => setTimeout(r, 1000));
             setStage("password");
-            if (fade.current) fade.current.style.animation = "";          
+            if (fade.current) fade.current.style.animation = "1s fadeInRight";          
         } else if (stage === "password") {
             if (!password.trim()) {
                 setError("Password is blank");
@@ -129,11 +129,11 @@ const App = () => {
                 if (request.status === 403) {
                     console.error("[ERROR] Session expired");
                     if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
-                    await new Promise(r => setTimeout(r, 900));
+                    await new Promise(r => setTimeout(r, 1000));
                     setStage("email");
                     setError("Hmm, you seem to have waited too long to log in. Please try again.");
                     // setError("Your email or password is incorrect. Please try again.");
-                    if (fade.current) fade.current.style.animation = "";
+                    if (fade.current) fade.current.style.animation = "1s fadeInRight";
                 }
                 if (request.status === 429) {
                     console.error("[ERROR] Rate limited");
@@ -147,16 +147,16 @@ const App = () => {
                 setContinueToken(response.continueToken);
                 setLoading(false);
                 if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
-                await new Promise(r => setTimeout(r, 900));
+                await new Promise(r => setTimeout(r, 1000));
                 setStage("2fa");
-                if (fade.current) fade.current.style.animation = "";
+                if (fade.current) fade.current.style.animation = "1s fadeInRight";
             } else {
                 setToken(response.token);
                 setLoading(false);
                 if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
-                await new Promise(r => setTimeout(r, 900));
+                await new Promise(r => setTimeout(r, 1000));
                 setStage("done");
-                if (fade.current) fade.current.style.animation = "";
+                if (fade.current) fade.current.style.animation = "1s fadeInRight";
             }
         } else if (stage === "2fa") {
             if (!code.trim()) {
@@ -202,10 +202,10 @@ const App = () => {
                 if (request.status === 403) {
                     console.error("[ERROR] Session expired");
                     if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
-                    await new Promise(r => setTimeout(r, 900));
+                    await new Promise(r => setTimeout(r, 1000));
                     setStage("email");
                     setError("Hmm, you seem to have waited too long to log in. Please try again.");
-                    if (fade.current) fade.current.style.animation = "";
+                    if (fade.current) fade.current.style.animation = "1s fadeInRight";
                 }
                 if (request.status === 429) {
                     console.error("[ERROR] Rate limited");
@@ -219,9 +219,9 @@ const App = () => {
             
             setLoading(false);
             if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
-            await new Promise(r => setTimeout(r, 900));
+            await new Promise(r => setTimeout(r, 1000));
             setStage("done");
-            if (fade.current) fade.current.style.animation = "";
+            if (fade.current) fade.current.style.animation = "1s fadeInRight";
 
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             localStorage.setItem("token", token!);
@@ -355,7 +355,7 @@ const App = () => {
                 }}>
                     <h1 className="text-3xl mb-5"><b>{i18n.translate(lang, "twoFactorAuthentication")}</b></h1>
                     <div className="inside">  
-                        <label><b>{i18n.translate(lang, "english")} - {i18n.translate(lang, "enterCodeDescription")}</b></label>
+                        <label><b>{i18n.translate(lang, "enterCodeDescription")}</b></label>
                         <input 
                             className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2" 
                             type="text" placeholder={i18n.translate(lang, "enterCode")}
