@@ -20,6 +20,7 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import i18n from "../utilities/i18n";
 import { useNavigate } from "react-router-dom";
 import FormBase from "../components/FormBase";
+import Button from "../components/primitive/Button";
 
 const App = () => {
     const [error, setError] = useState("");
@@ -249,7 +250,8 @@ const App = () => {
     };
     const press = (e: KeyboardEvent) => {      
         if (e.key === "Enter") {
-            (submit.current as unknown as HTMLButtonElement).click();   
+            console.log(submit.current?.click);
+            submit.current?.click();
         }  
     };
     const checkToken = async () => {
@@ -315,7 +317,8 @@ const App = () => {
                                 onChange={v => setEmail((v.target as HTMLInputElement).value)} 
                             />
                         </div>
-                        <div className='btnNext rounded-lg bg-green-500 hover:bg-opacity-60 p-2 text-white text-center' onClick={login} ref={submit}>{i18n.translate(lang, "next")}</div>
+                        {/* <div className='btnNext rounded-lg bg-green-500 hover:bg-opacity-60 p-2 text-white text-center' onClick={login} ref={submit}>{i18n.translate(lang, "next")}</div> */}
+                        <Button onClick={login} divRef={submit}>{i18n.translate(lang, "next")}</Button>
                     </div>
                     <div className="inside">
                         {/* <Button type="primary" shape="round" onClick={login} loading={loading} ref={node => setSubmit(node)}>Next</Button> */}
@@ -342,7 +345,8 @@ const App = () => {
                         <div className='my-1'>
                             <input className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2" type="password" placeholder={i18n.translate(lang, "enterPassword")}  disabled={loading} onKeyDown={press} value={password} onChange={v => setPassword((v.target as HTMLInputElement).value)} />
                         </div>
-                        <div className='btnNext rounded-lg bg-green-500 hover:bg-opacity-60 p-2 text-white text-center' onClick={login} ref={submit}>{i18n.translate(lang, "next")}</div>
+                        {/* <div className='btnNext rounded-lg bg-green-500 hover:bg-opacity-60 p-2 text-white text-center' onClick={login} ref={submit}>{i18n.translate(lang, "next")}</div> */}
+                        <Button onClick={login} divRef={submit}>{i18n.translate(lang, "next")}</Button>
                         {/* <Input type={"password"} placeholder="Enter password" onKeyDown={press} value={password} onChange={v => setPassword(v.target.value)}></Input> */}
                     </div>
                     <div className="inside">
@@ -379,7 +383,8 @@ const App = () => {
                             value={code} 
                             onChange={v => setCode((v.target as HTMLInputElement).value)} 
                         />
-                        <div className='btnNext rounded-lg bg-green-500 hover:bg-opacity-60 p-2 text-white text-center' onClick={login} ref={submit}>{i18n.translate(lang, "next")}</div>
+                        {/* <div className='btnNext rounded-lg bg-green-500 hover:bg-opacity-60 p-2 text-white text-center' onClick={login} ref={submit}>{i18n.translate(lang, "next")}</div> */}
+                        <Button onClick={login} divRef={submit}>{i18n.translate(lang, "next")}</Button>
                     </div>
                     <div className="inside">
                         {/* <Button type="primary" shape="round" onClick={login} loading={loading} ref={node => setSubmit(node)}>Log in</Button> */}
