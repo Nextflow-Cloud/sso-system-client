@@ -90,7 +90,7 @@ const App = () => {
             if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
             await new Promise(r => setTimeout(r, 900));
             setStage("password");
-            if (fade.current) fade.current.style.animation = ""; // I would put fade && but ESLint doesn't like it so I guess this will do           
+            if (fade.current) fade.current.style.animation = "";          
         } else if (stage === "password") {
             if (!password.trim()) {
                 setError("Password is blank");
