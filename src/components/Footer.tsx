@@ -9,8 +9,8 @@ const Footer = () => {
                 margin: "1rem"
             }}>
                 <div>Nextflow SSO System</div>
-                <div>version 0.8 build 2 (dev)</div>
-                {/* Photo by <a href="https://unsplash.com/@orwhat">Richard Horvath</a> on <a href="https://unsplash.com/">Unsplash</a> */}
+                <div>version 0.7 build 9 (dev)</div>
+                Photo by <a href="https://unsplash.com/@orwhat">Richard Horvath</a> on <a href="https://unsplash.com/">Unsplash</a>
                 <div>Copyright &copy; {new Date().getUTCFullYear()} Nextflow Technologies B.V. All rights reserved.</div>
             </div>
         </div>

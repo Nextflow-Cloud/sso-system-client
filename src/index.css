@@ -39,7 +39,6 @@ html, body, #app {
 
 .main {
     background-image: url("./background.jpg");
-    background: linear-gradient(315deg, rgba(18,215,146,1) 0%, rgba(0,119,193,1) 40%, rgba(160,69,210,1) 100%);
     background-repeat: no-repeat;
     background-size: cover;
     min-height: 100vh;
