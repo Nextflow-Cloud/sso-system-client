@@ -15,8 +15,8 @@ const Forgot = () => {
     return (
         <FormBase loading={loading} setLang={setLang} lang={lang}>
             <div ref={fade} style={{
-                    animation: "1s fadeInRight"
-                }}>
+                animation: "1s fadeInRight"
+            }}>
                 <h1 className="text-3xl mb-5"><b>Reset password</b></h1>
                 <div className="inside">  
                     

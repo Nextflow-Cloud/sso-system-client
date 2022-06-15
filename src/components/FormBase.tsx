@@ -1,5 +1,5 @@
 import { ComponentChildren } from "preact";
-import { StateUpdater, useState } from "preact/hooks";
+import { StateUpdater } from "preact/hooks";
 import i18n from "../utilities/i18n";
 import Footer from "./Footer";
 
