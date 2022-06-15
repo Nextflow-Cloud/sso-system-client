@@ -11,7 +11,7 @@ const Footer = () => {
                 <div>Nextflow SSO System</div>
                 <div>version 0.8 build 2 (dev)</div>
                 {/* Photo by <a href="https://unsplash.com/@orwhat">Richard Horvath</a> on <a href="https://unsplash.com/">Unsplash</a> */}
-                <div>Copyright &copy; {new Date().getUTCFullYear()} Nextflow Technologies B.V. All rights reserved.</div>
+                <div>Copyright &copy; {new Date().getUTCFullYear()} Nextflow Cloud Technologies. All rights reserved.</div>
             </div>
         </div>
     );
