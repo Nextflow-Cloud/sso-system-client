@@ -11,12 +11,7 @@
 
 // export default Login;
 
-// this still has way too many errors because I copied this from a JS file
-// I need to fix all the TypeErrors
-
 import { useEffect, useRef, useState } from "preact/hooks";
-// import { Button, Input, Form, Switch } from "antd";
-// import Footer from "../components/Footer";
 import i18n from "../utilities/i18n";
 import { useNavigate } from "react-router-dom";
 import FormBase from "../components/FormBase";
@@ -26,8 +21,6 @@ const App = () => {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [stage, setStage] = useState("email");
-    // const [fade, setFade] = useState<HTMLDivElement | null>(null);
-    // const [submit, setSubmit] = useState<HTMLDivElement | null>(null);
     const fade = useRef<HTMLDivElement>(null);
     const submit = useRef<HTMLDivElement>(null);
     const [email, setEmail] = useState("");
@@ -265,8 +258,6 @@ const App = () => {
                     token
                 })
             });
-            // // eslint-disable-next-line no-debugger
-            // debugger;
             if (r.ok) {
                 setStage("skip");
                 setTimeout(() => {
@@ -291,8 +282,6 @@ const App = () => {
         const href = continueUrl ? `/register?continue=${encodeURIComponent(continueUrl)}` : "/register";
         navigate(href);
     };
-    // // eslint-disable-next-line no-debugger
-    // debugger;
     if (!checked) {
         return <div />;
     }
@@ -305,7 +294,6 @@ const App = () => {
                     <h1 className="text-3xl mb-5"><b>{i18n.translate(lang, "login")}</b></h1>
                     <div className="inside">  
                         <label><b>{i18n.translate(lang, "email")}</b></label>
-                        {/* <Input type={"email"} disabled={loading} placeholder="Enter email" onKeyDown={press} value={email} onChange={v => setEmail(v.target.value)}></Input> */}
                         <div className='my-1'>
                             <input 
                                 className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2 focus:border-green-400" 
@@ -317,12 +305,9 @@ const App = () => {
                                 onChange={v => setEmail((v.target as HTMLInputElement).value)} 
                             />
                         </div>
-                        {/* <div className='btnNext rounded-lg bg-green-500 hover:bg-opacity-60 p-2 text-white text-center' onClick={login} ref={submit}>{i18n.translate(lang, "next")}</div> */}
                         <Button onClick={login} divRef={submit}>{i18n.translate(lang, "next")}</Button>
                     </div>
-                    <div className="inside">
-                        {/* <Button type="primary" shape="round" onClick={login} loading={loading} ref={node => setSubmit(node)}>Next</Button> */}
-                    </div>
+                    <div className="inside" />
                     <p className="inside">
                         {i18n.translate(lang, "noAccount")} <a onClick={register}>{i18n.translate(lang, "register")}</a>
                     </p>
@@ -345,15 +330,10 @@ const App = () => {
                         <div className='my-1'>
                             <input className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2" type="password" placeholder={i18n.translate(lang, "enterPassword")}  disabled={loading} onKeyDown={press} value={password} onChange={v => setPassword((v.target as HTMLInputElement).value)} />
                         </div>
-                        {/* <div className='btnNext rounded-lg bg-green-500 hover:bg-opacity-60 p-2 text-white text-center' onClick={login} ref={submit}>{i18n.translate(lang, "next")}</div> */}
                         <Button onClick={login} divRef={submit}>{i18n.translate(lang, "next")}</Button>
-                        {/* <Input type={"password"} placeholder="Enter password" onKeyDown={press} value={password} onChange={v => setPassword(v.target.value)}></Input> */}
                     </div>
                     <div className="inside">
                         <label><input checked={persist} onChange={v => setPersist((v.target as HTMLInputElement).checked)} type="checkbox" label="" /> {i18n.translate(lang, "staySignedIn")}</label>
-                        {/* <br />
-                        <br />
-                        <Button type="primary" shape="round" onClick={login} loading={loading} ref={node => setSubmit(node)}>Next</Button> */}
                     </div>
                     <p className="inside">
                         <a href="/forgot" onClick={e => {
@@ -376,7 +356,6 @@ const App = () => {
                     <h1 className="text-3xl mb-5"><b>{i18n.translate(lang, "twoFactorAuthentication")}</b></h1>
                     <div className="inside">  
                         <label><b>{i18n.translate(lang, "english")} - {i18n.translate(lang, "enterCodeDescription")}</b></label>
-                        {/* <Input type={"text"} placeholder={i18n[lang].enterCode} onKeyDown={press} value={code} onChange={v => setCode(v.target.value)}></Input> */}
                         <input 
                             className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2" 
                             type="text" placeholder={i18n.translate(lang, "enterCode")}
@@ -385,12 +364,9 @@ const App = () => {
                             value={code} 
                             onChange={v => setCode((v.target as HTMLInputElement).value)} 
                         />
-                        {/* <div className='btnNext rounded-lg bg-green-500 hover:bg-opacity-60 p-2 text-white text-center' onClick={login} ref={submit}>{i18n.translate(lang, "next")}</div> */}
                         <Button onClick={login} divRef={submit}>{i18n.translate(lang, "next")}</Button>
                     </div>
-                    <div className="inside">
-                        {/* <Button type="primary" shape="round" onClick={login} loading={loading} ref={node => setSubmit(node)}>Log in</Button> */}
-                    </div>
+                    <div className="inside" />
                     <p className='inside error'>
                         {error}
                     </p>

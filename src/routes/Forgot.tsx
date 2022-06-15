@@ -34,6 +34,6 @@ const Forgot = () => {
         </FormBase>
     );
 };
-// 
+
 // Please note that your data will be wiped as it is encrypted with a key derived from your old password.
 export default Forgot;
