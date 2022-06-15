@@ -297,7 +297,9 @@ const App = () => {
     if (stage === "email") {
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
-                <div ref={fade}>
+                <div ref={fade} style={{
+                    animation: "1s fadeInRight"
+                }}>
                     <h1 className="text-3xl mb-5"><b>{i18n.translate(lang, "login")}</b></h1>
                     <div className="inside">  
                         <label><b>{i18n.translate(lang, "email")}</b></label>
@@ -330,7 +332,9 @@ const App = () => {
     } if (stage === "password") {
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
-                <div ref={fade}>
+                <div ref={fade} style={{
+                    animation: "1s fadeInRight"
+                }}>
                     <h1 className="text-3xl mb-5"><b>{i18n.translate(lang, "login")}</b></h1>
 
                     <div className="inside">
@@ -360,7 +364,9 @@ const App = () => {
     } if (stage === "2fa") {
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
-                <div ref={fade}>
+                <div ref={fade} style={{
+                    animation: "1s fadeInRight"
+                }}>
                     <h1 className="text-3xl mb-5"><b>{i18n.translate(lang, "twoFactorAuthentication")}</b></h1>
                     <div className="inside">  
                         <label><b>{i18n.translate(lang, "english")} - {i18n.translate(lang, "enterCodeDescription")}</b></label>
@@ -387,7 +393,9 @@ const App = () => {
     } if (stage === "done") {
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
-                <div ref={fade}>
+                <div ref={fade} style={{
+                    animation: "1s fadeInRight"
+                }}>
                     <h1 className="text-3xl mb-5"><b>{i18n.translate(lang, "continue")}</b></h1>
                     <div className="inside">  
                         <label>{i18n.translate(lang, "loggedIn")}</label>
@@ -401,7 +409,9 @@ const App = () => {
     } if (stage === "skip") { 
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
-                <div ref={fade}>
+                <div ref={fade} style={{
+                    animation: "1s fadeInRight"
+                }}>
                     <h1 className="text-3xl mb-5"><b>{i18n.translate(lang, "continue")}</b></h1>
                     <div className="inside">
                         <label>{i18n.translate(lang, "alreadyLoggedIn")}</label>
