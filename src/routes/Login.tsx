@@ -350,14 +350,16 @@ const App = () => {
                         {/* <Input type={"password"} placeholder="Enter password" onKeyDown={press} value={password} onChange={v => setPassword(v.target.value)}></Input> */}
                     </div>
                     <div className="inside">
-                        <input checked={persist} onChange={v => setPersist((v.target as HTMLInputElement).checked)} />
-                        <label> {i18n.translate(lang, "staySignedIn")}</label>
+                        <label><input checked={persist} onChange={v => setPersist((v.target as HTMLInputElement).checked)} type="checkbox" label="" /> {i18n.translate(lang, "staySignedIn")}</label>
                         {/* <br />
                         <br />
                         <Button type="primary" shape="round" onClick={login} loading={loading} ref={node => setSubmit(node)}>Next</Button> */}
                     </div>
                     <p className="inside">
-                        <a href="/forgot">{i18n.translate(lang, "forgot")}</a>
+                        <a href="/forgot" onClick={e => {
+                            e.preventDefault();
+                            navigate("/forgot");
+                        }}>{i18n.translate(lang, "forgot")}</a>
                     </p>
                     <p className='inside error'>
                         {error}
