@@ -2,11 +2,11 @@ import { JSX } from "preact";
 import { lazy, Suspense } from "preact/compat";
 import { useEffect, useState } from "preact/hooks";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Authenticate from "./routes/Authenticate";
-import Forgot from "./routes/Forgot";
 
-const Login = lazy(() => import("./routes/Login"));
 const Root = lazy(() => import("./routes/Root"));
+const Authenticate = lazy(() => import("./routes/Authenticate"));
+const Login = lazy(() => import("./routes/Login"));
+const Forgot = lazy(() => import("./routes/Forgot"));
 
 const App = () => {
     const [modalDialog, setModalDialog] = useState<JSX.Element>();
