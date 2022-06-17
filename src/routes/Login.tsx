@@ -309,7 +309,7 @@ const App = () => {
                     </div>
                     <div className="inside" />
                     <p className="inside">
-                        {i18n.translate(lang, "noAccount")} <a onClick={register}>{i18n.translate(lang, "register")}</a>
+                        {i18n.translate(lang, "noAccount")} <a href="javascript:void(0)" onClick={register} class="text-blue-600">{i18n.translate(lang, "register")}</a>
                     </p>
                     <p className='inside error'>
                         {error}
