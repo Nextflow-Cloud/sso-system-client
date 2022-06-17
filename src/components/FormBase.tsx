@@ -6,7 +6,7 @@ import Footer from "./Footer";
 const FormBase = ({ children, loading, lang, setLang }: { children: ComponentChildren; loading: boolean; lang: string; setLang: StateUpdater<string> }) => {
     return (
         <div className="main">
-            <div className="inner flex backdrop-blur-md bg-white bg-opacity-30 w-1/2"> {/* w-1/2 */}
+            <div className="inner flex backdrop-blur-md bg-white bg-opacity-50 w-1/2"> {/* w-1/2 */}
                 <div className='p-10 flex flex-col justify-between w-4/12'> {/* w-2/5 */}
                     <div>
                         <div className="logo pb-5">
