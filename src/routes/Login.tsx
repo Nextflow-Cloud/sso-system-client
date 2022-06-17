@@ -1,16 +1,3 @@
-// const Login = () => {
-//     return (
-//         <div>
-//             <div>
-//                 <h1>Login</h1>
-//             </div>
-//             <h1 class="text-red-500">I'm a login page. Yay!</h1>
-//         </div>
-//     );
-// };
-
-// export default Login;
-
 import { useEffect, useRef, useState } from "preact/hooks";
 import i18n from "../utilities/i18n";
 import { useNavigate } from "react-router-dom";
