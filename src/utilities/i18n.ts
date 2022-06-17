@@ -2,7 +2,8 @@ class i18n {
     mappings = {
         en: {
             welcome: "Welcome",
-            description: "Your privacy-centered and open-source platform for cloud services",
+            // description: "Your privacy-centered and open-source platform for cloud services",
+            description: "Secure, private, open-source, and fast. Don't choose one of them, choose all of them.",
             email: "Email",
             enterEmail: "Enter email",
             next: "Next",
@@ -35,7 +36,8 @@ class i18n {
         },
         zh: {
             welcome: "欢迎",
-            description: "您的隐私保护与开源云服务平台",
+            // description: "您的隐私保护与开源云服务平台",
+            description: "安全、私密、开源、快速。不要选择一个，选择所有。",
             email: "邮箱",
             enterEmail: "输入邮箱",
             next: "下一步",
@@ -68,7 +70,8 @@ class i18n {
         },
         ja: {
             welcome: "ようこそ",
-            description: "あなたのプライバシー保護とオープンソースのクラウドサービスプラットフォーム",
+            // description: "あなたのプライバシー保護とオープンソースのクラウドサービスプラットフォーム",
+            description: "セキュア、プライベート、オープンソース、そして高速。どれかひとつを選ぶのではなく、すべてを選びましょう。",
             email: "メール",
             enterEmail: "メールを入力してください",
             next: "次へ",
@@ -101,7 +104,8 @@ class i18n {
         },
         ko: {
             welcome: "환영합니다",
-            description: "개인정보 보호 및 오픈 소스 클라우드 서비스 플랫폼",
+            // description: "개인정보 보호 및 오픈 소스 클라우드 서비스 플랫폼",
+            description: "안전하고 비공개이며 오픈 소스이며 빠릅니다. 하나를 선택하지 말고 모두 선택하십시오.",
             email: "이메일",
             enterEmail: "이메일을 입력하십시오",
             next: "다음",
@@ -134,7 +138,8 @@ class i18n {
         },
         ru: {
             welcome: "Добро пожаловать",
-            description: "Ваша платформа для приватности и открытого кода для облачных сервисов",
+            // description: "Ваша платформа для приватности и открытого кода для облачных сервисов",
+            description: "Безопасный, частный, с открытым исходным кодом и быстрый. Не выбирайте одно из них, выбирайте все.",
             email: "Электронная почта",
             enterEmail: "Введите электронную почту",
             next: "Далее",
@@ -167,7 +172,8 @@ class i18n {
         },
         es: {
             welcome: "Bienvenido",
-            description: "Su plataforma de protección de privacidad y código abierto para servicios en la nube",
+            // description: "Su plataforma de protección de privacidad y código abierto para servicios en la nube",
+            description: "Seguro, privado, con código abierto y rápido. No seleccione una de ellas, seleccione todas.",
             email: "Correo electrónico",
             enterEmail: "Introduzca el correo electrónico",
             next: "Siguiente",
@@ -200,7 +206,8 @@ class i18n {
         },
         fr: {
             welcome: "Bienvenue",
-            description: "Votre plate-forme de protection de vie privée et de code ouvert pour les services en ligne",
+            // description: "Votre plate-forme de protection de vie privée et de code ouvert pour les services en ligne",
+            description: "Sûr, privé, avec code ouvert et rapide. Ne sélectionnez pas une de ces, sélectionnez toutes.",
             email: "Email",
             enterEmail: "Entrez l'adresse email",
             next: "Suivant",
@@ -233,7 +240,8 @@ class i18n {
         },
         de: {
             welcome: "Willkommen",
-            description: "Ihre Plattform für Privatsphäre und offener Code für Cloud-Dienste",
+            // description: "Ihre Plattform für Privatsphäre und offener Code für Cloud-Dienste",
+            description: "Sicher, privat, mit offener Code und schnell. Wählen Sie nicht eine von ihnen, wählen Sie alle.",
             email: "E-Mail",
             enterEmail: "Geben Sie die E-Mail-Adresse ein",
             next: "Weiter",
@@ -266,7 +274,8 @@ class i18n {
         },
         it: {
             welcome: "Benvenuto",
-            description: "La tua piattaforma di protezione della privacy e codice aperto per i servizi in cloud",
+            // description: "La tua piattaforma di protezione della privacy e codice aperto per i servizi in cloud",
+            description: "Sicuro, privato, con codice aperto e veloce. Non selezionare nessuna di queste, seleziona tutte.",
             email: "Email",
             enterEmail: "Inserisci l'indirizzo email",
             next: "Avanti",
