@@ -305,7 +305,7 @@ const App = () => {
                                 onChange={v => setEmail((v.target as HTMLInputElement).value)} 
                             />
                         </div>
-                        <Button onClick={login} divRef={submit}>{i18n.translate(lang, "next")}</Button>
+                        <Button onClick={login} divRef={submit} disabled={loading}>{i18n.translate(lang, "next")}</Button>
                     </div>
                     <div className="inside" />
                     <p className="inside">
@@ -330,7 +330,7 @@ const App = () => {
                         <div className='my-1'>
                             <input className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2" type="password" placeholder={i18n.translate(lang, "enterPassword")}  disabled={loading} onKeyDown={press} value={password} onChange={v => setPassword((v.target as HTMLInputElement).value)} />
                         </div>
-                        <Button onClick={login} divRef={submit}>{i18n.translate(lang, "next")}</Button>
+                        <Button onClick={login} divRef={submit} disabled={loading}>{i18n.translate(lang, "next")}</Button>
                     </div>
                     <div className="inside">
                         <label><input checked={persist} onChange={v => setPersist((v.target as HTMLInputElement).checked)} type="checkbox" label="" /> {i18n.translate(lang, "staySignedIn")}</label>
@@ -364,7 +364,7 @@ const App = () => {
                             value={code} 
                             onChange={v => setCode((v.target as HTMLInputElement).value)} 
                         />
-                        <Button onClick={login} divRef={submit}>{i18n.translate(lang, "next")}</Button>
+                        <Button onClick={login} divRef={submit} disabled={loading}>{i18n.translate(lang, "next")}</Button>
                     </div>
                     <div className="inside" />
                     <p className='inside error'>
