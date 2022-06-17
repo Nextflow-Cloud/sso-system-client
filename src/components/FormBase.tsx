@@ -14,10 +14,7 @@ const FormBase = ({ children, loading, lang, setLang }: { children: ComponentChi
                         </div>
                         <div className="title">
                             <h1 className='text-3xl mb-2'><b>{i18n.translate(lang, "welcome")}</b></h1>
-                            <h2>
-                                {i18n.translate(lang, "description")}
-                                {/* Secure, private, open-source, and fast. Don't choose one of them, choose all of them. */}
-                            </h2>
+                            <h2>{i18n.translate(lang, "description")}</h2>
                         </div>
                         
                         {/* <div className="footer">
