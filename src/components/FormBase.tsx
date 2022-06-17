@@ -44,7 +44,7 @@ const FormBase = ({ children, loading, lang, setLang }: { children: ComponentChi
                     </div>
 
                 </div>
-                <form className='bg-white py-8 px-16 flex-grow overflow-hidden' style={{
+                <form className='bg-white py-8 px-16 w-2/3 overflow-hidden' style={{
                     opacity: loading ? 0.5 : 1
                 }}>
                     {children}
