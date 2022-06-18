@@ -4,16 +4,9 @@ import { useNavigate } from "react-router-dom";
 import i18n from "../utilities/i18n";
 import Button from "../components/primitive/Button";
 import FormBase from "../components/FormBase";
+import createProtectedRequest from "../utilities/createProtectedRequest";
 
 const hcap = "a57a57d4-6845-48a7-b89a-46b130e90f47";
-
-const raceRequest = (url: string, method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE" , json: string): Promise<Response | undefined> => Promise.race([fetch(url, {
-    headers: {
-        "Content-Type": "application/json"
-    },
-    method,
-    body: json
-}), new Promise(r => setTimeout(r, 10000))]) as Promise<Response | undefined>;
 
 const generateSecurityKeys = (password: string) => {
     // const salt = crypto.getRandomValues(new Uint8Array(16));
@@ -86,7 +79,7 @@ const Register = () => {
             if (fade.current) fade.current.style.animation = "1s fadeInRight";    
         }
         if (stage === "verify") {
-            const request = await raceRequest("https://secure.nextflow.cloud/api/user", "POST", JSON.stringify({
+            const request = await createProtectedRequest("https://secure.nextflow.cloud/api/user", "POST", JSON.stringify({
                 email,
                 password,
                 captcha_token: captchaKey,
@@ -119,7 +112,7 @@ const Register = () => {
             }
         }
         if (stage === "security") {
-            const request = await raceRequest("https://secure.nextflow.cloud/api/user/onboarding", "POST", JSON.stringify({
+            const request = await createProtectedRequest("https://secure.nextflow.cloud/api/user/onboarding", "POST", JSON.stringify({
                 continue_token: continueToken,
                 encrypt_ti: superSecureMode || tiEncryption,
                 encrypt_ia: superSecureMode || iaEncryption,
@@ -156,7 +149,7 @@ const Register = () => {
                 setError("Server timed out");
             }
         }if (stage === "backup") {
-            const request = await raceRequest("https://secure.nextflow.cloud/api/user/security", "POST", JSON.stringify({
+            const request = await createProtectedRequest("https://secure.nextflow.cloud/api/user/security", "POST", JSON.stringify({
                 continue_token: continueToken,
                 mfa_code: mfaCode,
             }));
