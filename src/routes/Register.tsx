@@ -6,7 +6,7 @@ import Button from "../components/primitive/Button";
 import FormBase from "../components/FormBase";
 import createProtectedRequest from "../utilities/createProtectedRequest";
 
-const hcap = "a57a57d4-6845-48a7-b89a-46b130e90f47";
+const captchaKey = "a57a57d4-6845-48a7-b89a-46b130e90f47";
 
 const generateSecurityKeys = (password: string) => {
     // const salt = crypto.getRandomValues(new Uint8Array(16));
@@ -27,24 +27,28 @@ const Register = () => {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [stage, setStage] = useState("details");
-    const fade = useRef<HTMLDivElement>(null);
-    const submit = useRef<HTMLDivElement>(null);
+    const [checked, setChecked] = useState(false);
+    const [lang, setLang] = useState(localStorage.getItem("lang") || "fr");
+
     // const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [code, setCode] = useState("");
-    const [captchaKey, setCaptchaKey] = useState("");
+    const [captchaToken, setCaptchaToken] = useState("");
     const [continueToken, setContinueToken] = useState("");
     const [token, setToken] = useState(localStorage.getItem("token"));
-    const [mfaCode, setMfaCode] = useState(""); // link to base64 image of QR code
+
+    const [mfaSecret, setMfaSecret] = useState(""); // link to base64 image of QR code
+    const [backupFile, setBackupFile] = useState("");
+    
     const [superSecureMode, setSuperSecureMode] = useState(true);
-    const [checked, setChecked] = useState(false);
-    const [lang, setLang] = useState(localStorage.getItem("lang") || "fr");
-    const captchaRef = useRef<HCaptcha>(null);
     const [tiEncryption, setTiEncryption] = useState(true);
     const [iaEncryption, setIaEncryption] = useState(true);
     const [mfaEnable, setMfaEnable] = useState(true);
-    const [backupFile, setBackupFile] = useState("");
+
+    const fade = useRef<HTMLDivElement>(null);
+    const submit = useRef<HTMLDivElement>(null);
+    const captcha = useRef<HCaptcha>(null);
     
     const navigate = useNavigate();
 
@@ -82,7 +86,7 @@ const Register = () => {
             const request = await createProtectedRequest("https://secure.nextflow.cloud/api/user", "POST", JSON.stringify({
                 email,
                 password,
-                captcha_token: captchaKey,
+                captcha_token: captchaToken,
             }));
             if (request) {
                 if (request.ok) {
@@ -122,7 +126,7 @@ const Register = () => {
                 if (request.ok) {
                     const data = await request.json();
                     setContinueToken(data.continue_token);
-                    setMfaCode(`data:image/png;base64,${data.mfa_code}`);
+                    setMfaSecret(`data:image/png;base64,${data.mfa_secret}`);
                     const bin = new TextEncoder().encode(generateSecurityKeys(password));
                     const keyBlob = URL.createObjectURL(new Blob([bin], { type: "application/octet-stream" }));
                     setBackupFile(keyBlob);
@@ -148,10 +152,11 @@ const Register = () => {
                 setLoading(false);
                 setError("Server timed out");
             }
-        }if (stage === "backup") {
+        }
+        if (stage === "backup") {
             const request = await createProtectedRequest("https://secure.nextflow.cloud/api/user/security", "POST", JSON.stringify({
                 continue_token: continueToken,
-                mfa_code: mfaCode,
+                code
             }));
             if (request) {
                 if (request.ok) {
@@ -174,34 +179,15 @@ const Register = () => {
                 setError("Server timed out");
             }
         }
-        // if (stage === "details") {
-        //     setLoading(false);
-        //     if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
-        //     await new Promise(r => setTimeout(r, 1000));
-        //     setStage("verify");
-        //     if (fade.current) fade.current.style.animation = "1s fadeInRight";          
-        // }
-        // if (stage === "verify") {
-        //     setLoading(false);
-        //     if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
-        //     await new Promise(r => setTimeout(r, 1000));
-        //     setStage("security");
-        //     if (fade.current) fade.current.style.animation = "1s fadeInRight";  
-        // }
-        // if (stage === "security") {
-        //     setLoading(false);
-        //     if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
-        //     await new Promise(r => setTimeout(r, 1000));
-        //     setStage("backup");
-        //     if (fade.current) fade.current.style.animation = "1s fadeInRight";  
-        // }
     };
+    
     const press = (e: KeyboardEvent) => {      
         if (e.key === "Enter") {
             console.log(submit.current?.click);
             submit.current?.click();
         }  
     };
+
     const checkToken = async () => {
         if (token) {
             const r = await fetch("https://secure.nextflow.cloud/api/validate", {
@@ -228,18 +214,13 @@ const Register = () => {
         }
         setChecked(true);
     };
-    const initCaptcha = () => {
-        captchaRef.current?.execute();
-    };
-    useEffect(() => {
-        checkToken();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+
     const login = () => {
         const continueUrl = new URLSearchParams(window.location.search).get("continue");
         const href = continueUrl ? `/login?continue=${encodeURIComponent(continueUrl)}` : "/login";
         navigate(href);
     };
+
     const back = async () => {
         setLoading(false);
         if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
@@ -247,12 +228,23 @@ const Register = () => {
         setStage("details");
         if (fade.current) fade.current.style.animation = "1s fadeInRight";    
     };
+
+    const initCaptcha = () => {
+        captcha.current?.execute();
+    };
+
     const backup = () => {
         const a = document.createElement("a");
         a.href = backupFile;
         a.download = "nextflow-backup.bin";
         a.click();
     };
+
+    useEffect(() => {
+        checkToken();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+    
     if (!checked) {
         return <div />;
     }
@@ -290,7 +282,8 @@ const Register = () => {
                 </div>
             </FormBase>
         );
-    } if (stage === "verify") {
+    } 
+    if (stage === "verify") {
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
                 <div ref={fade} style={{
@@ -303,9 +296,9 @@ const Register = () => {
                         <div class="bg-blue-100 border-blue-600 rounded-md border-2 my-2 px-2 py-2">
                             {/* @ts-expect-error HCaptcha is a React component and it doesn't type well in Preact */}
                             <HCaptcha
-                                sitekey={hcap}
-                                onVerify={setCaptchaKey}
-                                ref={captchaRef}
+                                sitekey={captchaKey}
+                                onVerify={setCaptchaToken}
+                                ref={captcha}
                                 onLoad={initCaptcha}     
                             />
                         </div>
@@ -322,7 +315,8 @@ const Register = () => {
             </FormBase>
         );
 
-    } if (stage === "security") {
+    } 
+    if (stage === "security") {
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
                 <div ref={fade} style={{
@@ -330,14 +324,6 @@ const Register = () => {
                 }}>
                     <h1 className="text-3xl mb-5"><b>{"Security"}</b></h1>
                     <div className="inside">
-                        {/* <input 
-                            className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2" 
-                            type="text" placeholder={i18n.translate(lang, "enterCode")}
-                            disabled={loading} 
-                            onKeyDown={press} 
-                            value={code} 
-                            onChange={v => setCode((v.target as HTMLInputElement).value)} 
-                        /> */}
                         <label>
                             <input type="checkbox" checked={superSecureMode} onChange={e => setSuperSecureMode((e.target as HTMLInputElement).checked)} /> Enable Ultra Secure Mode
                         </label>
@@ -365,7 +351,8 @@ const Register = () => {
                 </div>
             </FormBase>
         );
-    } if (stage === "backup") {
+    } 
+    if (stage === "backup") {
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
                 <div ref={fade} style={{
@@ -374,7 +361,7 @@ const Register = () => {
                     <h1 className="text-3xl mb-5"><b>{"Security"}</b></h1>
                     <div className="inside">
                         {/* <img src="https://sso.nextflow.cloud/dummy-qr-code" alt="MFA QR code" /> */}
-                        <img src={mfaCode} alt="MFA QR code" />
+                        <img src={mfaSecret} alt="MFA QR code" />
                         <div class="bg-green-100 border-green-600 rounded-md border-2 my-2 px-2 py-2"><p>Please scan this QR code using your preferred authenticator app. We ask you to type in the code generated there just to make sure you've got it. ☺</p></div>
                         <input 
                             className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2" 
@@ -397,7 +384,8 @@ const Register = () => {
             </FormBase>
         );
 
-    } if (stage === "done") {
+    } 
+    if (stage === "done") {
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
                 <div ref={fade} style={{
@@ -413,7 +401,8 @@ const Register = () => {
                 </div>
             </FormBase>
         );
-    } if (stage === "skip") { 
+    } 
+    if (stage === "skip") { 
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
                 <div ref={fade} style={{
