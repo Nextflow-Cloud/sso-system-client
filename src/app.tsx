@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 const Root = lazy(() => import("./routes/Root"));
 const Authenticate = lazy(() => import("./routes/Authenticate"));
 const Login = lazy(() => import("./routes/Login"));
+const Register = lazy(() => import("./routes/Register"));
 const Forgot = lazy(() => import("./routes/Forgot"));
 
 const App = () => {
@@ -21,6 +22,7 @@ const App = () => {
                         <Route path="/" element={<Root />} />
                         <Route path="/authenticate" element={<Authenticate />} />
                         <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
                         <Route path="/forgot" element={<Forgot />} />
                     </Routes>
                 </Suspense>
