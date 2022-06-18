@@ -62,15 +62,15 @@ class ExtendedWebSocket {
         const message = JSON.parse(event.data as string) as WebSocketMessage;
         if (message.type === WebSocketCodes.HEARTBEAT_ACK) return;
         if (message.type === WebSocketCodes.HELLO) {
-            if (message.data?.ids && message.data.ids instanceof Array) 
-                for (const x of message.data.ids) 
+            if (message.data?.ids && message.data.ids instanceof Array)
+                for (const x of message.data.ids)
                     this.idStore.push(x);
             return;
         }
         if (message.id) {
             const promise = this.waitingPromises[message.id];
             if (promise) {
-                if (message.type === WebSocketCodes.ERROR) 
+                if (message.type === WebSocketCodes.ERROR)
                     promise[1](new Error(`Error ${message.error}: ${message.data?.message}`));
                 else
                     promise[0](message);
@@ -110,7 +110,7 @@ class ExtendedWebSocket {
     async request(data: WebSocketMessage) {
         return await new Promise<WebSocketMessage>((resolve, reject) => {
             const id = this.idStore.length && this.idStore.shift();
-            if (id) { 
+            if (id) {
                 data.id = id;
                 this.waitingPromises[data.id] = [resolve, reject];
             } else {

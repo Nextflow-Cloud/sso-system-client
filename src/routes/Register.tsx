@@ -40,7 +40,7 @@ const Register = () => {
 
     const [mfaSecret, setMfaSecret] = useState(""); // link to base64 image of QR code
     const [backupFile, setBackupFile] = useState("");
-    
+
     const [superSecureMode, setSuperSecureMode] = useState(true);
     const [tiEncryption, setTiEncryption] = useState(true);
     const [iaEncryption, setIaEncryption] = useState(true);
@@ -49,7 +49,7 @@ const Register = () => {
     const fade = useRef<HTMLDivElement>(null);
     const submit = useRef<HTMLDivElement>(null);
     const captcha = useRef<HCaptcha>(null);
-    
+
     const navigate = useNavigate();
 
     const register = async () => {
@@ -80,7 +80,7 @@ const Register = () => {
             if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
             await new Promise(r => setTimeout(r, 1000));
             setStage("verify");
-            if (fade.current) fade.current.style.animation = "1s fadeInRight";    
+            if (fade.current) fade.current.style.animation = "1s fadeInRight";
         }
         if (stage === "verify") {
             const request = await createProtectedRequest("https://secure.nextflow.cloud/api/user", "POST", JSON.stringify({
@@ -96,17 +96,14 @@ const Register = () => {
                     if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
                     await new Promise(r => setTimeout(r, 1000));
                     setStage("verify");
-                    if (fade.current) fade.current.style.animation = "1s fadeInRight";    
-                } else 
-                if (request.status === 401) {
+                    if (fade.current) fade.current.style.animation = "1s fadeInRight";
+                } else if (request.status === 401) {
                     setLoading(false);
                     setError("Please complete the captcha before continuing.");
-                } else 
-                if (request.status === 409) {
+                } else if (request.status === 409) {
                     setLoading(false);
                     setError("This email is already registered.");
-                } else 
-                {
+                } else {
                     setLoading(false);
                     setError("Unknown error occured, please check console for technical information.");
                 }
@@ -134,17 +131,15 @@ const Register = () => {
                     if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
                     await new Promise(r => setTimeout(r, 1000));
                     setStage("backup");
-                    if (fade.current) fade.current.style.animation = "1s fadeInRight";    
-                } else 
-                if (request.status === 403) {
+                    if (fade.current) fade.current.style.animation = "1s fadeInRight";
+                } else if (request.status === 403) {
                     setLoading(false);
                     setError("Try registering again, your session could have timed out.");
                     if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
                     await new Promise(r => setTimeout(r, 1000));
                     setStage("details");
-                    if (fade.current) fade.current.style.animation = "1s fadeInRight";    
-                } else 
-                {
+                    if (fade.current) fade.current.style.animation = "1s fadeInRight";
+                } else {
                     setLoading(false);
                     setError("Unknown error occured, please check console for technical information.");
                 }
@@ -166,8 +161,8 @@ const Register = () => {
                     if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
                     await new Promise(r => setTimeout(r, 1000));
                     setStage("done");
-                    if (fade.current) fade.current.style.animation = "1s fadeInRight";    
-                } else if (request.status === 401)  {
+                    if (fade.current) fade.current.style.animation = "1s fadeInRight";
+                } else if (request.status === 401) {
                     setLoading(false);
                     setError("Code incorrect, please try again.");
                 } else {
@@ -180,21 +175,21 @@ const Register = () => {
             }
         }
     };
-    
-    const press = (e: KeyboardEvent) => {      
+
+    const press = (e: KeyboardEvent) => {
         if (e.key === "Enter") {
             console.log(submit.current?.click);
             submit.current?.click();
-        }  
+        }
     };
 
     const checkToken = async () => {
         if (token) {
             const r = await fetch("https://secure.nextflow.cloud/api/validate", {
                 method: "POST",
-                headers: { 
+                headers: {
                     "Content-Type": "application/json",
-                }, 
+                },
                 body: JSON.stringify({
                     token
                 })
@@ -226,7 +221,7 @@ const Register = () => {
         if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
         await new Promise(r => setTimeout(r, 1000));
         setStage("details");
-        if (fade.current) fade.current.style.animation = "1s fadeInRight";    
+        if (fade.current) fade.current.style.animation = "1s fadeInRight";
     };
 
     const initCaptcha = () => {
@@ -242,9 +237,9 @@ const Register = () => {
 
     useEffect(() => {
         checkToken();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    
+
     if (!checked) {
         return <div />;
     }
@@ -256,19 +251,19 @@ const Register = () => {
                     animation: "1s fadeInRight"
                 }}>
                     <h1 className="text-3xl mb-5"><b>{i18n.translate(lang, "register")}</b></h1>
-                    <div className="inside">  
+                    <div className="inside">
                         <label><b>{"Credentials"}</b></label>
                         <div className='my-1'>
-                            <input 
-                                className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2 focus:border-green-400" 
-                                type="text" 
-                                placeholder={i18n.translate(lang, "enterEmail")} 
-                                disabled={loading} 
-                                onKeyDown={press} 
-                                value={email} 
-                                onChange={v => setEmail((v.target as HTMLInputElement).value)} 
+                            <input
+                                className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2 focus:border-green-400"
+                                type="text"
+                                placeholder={i18n.translate(lang, "enterEmail")}
+                                disabled={loading}
+                                onKeyDown={press}
+                                value={email}
+                                onChange={v => setEmail((v.target as HTMLInputElement).value)}
                             />
-                            <input className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2" type="password" placeholder={i18n.translate(lang, "enterPassword")}  disabled={loading} onKeyDown={press} value={password} onChange={v => setPassword((v.target as HTMLInputElement).value)} />
+                            <input className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2" type="password" placeholder={i18n.translate(lang, "enterPassword")} disabled={loading} onKeyDown={press} value={password} onChange={v => setPassword((v.target as HTMLInputElement).value)} />
                         </div>
                         <Button onClick={register} divRef={submit} disabled={loading}>{i18n.translate(lang, "next")}</Button>
                     </div>
@@ -282,7 +277,7 @@ const Register = () => {
                 </div>
             </FormBase>
         );
-    } 
+    }
     if (stage === "verify") {
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
@@ -290,7 +285,7 @@ const Register = () => {
                     animation: "1s fadeInRight"
                 }}>
                     <h1 className="text-3xl mb-5"><b>{/* i18n.translate(lang, "register")*/}Verification</b></h1>
-                    <div className="inside">  
+                    <div className="inside">
                         {/* <label><b>{"Verify"}</b></label> */}
                         <div class="bg-green-100 border-green-600 rounded-md border-2 my-2 px-2 py-2"><p>Are you a robot? We're sure you aren't, but we just want to check to make sure.</p></div>
                         <div class="bg-blue-100 border-blue-600 rounded-md border-2 my-2 px-2 py-2">
@@ -299,7 +294,7 @@ const Register = () => {
                                 sitekey={captchaKey}
                                 onVerify={setCaptchaToken}
                                 ref={captcha}
-                                onLoad={initCaptcha}     
+                                onLoad={initCaptcha}
                             />
                         </div>
                         <div class="space-x-3">
@@ -315,7 +310,7 @@ const Register = () => {
             </FormBase>
         );
 
-    } 
+    }
     if (stage === "security") {
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
@@ -351,7 +346,7 @@ const Register = () => {
                 </div>
             </FormBase>
         );
-    } 
+    }
     if (stage === "backup") {
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
@@ -363,13 +358,13 @@ const Register = () => {
                         {/* <img src="https://sso.nextflow.cloud/dummy-qr-code" alt="MFA QR code" /> */}
                         <img src={mfaSecret} alt="MFA QR code" />
                         <div class="bg-green-100 border-green-600 rounded-md border-2 my-2 px-2 py-2"><p>Please scan this QR code using your preferred authenticator app. We ask you to type in the code generated there just to make sure you've got it. ☺</p></div>
-                        <input 
-                            className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2" 
+                        <input
+                            className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2"
                             type="text" placeholder={i18n.translate(lang, "enterCode")}
-                            disabled={loading} 
-                            onKeyDown={press} 
-                            value={code} 
-                            onChange={v => setCode((v.target as HTMLInputElement).value)} 
+                            disabled={loading}
+                            onKeyDown={press}
+                            value={code}
+                            onChange={v => setCode((v.target as HTMLInputElement).value)}
                         />
                         <div class="bg-yellow-100 border-yellow-600 rounded-md border-2 my-2 px-2 py-2"><b>IMPORTANT!</b><p class="mb-1">Please download this recovery key and store it in a safe location. This will allow you to regain access to your encrypted data in case you lose your password.</p>
                             <Button onClick={backup}>Download recovery keys</Button>
@@ -384,7 +379,7 @@ const Register = () => {
             </FormBase>
         );
 
-    } 
+    }
     if (stage === "done") {
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
@@ -392,7 +387,7 @@ const Register = () => {
                     animation: "1s fadeInRight"
                 }}>
                     <h1 className="text-3xl mb-5"><b>{i18n.translate(lang, "continue")}</b></h1>
-                    <div className="inside">  
+                    <div className="inside">
                         <label>{i18n.translate(lang, "loggedIn")}</label>
                     </div>
                     <p className='inside error'>
@@ -401,8 +396,8 @@ const Register = () => {
                 </div>
             </FormBase>
         );
-    } 
-    if (stage === "skip") { 
+    }
+    if (stage === "skip") {
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
                 <div ref={fade} style={{

@@ -10,7 +10,7 @@ class Internals {
     protected setModalDialog?: StateUpdater<JSX.Element | undefined>;
 
     // eslint-disable-next-line no-unused-vars
-    initializeModalDialog(modalDialog: JSX.Element | null | undefined, setModalDialog:  StateUpdater<JSX.Element | undefined>) {
+    initializeModalDialog(modalDialog: JSX.Element | null | undefined, setModalDialog: StateUpdater<JSX.Element | undefined>) {
         this.modalDialog = modalDialog;
         this.setModalDialog = setModalDialog;
     }

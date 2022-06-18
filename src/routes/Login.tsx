@@ -17,12 +17,12 @@ const Login = () => {
     const [persist, setPersist] = useState(false);
     const [continueToken, setContinueToken] = useState("");
     const [token, setToken] = useState(localStorage.getItem("token"));
-    
+
     const fade = useRef<HTMLDivElement>(null);
     const submit = useRef<HTMLDivElement>(null);
-    
+
     const navigate = useNavigate();
-      
+
     const login = async () => {
         setError("");
         if (stage === "email") {
@@ -42,9 +42,9 @@ const Login = () => {
 
             const request = await Promise.race([fetch("https://secure.nextflow.cloud/api/login", {
                 method: "POST",
-                headers: { 
+                headers: {
                     "Content-Type": "application/json",
-                }, 
+                },
                 body: JSON.stringify({
                     stage: 1,
                     email
@@ -72,26 +72,26 @@ const Login = () => {
                 return;
             }
             const response = await request.json();
-            console.log("[LOG] Login response: ", response); 
+            console.log("[LOG] Login response: ", response);
             setContinueToken(response.continue_token);
-            
+
             setLoading(false);
             if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
             await new Promise(r => setTimeout(r, 1000));
             setStage("password");
-            if (fade.current) fade.current.style.animation = "1s fadeInRight";          
+            if (fade.current) fade.current.style.animation = "1s fadeInRight";
         } else if (stage === "password") {
             if (!password.trim()) {
                 setError("Password is blank");
                 return;
             }
             setLoading(true);
-            
+
             const request = await Promise.race([fetch("https://secure.nextflow.cloud/api/login", {
                 method: "POST",
-                headers: { 
+                headers: {
                     "Content-Type": "application/json",
-                }, 
+                },
                 body: JSON.stringify({
                     stage: 2,
                     continue_token: continueToken,
@@ -106,7 +106,7 @@ const Login = () => {
                 setLoading(false);
                 return;
             }
-            
+
             if (!request.ok) {
                 console.error(`[ERROR] Server returned status code ${request.status}`);
                 setError(`Server returned status code ${request.status}`);
@@ -152,7 +152,7 @@ const Login = () => {
                 setError("2FA code is blank");
                 return;
             }
-            if (code.length !== 6) { 
+            if (code.length !== 6) {
                 setError("2FA code is not 6 digits");
                 return;
             }
@@ -163,9 +163,9 @@ const Login = () => {
             setLoading(true);
             const request = await Promise.race([fetch("https://secure.nextflow.cloud/api/login", {
                 method: "POST",
-                headers: { 
+                headers: {
                     "Content-Type": "application/json",
-                }, 
+                },
                 body: JSON.stringify({
                     stage: 3,
                     continue_token: continueToken,
@@ -205,7 +205,7 @@ const Login = () => {
             const response = await request.json();
             console.log("[LOG] Login response: ", response);
             setToken(response.token);
-            
+
             setLoading(false);
             if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
             await new Promise(r => setTimeout(r, 1000));
@@ -236,20 +236,20 @@ const Login = () => {
         navigate(href);
     };
 
-    const press = (e: KeyboardEvent) => {      
+    const press = (e: KeyboardEvent) => {
         if (e.key === "Enter") {
             console.log(submit.current?.click);
             submit.current?.click();
-        }  
+        }
     };
 
     const checkToken = async () => {
         if (token) {
             const r = await fetch("https://secure.nextflow.cloud/api/validate", {
                 method: "POST",
-                headers: { 
+                headers: {
                     "Content-Type": "application/json",
-                }, 
+                },
                 body: JSON.stringify({
                     token
                 })
@@ -272,7 +272,7 @@ const Login = () => {
 
     useEffect(() => {
         checkToken();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     if (!checked) {
@@ -286,17 +286,17 @@ const Login = () => {
                     animation: "1s fadeInRight"
                 }}>
                     <h1 className="text-3xl mb-5"><b>{i18n.translate(lang, "login")}</b></h1>
-                    <div className="inside">  
+                    <div className="inside">
                         <label><b>{i18n.translate(lang, "email")}</b></label>
                         <div className='my-1'>
-                            <input 
-                                className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2 focus:border-green-400" 
-                                type="text" 
-                                placeholder={i18n.translate(lang, "enterEmail")} 
-                                disabled={loading} 
-                                onKeyDown={press} 
-                                value={email} 
-                                onChange={v => setEmail((v.target as HTMLInputElement).value)} 
+                            <input
+                                className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2 focus:border-green-400"
+                                type="text"
+                                placeholder={i18n.translate(lang, "enterEmail")}
+                                disabled={loading}
+                                onKeyDown={press}
+                                value={email}
+                                onChange={v => setEmail((v.target as HTMLInputElement).value)}
                             />
                         </div>
                         <Button onClick={login} divRef={submit} disabled={loading}>{i18n.translate(lang, "next")}</Button>
@@ -311,7 +311,7 @@ const Login = () => {
                 </div>
             </FormBase>
         );
-    } 
+    }
     if (stage === "password") {
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
@@ -323,7 +323,7 @@ const Login = () => {
                     <div className="inside">
                         <label><b>{i18n.translate(lang, "password")}</b></label>
                         <div className='my-1'>
-                            <input className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2" type="password" placeholder={i18n.translate(lang, "enterPassword")}  disabled={loading} onKeyDown={press} value={password} onChange={v => setPassword((v.target as HTMLInputElement).value)} />
+                            <input className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2" type="password" placeholder={i18n.translate(lang, "enterPassword")} disabled={loading} onKeyDown={press} value={password} onChange={v => setPassword((v.target as HTMLInputElement).value)} />
                         </div>
                         <Button onClick={login} divRef={submit} disabled={loading}>{i18n.translate(lang, "next")}</Button>
                     </div>
@@ -342,7 +342,7 @@ const Login = () => {
                 </div>
             </FormBase>
         );
-    } 
+    }
     if (stage === "2fa") {
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
@@ -350,15 +350,15 @@ const Login = () => {
                     animation: "1s fadeInRight"
                 }}>
                     <h1 className="text-3xl mb-5"><b>{i18n.translate(lang, "twoFactorAuthentication")}</b></h1>
-                    <div className="inside">  
+                    <div className="inside">
                         <label><b>{i18n.translate(lang, "enterCodeDescription")}</b></label>
-                        <input 
-                            className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2" 
+                        <input
+                            className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2"
                             type="text" placeholder={i18n.translate(lang, "enterCode")}
-                            disabled={loading} 
-                            onKeyDown={press} 
-                            value={code} 
-                            onChange={v => setCode((v.target as HTMLInputElement).value)} 
+                            disabled={loading}
+                            onKeyDown={press}
+                            value={code}
+                            onChange={v => setCode((v.target as HTMLInputElement).value)}
                         />
                         <Button onClick={login} divRef={submit} disabled={loading}>{i18n.translate(lang, "next")}</Button>
                     </div>
@@ -369,7 +369,7 @@ const Login = () => {
                 </div>
             </FormBase>
         );
-    } 
+    }
     if (stage === "done") {
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
@@ -377,7 +377,7 @@ const Login = () => {
                     animation: "1s fadeInRight"
                 }}>
                     <h1 className="text-3xl mb-5"><b>{i18n.translate(lang, "continue")}</b></h1>
-                    <div className="inside">  
+                    <div className="inside">
                         <label>{i18n.translate(lang, "loggedIn")}</label>
                     </div>
                     <p className='inside error'>
@@ -386,8 +386,8 @@ const Login = () => {
                 </div>
             </FormBase>
         );
-    } 
-    if (stage === "skip") { 
+    }
+    if (stage === "skip") {
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
                 <div ref={fade} style={{

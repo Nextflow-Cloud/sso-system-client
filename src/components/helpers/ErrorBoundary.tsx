@@ -1,5 +1,3 @@
-
-
 import { ComponentChildren } from "preact";
 import { useErrorBoundary } from "preact/hooks";
 import ModalDialog from "../ModalDialog";
@@ -29,12 +27,12 @@ const ErrorBoundary = (props: { children: ComponentChildren; }) => {
             window.internals;
         }
         if (id === "yes") {
-            
+
         } else {
             ignoreError();
         }
     };
-    
+
     if (error) {
         return (
             <>

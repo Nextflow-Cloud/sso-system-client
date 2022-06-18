@@ -19,9 +19,9 @@ const Authenticate = (props: { children: ComponentChildren; }) => {
             const token = getCookie("token");
             const request = await Promise.race([fetch("https://secure.nextflow.cloud/api/validate", {
                 method: "POST",
-                headers: { 
+                headers: {
                     "Content-Type": "application/json",
-                }, 
+                },
                 body: JSON.stringify({ token })
             }), new Promise(r => setTimeout(r, 5000))]);
             if (!(request instanceof Response)) setTimedOut(true);
@@ -38,14 +38,14 @@ const Authenticate = (props: { children: ComponentChildren; }) => {
     if (failed) {
         navigate("/login");
         return <></>;
-    } 
+    }
     return (
         <>
             {timedOut && <div>Warning: SSO authentication server timed out. Check service status <a href="https://status.nextflow.cloud">here</a>.</div>}
             {succeeded && props.children}
         </>
     );
-    
+
 };
 
 export default Authenticate;

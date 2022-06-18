@@ -3,7 +3,7 @@ const Footer = () => {
         <div class="footer">
             <div class="mobile">
                 <p>This app is not natively supported on mobile yet. Please check back later, we're working on it! ;)</p>
-            </div> 
+            </div>
             <div class="image-credit" style={{
                 textAlign: "right",
                 margin: "1rem"

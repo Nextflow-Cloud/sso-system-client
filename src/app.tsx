@@ -31,7 +31,7 @@ const App = () => {
             </BrowserRouter>
             {modalDialog ? modalDialog : <></>}
         </>
-    ); 
+    );
 };
 
 export default App;

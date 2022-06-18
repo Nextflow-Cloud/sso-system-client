@@ -16,7 +16,7 @@ const FormBase = ({ children, loading, lang, setLang }: { children: ComponentChi
                             <h1 className='text-3xl mb-2'><b>{i18n.translate(lang, "welcome")}</b></h1>
                             <h2>{i18n.translate(lang, "description")}</h2>
                         </div>
-                        
+
                         {/* <div className="footer">
                             <div className="links">
                                 <a href="https://nextflow.cloud/docs/">Documentation</a>
