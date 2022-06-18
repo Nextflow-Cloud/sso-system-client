@@ -119,7 +119,7 @@ const Register = () => {
             }
         }
         if (stage === "security") {
-            const request = await raceRequest("https://secure.nextflow.cloud/api/register/onboarding", "POST", JSON.stringify({
+            const request = await raceRequest("https://secure.nextflow.cloud/api/user/onboarding", "POST", JSON.stringify({
                 continue_token: continueToken,
                 encrypt_ti: superSecureMode || tiEncryption,
                 encrypt_ia: superSecureMode || iaEncryption,
@@ -156,7 +156,7 @@ const Register = () => {
                 setError("Server timed out");
             }
         }if (stage === "backup") {
-            const request = await raceRequest("https://secure.nextflow.cloud/api/register/security", "POST", JSON.stringify({
+            const request = await raceRequest("https://secure.nextflow.cloud/api/user/security", "POST", JSON.stringify({
                 continue_token: continueToken,
                 mfa_code: mfaCode,
             }));
