@@ -4,20 +4,22 @@ import { useNavigate } from "react-router-dom";
 import FormBase from "../components/FormBase";
 import Button from "../components/primitive/Button";
 
-const App = () => {
+const Login = () => {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [stage, setStage] = useState("email");
-    const fade = useRef<HTMLDivElement>(null);
-    const submit = useRef<HTMLDivElement>(null);
-    const [email, setEmail] = useState("");
-    const [code, setCode] = useState("");
-    const [password, setPassword] = useState("");
-    const [continueToken, setContinueToken] = useState("");
-    const [token, setToken] = useState(localStorage.getItem("token"));
-    const [persist, setPersist] = useState(false);
     const [checked, setChecked] = useState(false);
     const [lang, setLang] = useState(localStorage.getItem("lang") || "fr");
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [code, setCode] = useState("");
+    const [persist, setPersist] = useState(false);
+    const [continueToken, setContinueToken] = useState("");
+    const [token, setToken] = useState(localStorage.getItem("token"));
+    
+    const fade = useRef<HTMLDivElement>(null);
+    const submit = useRef<HTMLDivElement>(null);
     
     const navigate = useNavigate();
       
@@ -226,14 +228,21 @@ const App = () => {
             // continue to destination
             setError("");
         }
-        
     };
+
+    const register = () => {
+        const continueUrl = new URLSearchParams(window.location.search).get("continue");
+        const href = continueUrl ? `/register?continue=${encodeURIComponent(continueUrl)}` : "/register";
+        navigate(href);
+    };
+
     const press = (e: KeyboardEvent) => {      
         if (e.key === "Enter") {
             console.log(submit.current?.click);
             submit.current?.click();
         }  
     };
+
     const checkToken = async () => {
         if (token) {
             const r = await fetch("https://secure.nextflow.cloud/api/validate", {
@@ -260,18 +269,16 @@ const App = () => {
         }
         setChecked(true);
     };
+
     useEffect(() => {
         checkToken();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    const register = () => {
-        const continueUrl = new URLSearchParams(window.location.search).get("continue");
-        const href = continueUrl ? `/register?continue=${encodeURIComponent(continueUrl)}` : "/register";
-        navigate(href);
-    };
+
     if (!checked) {
         return <div />;
     }
+
     if (stage === "email") {
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
@@ -304,7 +311,8 @@ const App = () => {
                 </div>
             </FormBase>
         );
-    } if (stage === "password") {
+    } 
+    if (stage === "password") {
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
                 <div ref={fade} style={{
@@ -334,7 +342,8 @@ const App = () => {
                 </div>
             </FormBase>
         );
-    } if (stage === "2fa") {
+    } 
+    if (stage === "2fa") {
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
                 <div ref={fade} style={{
@@ -360,7 +369,8 @@ const App = () => {
                 </div>
             </FormBase>
         );
-    } if (stage === "done") {
+    } 
+    if (stage === "done") {
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
                 <div ref={fade} style={{
@@ -376,7 +386,8 @@ const App = () => {
                 </div>
             </FormBase>
         );
-    } if (stage === "skip") { 
+    } 
+    if (stage === "skip") { 
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
                 <div ref={fade} style={{
@@ -396,5 +407,4 @@ const App = () => {
     return <div />;
 };
 
-export default App;
-
+export default Login;
