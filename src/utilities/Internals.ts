@@ -1,8 +1,7 @@
 import { JSX } from "preact";
 import { StateUpdater } from "preact/hooks";
-import { Button } from "../components/ModalDialog";
-import createModalDialog from "./createModalDialog";
-import createProtectedRequest from "./createProtectedRequest";
+import ModalDialog, { Button } from "../components/ModalDialog";
+import createProtectedRequest, { Method } from "./createProtectedRequest";
 
 class Internals {
     protected flags: Record<string, boolean> = {};
@@ -26,7 +25,7 @@ class Internals {
 
     // eslint-disable-next-line no-unused-vars
     showModalDialog(title: string, content: string, buttons: Button[], onClose: (id: string, checkbox?: boolean) => void, checkbox?: string) {
-        this.setModalDialog?.(createModalDialog({ title, content, buttons, onClose, checkbox }));
+        this.setModalDialog?.(ModalDialog({ title, content, buttons, onClose, checkbox }));
     }
 
     hideModalDialog() {
@@ -34,8 +33,8 @@ class Internals {
     }
 
     // eslint-disable-next-line no-undef
-    async createProtectedRequest(url: string, options: RequestInit) {
-        return await createProtectedRequest(url, options);
+    async createProtectedRequest(url: string, method: Method, json: string): Promise<Response | undefined> {
+        return await createProtectedRequest(url, method, json);
     }
 }
 

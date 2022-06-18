@@ -1,21 +1,13 @@
-// eslint-disable-next-line no-undef
-const createProtectedRequest = async (url: string, options: RequestInit) => {
-    try {
-        const request = await Promise.race([fetch(url, options), new Promise(r => setTimeout(r, 5000))]);
-        if (!(request instanceof Response)) {
-            throw new Error("Request timed out.");
-        } else if (!request.ok) {
-            throw new Error(`Request failed with status code ${request.status}.`);
-        } else {
-            try {
-                return await request.json();
-            } catch {
-                throw new Error("Request failed to parse JSON.");
-            }
-        }
-    } catch {
-        throw new Error("Request failed due to CORS or network issues.");
-    }
-};
+type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+
+export type { Method };
+
+const createProtectedRequest = (url: string, method: Method, json: string): Promise<Response | undefined> => Promise.race([fetch(url, {
+    headers: {
+        "Content-Type": "application/json"
+    },
+    method,
+    body: json
+}), new Promise(r => setTimeout(r, 5000))]) as Promise<Response | undefined>;
 
 export default createProtectedRequest;
