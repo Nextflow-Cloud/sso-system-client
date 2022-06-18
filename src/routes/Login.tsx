@@ -71,7 +71,7 @@ const App = () => {
             }
             const response = await request.json();
             console.log("[LOG] Login response: ", response); 
-            setContinueToken(response.continueToken);
+            setContinueToken(response.continue_token);
             
             setLoading(false);
             if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
@@ -92,7 +92,7 @@ const App = () => {
                 }, 
                 body: JSON.stringify({
                     stage: 2,
-                    continueToken,
+                    continue_token: continueToken,
                     password,
                     persist
                 })
@@ -130,7 +130,7 @@ const App = () => {
             }
             const response = await request.json();
             console.log("[LOG] Login response: ", response);
-            if (response.mfaEnabled) {
+            if (response.mfa_enabled) {
                 setContinueToken(response.continueToken);
                 setLoading(false);
                 if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
@@ -166,7 +166,7 @@ const App = () => {
                 }, 
                 body: JSON.stringify({
                     stage: 3,
-                    continueToken,
+                    continue_token: continueToken,
                     code,
                     password
                 })
