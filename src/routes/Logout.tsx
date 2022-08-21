@@ -10,7 +10,7 @@ const Logout = () => {
     const logout = async () => {
         const token = localStorage.getItem("token");
         if (token) {
-            await createProtectedRequest("https://sso.nextflow.cloud/api/logout", "DELETE", JSON.stringify({}), {
+            await createProtectedRequest("/api/login", "DELETE", JSON.stringify({}), {
                 Authorization: `Bearer ${token}`
             });
             localStorage.removeItem("token");

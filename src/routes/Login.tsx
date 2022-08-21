@@ -40,7 +40,7 @@ const Login = () => {
             setLoading(true);
             setEmail(match[0]);
 
-            const request = await Promise.race([fetch("https://secure.nextflow.cloud/api/login", {
+            const request = await Promise.race([fetch("/api/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -87,7 +87,7 @@ const Login = () => {
             }
             setLoading(true);
 
-            const request = await Promise.race([fetch("https://secure.nextflow.cloud/api/login", {
+            const request = await Promise.race([fetch("/api/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -146,6 +146,17 @@ const Login = () => {
                 await new Promise(r => setTimeout(r, 1000));
                 setStage("done");
                 if (fade.current) fade.current.style.animation = "1s fadeInRight";
+
+                localStorage.setItem("token", token as string);
+                setTimeout(() => {
+                    const getContinueUrl = new URLSearchParams(window.location.search).get("continue");
+                    const url = new URL(getContinueUrl ? getContinueUrl : "https://nextflow.cloud");
+                    if (getContinueUrl === "nextpass://auth") {
+                        url.searchParams.set("token", localStorage.getItem("token") as string);
+                    }
+                    // url.searchParams.set("token", token);
+                    window.location.href = url.toString();
+                }, 1000);
             }
         } else if (stage === "2fa") {
             if (!code.trim()) {
@@ -161,7 +172,7 @@ const Login = () => {
                 return;
             }
             setLoading(true);
-            const request = await Promise.race([fetch("https://secure.nextflow.cloud/api/login", {
+            const request = await Promise.race([fetch("/api/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -212,14 +223,12 @@ const Login = () => {
             setStage("done");
             if (fade.current) fade.current.style.animation = "1s fadeInRight";
 
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            localStorage.setItem("token", token!);
+            localStorage.setItem("token", token as string);
             setTimeout(() => {
                 const getContinueUrl = new URLSearchParams(window.location.search).get("continue");
                 const url = new URL(getContinueUrl ? getContinueUrl : "https://nextflow.cloud");
                 if (getContinueUrl === "nextpass://auth") {
-                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                    url.searchParams.set("token", localStorage.getItem("token")!);
+                    url.searchParams.set("token", localStorage.getItem("token") as string);
                 }
                 // url.searchParams.set("token", token);
                 window.location.href = url.toString();
@@ -238,14 +247,14 @@ const Login = () => {
 
     const press = (e: KeyboardEvent) => {
         if (e.key === "Enter") {
-            console.log(submit.current?.click);
-            submit.current?.click();
+            e.preventDefault();
+            login();
         }
     };
 
     const checkToken = async () => {
         if (token) {
-            const r = await fetch("https://secure.nextflow.cloud/api/validate", {
+            const r = await fetch("/api/validate", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

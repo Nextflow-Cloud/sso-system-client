@@ -1,9 +1,20 @@
 import { ComponentChildren } from "preact";
-import { StateUpdater } from "preact/hooks";
+import { StateUpdater, useEffect, useRef } from "preact/hooks";
 import i18n from "../utilities/i18n";
 import Footer from "./Footer";
 
 const FormBase = ({ children, loading, lang, setLang }: { children: ComponentChildren; loading: boolean; lang: string; setLang: StateUpdater<string> }) => {
+    const formRef = useRef<HTMLFormElement>(null);
+    useEffect(() => {
+        // eslint-disable-next-line no-undef
+        const listener = (e: SubmitEvent) => e.preventDefault();
+        formRef.current?.addEventListener("submit", listener);
+        return () => {
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            formRef.current?.removeEventListener("submit", listener);
+        };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [formRef.current]);
     return (
         <div className="main">
             <div className="inner flex backdrop-blur-md bg-white bg-opacity-50 w-1/2"> {/* w-1/2 */}
@@ -46,7 +57,7 @@ const FormBase = ({ children, loading, lang, setLang }: { children: ComponentChi
                 </div>
                 <form className='bg-white py-8 px-16 w-2/3 overflow-hidden' style={{
                     opacity: loading ? 0.5 : 1
-                }}>
+                }} ref={formRef}>
                     {children}
                 </form>
             </div>
