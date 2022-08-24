@@ -2,11 +2,7 @@ import { ComponentChildren } from "preact";
 import { useEffect, useState } from "preact/hooks";
 import { useNavigate } from "react-router";
 
-const getCookie = (name: string) => {
-    const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
-    if (match) return match[2];
-    return null;
-};
+// const getCookie = (name: string) => document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`))?.[2];
 
 const Authenticate = (props: { children: ComponentChildren; }) => {
     const [timedOut, setTimedOut] = useState(false);
@@ -15,9 +11,9 @@ const Authenticate = (props: { children: ComponentChildren; }) => {
     const navigate = useNavigate();
 
     const checkToken = async () => {
-        if (getCookie("token") !== null) {
-            const token = getCookie("token");
-            const request = await Promise.race([fetch("https://secure.nextflow.cloud/api/validate", {
+        const token = localStorage.getItem("token");
+        if (token !== null) {
+            const request = await Promise.race([fetch("/api/validate", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
