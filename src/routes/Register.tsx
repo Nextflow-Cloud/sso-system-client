@@ -268,12 +268,12 @@ const Register = () => {
                 }}>
                     <h1 className="text-3xl mb-5"><b>{i18n.translate(lang, "register")}</b></h1>
                     <div className="inside">
-                        <label><b>{"Credentials"}</b></label>
+                        <label><b>{i18n.translate(lang, "credentials")}</b></label>
                         <div className='my-1'>
                             <input
                                 className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2 focus:border-green-400"
                                 type="text"
-                                placeholder={"Enter display name"}
+                                placeholder={i18n.translate(lang, "enterDisplayName")}
                                 disabled={loading}
                                 onKeyDown={press}
                                 value={displayName}
@@ -282,7 +282,7 @@ const Register = () => {
                             <input
                                 className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2 focus:border-green-400"
                                 type="text"
-                                placeholder={"Enter username"}
+                                placeholder={i18n.translate(lang, "enterUsername")}
                                 disabled={loading}
                                 onKeyDown={press}
                                 value={username}
@@ -311,7 +311,7 @@ const Register = () => {
                     </div>
                     <div className="inside" />
                     <p className="inside">
-                        {"Have an account?"} <a href="javascript:void(0)" onClick={login} class="text-blue-600">{i18n.translate(lang, "login")}</a>
+                        {i18n.translate(lang, "haveAnAccount")} <a href="javascript:void(0)" onClick={login} class="text-blue-600">{i18n.translate(lang, "login")}</a>
                     </p>
                     <p className='inside error'>
                         {error}
@@ -326,10 +326,9 @@ const Register = () => {
                 <div ref={fade} style={{
                     animation: "1s fadeInRight"
                 }}>
-                    <h1 className="text-3xl mb-5"><b>{/* i18n.translate(lang, "register")*/}Verification</b></h1>
+                    <h1 className="text-3xl mb-5"><b>{i18n.translate(lang, "verification")}</b></h1>
                     <div className="inside">
-                        {/* <label><b>{"Verify"}</b></label> */}
-                        <div class="bg-green-100 border-green-600 rounded-md border-2 my-2 px-2 py-2"><p>Are you a robot? We're sure you aren't, but we just want to check to make sure.</p></div>
+                        <div class="bg-green-100 border-green-600 rounded-md border-2 my-2 px-2 py-2"><p>{i18n.translate(lang, "verificationDescription")}</p></div>
                         <div class="bg-blue-100 border-blue-600 rounded-md border-2 my-2 px-2 py-2">
                             {/* @ts-expect-error HCaptcha is a React component and it doesn't type well in Preact */}
                             <HCaptcha
@@ -340,7 +339,7 @@ const Register = () => {
                             />
                         </div>
                         <div class="space-x-3">
-                            <Button onClick={back} divRef={submit} disabled={loading}>Previous</Button>
+                            <Button onClick={back} divRef={submit} disabled={loading}>{i18n.translate(lang, "previous")}</Button>
                             <Button onClick={register} divRef={submit} disabled={loading}>{i18n.translate(lang, "next")}</Button>
                         </div>
                     </div>
