@@ -16,7 +16,6 @@ const Login = () => {
     const [code, setCode] = useState("");
     const [persist, setPersist] = useState(false);
     const [continueToken, setContinueToken] = useState("");
-    const [token, setToken] = useState(localStorage.getItem("token"));
 
     const fade = useRef<HTMLDivElement>(null);
     const submit = useRef<HTMLDivElement>(null);
@@ -133,21 +132,20 @@ const Login = () => {
             const response = await request.json();
             console.log("[LOG] Login response: ", response);
             if (response.mfa_enabled) {
-                setContinueToken(response.continueToken);
+                setContinueToken(response.continue_token);
                 setLoading(false);
                 if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
                 await new Promise(r => setTimeout(r, 1000));
                 setStage("2fa");
                 if (fade.current) fade.current.style.animation = "1s fadeInRight";
             } else {
-                setToken(response.token);
                 setLoading(false);
                 if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
                 await new Promise(r => setTimeout(r, 1000));
                 setStage("done");
                 if (fade.current) fade.current.style.animation = "1s fadeInRight";
 
-                localStorage.setItem("token", token as string);
+                localStorage.setItem("token", response.token);
                 setTimeout(() => {
                     const getContinueUrl = new URLSearchParams(window.location.search).get("continue");
                     const url = new URL(getContinueUrl ? getContinueUrl : "https://nextflow.cloud");
@@ -163,8 +161,8 @@ const Login = () => {
                 setError("2FA code is blank");
                 return;
             }
-            if (code.length !== 6) {
-                setError("2FA code is not 6 digits");
+            if (code.length !== 8) {
+                setError("2FA code is not 8 digits");
                 return;
             }
             if (!code.trim().match(/^\d+$/)) {
@@ -215,7 +213,6 @@ const Login = () => {
             }
             const response = await request.json();
             console.log("[LOG] Login response: ", response);
-            setToken(response.token);
 
             setLoading(false);
             if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
@@ -223,15 +220,15 @@ const Login = () => {
             setStage("done");
             if (fade.current) fade.current.style.animation = "1s fadeInRight";
 
-            localStorage.setItem("token", token as string);
+            localStorage.setItem("token", response.token);
             setTimeout(() => {
-                const getContinueUrl = new URLSearchParams(window.location.search).get("continue");
+                const getContinueUrl = new URLSearchParams(location.search).get("continue");
                 const url = new URL(getContinueUrl ? getContinueUrl : "https://nextflow.cloud");
                 if (getContinueUrl === "nextpass://auth") {
                     url.searchParams.set("token", localStorage.getItem("token") as string);
                 }
                 // url.searchParams.set("token", token);
-                window.location.href = url.toString();
+                location.href = url.toString();
             }, 1000);
         } else if (stage === "done") {
             // continue to destination
@@ -253,15 +250,14 @@ const Login = () => {
     };
 
     const checkToken = async () => {
+        const token = localStorage.getItem("token");
         if (token) {
             const r = await fetch("/api/validate", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    token
-                })
+                body: JSON.stringify({ token })
             });
             if (r.ok) {
                 setStage("skip");
