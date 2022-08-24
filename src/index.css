@@ -54,7 +54,6 @@ html, body, #app {
     box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);
     border-radius: 15px;
     transition: all .3s;
-    overflow: hidden;
 }
 
 * {
@@ -89,17 +88,6 @@ body, html, .main {
 
 .footer {
     text-align: center;
-}
-  
-@media only screen and (max-width: 768px) {
-    .inner {
-        display: none;
-    }
-    .mobile {
-        display: block;
-        text-align: center;
-        color: #ffffff;
-    }
 }
 
 .error {
