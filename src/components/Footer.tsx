@@ -1,11 +1,8 @@
-const Footer = () => {
+const Footer = ({ desktop }: { desktop: boolean; }) => {
     return (
         <div class="footer">
-            <div class="mobile">
-                <p>This app is not natively supported on mobile yet. Please check back later, we're working on it! ;)</p>
-            </div>
             <div class="image-credit" style={{
-                textAlign: "right",
+                textAlign: desktop ? "right" : "center",
                 margin: "1rem"
             }}>
                 <div>Nextflow SSO System</div>
