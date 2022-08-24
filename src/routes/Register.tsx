@@ -338,7 +338,7 @@ const Register = () => {
                                 onLoad={initCaptcha}
                             />
                         </div>
-                        <div class="space-x-3">
+                        <div class="space-y-3">
                             <Button onClick={back} divRef={submit} disabled={loading}>{i18n.translate(lang, "previous")}</Button>
                             <Button onClick={register} divRef={submit} disabled={loading}>{i18n.translate(lang, "next")}</Button>
                         </div>
