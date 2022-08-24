@@ -191,14 +191,12 @@ const Register = () => {
         //     }
         // }
     };
-
     const press = (e: KeyboardEvent) => {
         if (e.key === "Enter") {
             e.preventDefault();
             register();
         }
     };
-
     const checkToken = async () => {
         if (token) {
             const r = await fetch("/api/validate", {
@@ -225,13 +223,11 @@ const Register = () => {
         }
         setChecked(true);
     };
-
     const login = () => {
         const continueUrl = new URLSearchParams(window.location.search).get("continue");
         const href = continueUrl ? `/login?continue=${encodeURIComponent(continueUrl)}` : "/login";
         navigate(href);
     };
-
     const back = async () => {
         setLoading(false);
         if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
@@ -239,11 +235,9 @@ const Register = () => {
         setStage("details");
         if (fade.current) fade.current.style.animation = "1s fadeInRight";
     };
-
     const initCaptcha = () => {
         captcha.current?.execute();
     };
-
     // const backup = () => {
     //     const a = document.createElement("a");
     //     a.href = backupFile;
@@ -259,19 +253,18 @@ const Register = () => {
     if (!checked) {
         return <div />;
     }
-
     if (stage === "details") {
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
                 <div ref={fade} style={{
                     animation: "1s fadeInRight"
                 }}>
-                    <h1 className="text-3xl mb-5"><b>{i18n.translate(lang, "register")}</b></h1>
-                    <div className="inside">
+                    <h1 class="text-3xl mb-5"><b>{i18n.translate(lang, "register")}</b></h1>
+                    <div class="inside">
                         <label><b>{i18n.translate(lang, "credentials")}</b></label>
-                        <div className='my-1'>
+                        <div class="my-1">
                             <input
-                                className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2 focus:border-green-400"
+                                class="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2 focus:border-green-400"
                                 type="text"
                                 placeholder={i18n.translate(lang, "enterDisplayName")}
                                 disabled={loading}
@@ -280,7 +273,7 @@ const Register = () => {
                                 onChange={v => setDisplayName((v.target as HTMLInputElement).value)}
                             />
                             <input
-                                className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2 focus:border-green-400"
+                                class="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2 focus:border-green-400"
                                 type="text"
                                 placeholder={i18n.translate(lang, "enterUsername")}
                                 disabled={loading}
@@ -289,7 +282,7 @@ const Register = () => {
                                 onChange={v => setUsername((v.target as HTMLInputElement).value)}
                             />
                             <input
-                                className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2 focus:border-green-400"
+                                class="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2 focus:border-green-400"
                                 type="text"
                                 placeholder={i18n.translate(lang, "enterEmail")}
                                 disabled={loading}
@@ -298,7 +291,7 @@ const Register = () => {
                                 onChange={v => setEmail((v.target as HTMLInputElement).value)}
                             />
                             <input 
-                                className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2" 
+                                class="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2" 
                                 type="password" 
                                 placeholder={i18n.translate(lang, "enterPassword")} 
                                 disabled={loading} 
@@ -309,11 +302,11 @@ const Register = () => {
                         </div>
                         <Button onClick={register} divRef={submit} disabled={loading}>{i18n.translate(lang, "next")}</Button>
                     </div>
-                    <div className="inside" />
-                    <p className="inside">
+                    <div class="inside" />
+                    <p class="inside">
                         {i18n.translate(lang, "haveAnAccount")} <a href="javascript:void(0)" onClick={login} class="text-blue-600">{i18n.translate(lang, "login")}</a>
                     </p>
-                    <p className='inside error'>
+                    <p class="inside error">
                         {error}
                     </p>
                 </div>
@@ -326,8 +319,8 @@ const Register = () => {
                 <div ref={fade} style={{
                     animation: "1s fadeInRight"
                 }}>
-                    <h1 className="text-3xl mb-5"><b>{i18n.translate(lang, "verification")}</b></h1>
-                    <div className="inside">
+                    <h1 class="text-3xl mb-5"><b>{i18n.translate(lang, "verification")}</b></h1>
+                    <div class="inside">
                         <div class="bg-green-100 border-green-600 rounded-md border-2 my-2 px-2 py-2"><p>{i18n.translate(lang, "verificationDescription")}</p></div>
                         <div class="bg-blue-100 border-blue-600 rounded-md border-2 my-2 px-2 py-2">
                             {/* @ts-expect-error HCaptcha is a React component and it doesn't type well in Preact */}
@@ -343,14 +336,13 @@ const Register = () => {
                             <Button onClick={register} divRef={submit} disabled={loading}>{i18n.translate(lang, "next")}</Button>
                         </div>
                     </div>
-                    <div className="inside" />
-                    <p className='inside error'>
+                    <div class="inside" />
+                    <p class="inside error">
                         {error}
                     </p>
                 </div>
             </FormBase>
         );
-
     }
     // if (stage === "security") {
     //     return (
@@ -358,8 +350,8 @@ const Register = () => {
     //             <div ref={fade} style={{
     //                 animation: "1s fadeInRight"
     //             }}>
-    //                 <h1 className="text-3xl mb-5"><b>{"Security"}</b></h1>
-    //                 <div className="inside">
+    //                 <h1 class="text-3xl mb-5"><b>{"Security"}</b></h1>
+    //                 <div class="inside">
     //                     <label>
     //                         <input type="checkbox" checked={superSecureMode} onChange={e => setSuperSecureMode((e.target as HTMLInputElement).checked)} /> Enable Ultra Secure Mode
     //                     </label>
@@ -380,8 +372,8 @@ const Register = () => {
     //                     </div>
     //                     <Button onClick={register} divRef={submit} disabled={loading}>{i18n.translate(lang, "next")}</Button>
     //                 </div>
-    //                 <div className="inside" />
-    //                 <p className='inside error'>
+    //                 <div class="inside" />
+    //                 <p class="inside error">
     //                     {error}
     //                 </p>
     //             </div>
@@ -394,13 +386,13 @@ const Register = () => {
     //             <div ref={fade} style={{
     //                 animation: "1s fadeInRight"
     //             }}>
-    //                 <h1 className="text-3xl mb-5"><b>{"Security"}</b></h1>
-    //                 <div className="inside">
+    //                 <h1 class="text-3xl mb-5"><b>{"Security"}</b></h1>
+    //                 <div class="inside">
     //                     {/* <img src="/dummy-qr-code" alt="MFA QR code" /> */}
     //                     <img src={mfaSecret} alt="MFA QR code" />
     //                     <div class="bg-green-100 border-green-600 rounded-md border-2 my-2 px-2 py-2"><p>Please scan this QR code using your preferred authenticator app. We ask you to type in the code generated there just to make sure you've got it. ☺</p></div>
     //                     <input
-    //                         className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2"
+    //                         class="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2"
     //                         type="text" placeholder={i18n.translate(lang, "enterCode")}
     //                         disabled={loading}
     //                         onKeyDown={press}
@@ -412,14 +404,13 @@ const Register = () => {
     //                     </div>
     //                     <Button onClick={register} divRef={submit} disabled={loading}>{i18n.translate(lang, "next")}</Button>
     //                 </div>
-    //                 <div className="inside" />
-    //                 <p className='inside error'>
+    //                 <div class="inside" />
+    //                 <p class="inside error">
     //                     {error}
     //                 </p>
     //             </div>
     //         </FormBase>
     //     );
-
     // }
     if (stage === "done") {
         return (
@@ -427,11 +418,11 @@ const Register = () => {
                 <div ref={fade} style={{
                     animation: "1s fadeInRight"
                 }}>
-                    <h1 className="text-3xl mb-5"><b>{i18n.translate(lang, "continue")}</b></h1>
-                    <div className="inside">
+                    <h1 class="text-3xl mb-5"><b>{i18n.translate(lang, "continue")}</b></h1>
+                    <div class="inside">
                         <label>{i18n.translate(lang, "loggedIn")}</label>
                     </div>
-                    <p className='inside error'>
+                    <p class="inside error">
                         {error}
                     </p>
                 </div>
@@ -444,17 +435,18 @@ const Register = () => {
                 <div ref={fade} style={{
                     animation: "1s fadeInRight"
                 }}>
-                    <h1 className="text-3xl mb-5"><b>{i18n.translate(lang, "continue")}</b></h1>
-                    <div className="inside">
+                    <h1 class="text-3xl mb-5"><b>{i18n.translate(lang, "continue")}</b></h1>
+                    <div class="inside">
                         <label>{i18n.translate(lang, "alreadyLoggedIn")}</label>
                     </div>
-                    <p className='inside error'>
+                    <p class="inside error">
                         {error}
                     </p>
                 </div>
             </FormBase>
         );
     }
+
     return <div />;
 };
 

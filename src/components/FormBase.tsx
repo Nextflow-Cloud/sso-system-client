@@ -2,12 +2,13 @@ import { ComponentChildren } from "preact";
 import { StateUpdater, useEffect, useRef, useState } from "preact/hooks";
 import i18n from "../utilities/i18n";
 import Footer from "./Footer";
-// import { isDesktop } from "react-device-detect";
 
 const FormBase = ({ children, loading, lang, setLang }: { children: ComponentChildren; loading: boolean; lang: string; setLang: StateUpdater<string> }) => {
-    const formRef = useRef<HTMLFormElement>(null);
     const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1280);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    
+    const formRef = useRef<HTMLFormElement>(null);
+    
     useEffect(() => {
         // eslint-disable-next-line no-undef
         const listener = (e: SubmitEvent) => e.preventDefault();
@@ -24,22 +25,23 @@ const FormBase = ({ children, loading, lang, setLang }: { children: ComponentChi
         };
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [formRef.current]);
+
     if (isDesktop) {
         return (
             <div className="main">
                 <div className="inner flex backdrop-blur-md bg-white bg-opacity-50 w-7/12 overflow-hidden"> {/* w-1/2 */}
-                    <div className='p-10 flex flex-col justify-between w-4/12'> {/* w-2/5 */}
+                    <div className="p-10 flex flex-col justify-between w-4/12"> {/* w-2/5 */}
                         <div>
                             <div className="logo pb-5">
-                                <img src="/logo.png" alt="Nextflow" className='h-8' />
+                                <img src="/logo.png" alt="Nextflow" className="h-8" />
                             </div>
                             <div className="title">
-                                <h1 className='text-3xl mb-2'><b>{i18n.translate(lang, "welcome")}</b></h1>
+                                <h1 className="text-3xl mb-2"><b>{i18n.translate(lang, "welcome")}</b></h1>
                                 <h2>{i18n.translate(lang, "description")}</h2>
                             </div>
                         </div>
                         <div class="w-full">
-                            <select className='rounded-md p-2 mt-5 w-full' onChange={e => {
+                            <select className="rounded-md p-2 mt-5 w-full" onChange={e => {
                                 setLang((e.target as HTMLSelectElement).value);
                                 localStorage.setItem("lang", (e.target as HTMLSelectElement).value);
                             }} value={lang}>
@@ -61,7 +63,7 @@ const FormBase = ({ children, loading, lang, setLang }: { children: ComponentChi
                         </div>
 
                     </div>
-                    <form className='bg-white py-8 px-16 w-2/3 overflow-hidden' style={{
+                    <form className="bg-white py-8 px-16 w-2/3 overflow-hidden" style={{
                         opacity: loading ? 0.5 : 1
                     }} ref={formRef}>
                         {children}
@@ -77,10 +79,10 @@ const FormBase = ({ children, loading, lang, setLang }: { children: ComponentChi
                     <div class="text-center">
                         <div class="flex-col mb-5">
                             <div className="logo pb-5 text-center">
-                                <img src="/logo.png" alt="Nextflow" className='h-8' />
+                                <img src="/logo.png" alt="Nextflow" className="h-8" />
                             </div>
                             <div className="title">
-                                <h1 className='text-3xl mb-2 text-center'><b>{i18n.translate(lang, "welcome")}</b></h1>
+                                <h1 className="text-3xl mb-2 text-center"><b>{i18n.translate(lang, "welcome")}</b></h1>
                                 <h2 class="text-center">{i18n.translate(lang, "description")}</h2>
                             </div>
                         </div>
@@ -89,7 +91,7 @@ const FormBase = ({ children, loading, lang, setLang }: { children: ComponentChi
                         </div>
                     </div>
                     <div class="text-center">
-                        <select className='rounded-md p-2 mt-5' onChange={e => {
+                        <select className="rounded-md p-2 mt-5" onChange={e => {
                             setLang((e.target as HTMLSelectElement).value);
                             localStorage.setItem("lang", (e.target as HTMLSelectElement).value);
                         }} value={lang}>
@@ -117,18 +119,18 @@ const FormBase = ({ children, loading, lang, setLang }: { children: ComponentChi
         return (
             <div className="main p-5">
                 <div className="inner flex backdrop-blur-md bg-white bg-opacity-50 overflow-scroll">
-                    <div className='p-10 flex flex-col justify-between w-4/12'>
+                    <div className="p-10 flex flex-col justify-between w-4/12">
                         <div>
                             <div className="logo pb-5">
-                                <img src="/logo.png" alt="Nextflow" className='h-8' />
+                                <img src="/logo.png" alt="Nextflow" className="h-8" />
                             </div>
                             <div className="title">
-                                <h1 className='text-3xl mb-2'><b>{i18n.translate(lang, "welcome")}</b></h1>
+                                <h1 className="text-3xl mb-2"><b>{i18n.translate(lang, "welcome")}</b></h1>
                                 <h2>{i18n.translate(lang, "description")}</h2>
                             </div>
                         </div>
                         <div class="w-full">
-                            <select className='rounded-md p-2 mt-5 w-full' onChange={e => {
+                            <select className="rounded-md p-2 mt-5 w-full" onChange={e => {
                                 setLang((e.target as HTMLSelectElement).value);
                                 localStorage.setItem("lang", (e.target as HTMLSelectElement).value);
                             }} value={lang}>
@@ -148,9 +150,8 @@ const FormBase = ({ children, loading, lang, setLang }: { children: ComponentChi
                                 <option value="vi">{i18n.translate(lang, "vietnamese")} (Tiếng Việt)</option>
                             </select>
                         </div>
-
                     </div>
-                    <form className='bg-white py-8 px-16 w-2/3' style={{
+                    <form className="bg-white py-8 px-16 w-2/3" style={{
                         opacity: loading ? 0.5 : 1
                     }} ref={formRef}>
                         {children}

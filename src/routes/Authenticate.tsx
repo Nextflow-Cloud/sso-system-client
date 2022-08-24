@@ -5,7 +5,7 @@ const Authenticate = () => {
     return (
         <>
             <Authenticated>
-                <Navigate to="/account" /> {/* sso.nextflow.cloud */}
+                <Navigate to="/account" />
             </Authenticated>
         </>
     );

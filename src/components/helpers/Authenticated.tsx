@@ -8,6 +8,7 @@ const Authenticate = (props: { children: ComponentChildren; }) => {
     const [timedOut, setTimedOut] = useState(false);
     const [failed, setFailed] = useState(false);
     const [succeeded, setSucceeded] = useState(false);
+    
     const navigate = useNavigate();
 
     const checkToken = async () => {
@@ -31,17 +32,18 @@ const Authenticate = (props: { children: ComponentChildren; }) => {
     useEffect(() => {
         checkToken();
     }, []);
+
     if (failed) {
         navigate("/login");
         return <></>;
     }
+
     return (
         <>
             {timedOut && <div>Warning: SSO authentication server timed out. Check service status <a href="https://status.nextflow.cloud">here</a>.</div>}
             {succeeded && props.children}
         </>
     );
-
 };
 
 export default Authenticate;

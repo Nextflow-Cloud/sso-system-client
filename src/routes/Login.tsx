@@ -38,7 +38,6 @@ const Login = () => {
             }
             setLoading(true);
             setEmail(match[0]);
-
             const request = await Promise.race([fetch("/api/login", {
                 method: "POST",
                 headers: {
@@ -73,7 +72,6 @@ const Login = () => {
             const response = await request.json();
             console.log("[LOG] Login response: ", response);
             setContinueToken(response.continue_token);
-
             setLoading(false);
             if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
             await new Promise(r => setTimeout(r, 1000));
@@ -85,7 +83,6 @@ const Login = () => {
                 return;
             }
             setLoading(true);
-
             const request = await Promise.race([fetch("/api/login", {
                 method: "POST",
                 headers: {
@@ -105,7 +102,6 @@ const Login = () => {
                 setLoading(false);
                 return;
             }
-
             if (!request.ok) {
                 console.error(`[ERROR] Server returned status code ${request.status}`);
                 setError(`Server returned status code ${request.status}`);
@@ -147,13 +143,13 @@ const Login = () => {
 
                 localStorage.setItem("token", response.token);
                 setTimeout(() => {
-                    const getContinueUrl = new URLSearchParams(window.location.search).get("continue");
-                    const url = new URL(getContinueUrl ? getContinueUrl : "https://nextflow.cloud");
-                    if (getContinueUrl === "nextpass://auth") {
+                    const continueUrl = new URLSearchParams(location.search).get("continue");
+                    const url = new URL(continueUrl ? continueUrl : "https://nextflow.cloud");
+                    if (continueUrl === "nextpass://auth") {
                         url.searchParams.set("token", localStorage.getItem("token") as string);
                     }
                     // url.searchParams.set("token", token);
-                    window.location.href = url.toString();
+                    location.href = url.toString();
                 }, 1000);
             }
         } else if (stage === "2fa") {
@@ -213,42 +209,34 @@ const Login = () => {
             }
             const response = await request.json();
             console.log("[LOG] Login response: ", response);
-
             setLoading(false);
             if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
             await new Promise(r => setTimeout(r, 1000));
             setStage("done");
             if (fade.current) fade.current.style.animation = "1s fadeInRight";
-
             localStorage.setItem("token", response.token);
             setTimeout(() => {
-                const getContinueUrl = new URLSearchParams(location.search).get("continue");
-                const url = new URL(getContinueUrl ? getContinueUrl : "https://nextflow.cloud");
-                if (getContinueUrl === "nextpass://auth") {
+                const continueUrl = new URLSearchParams(location.search).get("continue");
+                const url = new URL(continueUrl ? continueUrl : "https://nextflow.cloud");
+                if (continueUrl === "nextpass://auth") {
                     url.searchParams.set("token", localStorage.getItem("token") as string);
                 }
                 // url.searchParams.set("token", token);
                 location.href = url.toString();
             }, 1000);
-        } else if (stage === "done") {
-            // continue to destination
-            setError("");
         }
     };
-
     const register = () => {
         const continueUrl = new URLSearchParams(window.location.search).get("continue");
         const href = continueUrl ? `/register?continue=${encodeURIComponent(continueUrl)}` : "/register";
         navigate(href);
     };
-
     const press = (e: KeyboardEvent) => {
         if (e.key === "Enter") {
             e.preventDefault();
             login();
         }
     };
-
     const checkToken = async () => {
         const token = localStorage.getItem("token");
         if (token) {
@@ -283,19 +271,18 @@ const Login = () => {
     if (!checked) {
         return <div />;
     }
-
     if (stage === "email") {
         return (
             <FormBase loading={loading} setLang={setLang} lang={lang}>
                 <div ref={fade} style={{
                     animation: "1s fadeInRight"
                 }}>
-                    <h1 className="text-3xl mb-5"><b>{i18n.translate(lang, "login")}</b></h1>
-                    <div className="inside">
+                    <h1 class="text-3xl mb-5"><b>{i18n.translate(lang, "login")}</b></h1>
+                    <div class="inside">
                         <label><b>{i18n.translate(lang, "email")}</b></label>
-                        <div className='my-1'>
+                        <div class="my-1">
                             <input
-                                className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2 focus:border-green-400"
+                                class="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2 focus:border-green-400"
                                 type="text"
                                 placeholder={i18n.translate(lang, "enterEmail")}
                                 disabled={loading}
@@ -306,11 +293,11 @@ const Login = () => {
                         </div>
                         <Button onClick={login} divRef={submit} disabled={loading}>{i18n.translate(lang, "next")}</Button>
                     </div>
-                    <div className="inside" />
-                    <p className="inside">
+                    <div class="inside" />
+                    <p class="inside">
                         {i18n.translate(lang, "noAccount")} <a href="javascript:void(0)" onClick={register} class="text-blue-600">{i18n.translate(lang, "register")}</a>
                     </p>
-                    <p className='inside error'>
+                    <p class="inside error">
                         {error}
                     </p>
                 </div>
@@ -323,25 +310,25 @@ const Login = () => {
                 <div ref={fade} style={{
                     animation: "1s fadeInRight"
                 }}>
-                    <h1 className="text-3xl mb-5"><b>{i18n.translate(lang, "login")}</b></h1>
+                    <h1 class="text-3xl mb-5"><b>{i18n.translate(lang, "login")}</b></h1>
 
-                    <div className="inside">
+                    <div class="inside">
                         <label><b>{i18n.translate(lang, "password")}</b></label>
-                        <div className='my-1'>
-                            <input className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2" type="password" placeholder={i18n.translate(lang, "enterPassword")} disabled={loading} onKeyDown={press} value={password} onChange={v => setPassword((v.target as HTMLInputElement).value)} />
+                        <div class="my-1">
+                            <input class="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2" type="password" placeholder={i18n.translate(lang, "enterPassword")} disabled={loading} onKeyDown={press} value={password} onChange={v => setPassword((v.target as HTMLInputElement).value)} />
                         </div>
                         <Button onClick={login} divRef={submit} disabled={loading}>{i18n.translate(lang, "next")}</Button>
                     </div>
-                    <div className="inside">
+                    <div class="inside">
                         <label><input checked={persist} onChange={v => setPersist((v.target as HTMLInputElement).checked)} type="checkbox" label="" /> {i18n.translate(lang, "staySignedIn")}</label>
                     </div>
-                    <p className="inside">
+                    <p class="inside">
                         <a href="/forgot" onClick={e => {
                             e.preventDefault();
                             navigate("/forgot");
                         }}>{i18n.translate(lang, "forgot")}</a>
                     </p>
-                    <p className='inside error'>
+                    <p class="inside error">
                         {error}
                     </p>
                 </div>
@@ -354,11 +341,11 @@ const Login = () => {
                 <div ref={fade} style={{
                     animation: "1s fadeInRight"
                 }}>
-                    <h1 className="text-3xl mb-5"><b>{i18n.translate(lang, "twoFactorAuthentication")}</b></h1>
-                    <div className="inside">
+                    <h1 class="text-3xl mb-5"><b>{i18n.translate(lang, "twoFactorAuthentication")}</b></h1>
+                    <div class="inside">
                         <label><b>{i18n.translate(lang, "enterCodeDescription")}</b></label>
                         <input
-                            className="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2"
+                            class="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2"
                             type="text" placeholder={i18n.translate(lang, "enterCode")}
                             disabled={loading}
                             onKeyDown={press}
@@ -367,8 +354,8 @@ const Login = () => {
                         />
                         <Button onClick={login} divRef={submit} disabled={loading}>{i18n.translate(lang, "next")}</Button>
                     </div>
-                    <div className="inside" />
-                    <p className='inside error'>
+                    <div class="inside" />
+                    <p class="inside error">
                         {error}
                     </p>
                 </div>
@@ -381,11 +368,11 @@ const Login = () => {
                 <div ref={fade} style={{
                     animation: "1s fadeInRight"
                 }}>
-                    <h1 className="text-3xl mb-5"><b>{i18n.translate(lang, "continue")}</b></h1>
-                    <div className="inside">
+                    <h1 class="text-3xl mb-5"><b>{i18n.translate(lang, "continue")}</b></h1>
+                    <div class="inside">
                         <label>{i18n.translate(lang, "loggedIn")}</label>
                     </div>
-                    <p className='inside error'>
+                    <p class="inside error">
                         {error}
                     </p>
                 </div>
@@ -398,17 +385,18 @@ const Login = () => {
                 <div ref={fade} style={{
                     animation: "1s fadeInRight"
                 }}>
-                    <h1 className="text-3xl mb-5"><b>{i18n.translate(lang, "continue")}</b></h1>
-                    <div className="inside">
+                    <h1 class="text-3xl mb-5"><b>{i18n.translate(lang, "continue")}</b></h1>
+                    <div class="inside">
                         <label>{i18n.translate(lang, "alreadyLoggedIn")}</label>
                     </div>
-                    <p className='inside error'>
+                    <p class="inside error">
                         {error}
                     </p>
                 </div>
             </FormBase>
         );
     }
+
     return <div />;
 };
 

@@ -21,7 +21,6 @@ const ErrorBoundary = (props: { children: ComponentChildren; }) => {
                 const response = await request.json();
                 console.log(`Error reporting successful (ID: ${response.id})`);
             } else {
-                // Error reporting failed, no biggie
                 console.log("Error reporting failed");
             }
             window.internals;
@@ -32,7 +31,7 @@ const ErrorBoundary = (props: { children: ComponentChildren; }) => {
             ignoreError();
         }
     };
-
+    
     if (error) {
         return (
             <>
@@ -40,6 +39,7 @@ const ErrorBoundary = (props: { children: ComponentChildren; }) => {
             </>
         );
     }
+
     return (
         <>
             {props.children}
