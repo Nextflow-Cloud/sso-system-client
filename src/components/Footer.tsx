@@ -6,7 +6,7 @@ const Footer = ({ desktop }: { desktop: boolean; }) => {
                 margin: "1rem"
             }}>
                 <div>Nextflow SSO System</div>
-                <div>version 0.8 build 2 (dev)</div>
+                <div>version 0.9 build 6 (dev)</div>
                 {/* Photo by <a href="https://unsplash.com/@orwhat">Richard Horvath</a> on <a href="https://unsplash.com/">Unsplash</a> */}
                 <div>Copyright &copy; {new Date().getUTCFullYear()} Nextflow Cloud Technologies. All rights reserved.</div>
             </div>
