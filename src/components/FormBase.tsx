@@ -80,7 +80,7 @@ const FormBase = ({ children, loading, lang, setLang }: { children: ComponentChi
                     <div class="text-center">
                         <div class="flex-col mb-5">
                             <div className="logo pb-5 text-center">
-                                <img src="/logo.png" alt="Nextflow" className="h-8" />
+                                <img src={logo} alt="Nextflow" className="h-8" />
                             </div>
                             <div className="title">
                                 <h1 className="text-3xl mb-2 text-center"><b>{i18n.translate(lang, "welcome")}</b></h1>
@@ -123,7 +123,7 @@ const FormBase = ({ children, loading, lang, setLang }: { children: ComponentChi
                     <div className="p-10 flex flex-col justify-between w-4/12">
                         <div>
                             <div className="logo pb-5">
-                                <img src="/logo.png" alt="Nextflow" className="h-8" />
+                                <img src={logo} alt="Nextflow" className="h-8" />
                             </div>
                             <div className="title">
                                 <h1 className="text-3xl mb-2"><b>{i18n.translate(lang, "welcome")}</b></h1>
