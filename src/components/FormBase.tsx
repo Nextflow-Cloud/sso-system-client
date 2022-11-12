@@ -2,6 +2,7 @@ import { ComponentChildren } from "preact";
 import { StateUpdater, useEffect, useRef, useState } from "preact/hooks";
 import i18n from "../utilities/i18n";
 import Footer from "./Footer";
+import logo from "../logo.png";
 
 const FormBase = ({ children, loading, lang, setLang }: { children: ComponentChildren; loading: boolean; lang: string; setLang: StateUpdater<string> }) => {
     const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1280);
@@ -33,7 +34,7 @@ const FormBase = ({ children, loading, lang, setLang }: { children: ComponentChi
                     <div className="p-10 flex flex-col justify-between w-4/12"> {/* w-2/5 */}
                         <div>
                             <div className="logo pb-5">
-                                <img src="/logo.png" alt="Nextflow" className="h-8" />
+                                <img src={logo} alt="Nextflow" className="h-8" />
                             </div>
                             <div className="title">
                                 <h1 className="text-3xl mb-2"><b>{i18n.translate(lang, "welcome")}</b></h1>
