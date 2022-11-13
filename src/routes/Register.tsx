@@ -1,10 +1,16 @@
 import HCaptcha from "@hcaptcha/react-hcaptcha";
-import { useEffect, useRef, useState } from "preact/hooks";
+import { StateUpdater, useEffect, useRef, useState } from "preact/hooks";
 import { useNavigate } from "react-router-dom";
 import i18n from "../utilities/i18n";
 import Button from "../components/primitive/Button";
-import FormBase from "../components/FormBase";
 import createProtectedRequest from "../utilities/createProtectedRequest";
+import Input from "../components/primitive/Input";
+import Title from "../components/primitive/Title";
+import Box from "../components/primitive/Box";
+import styled from "styled-components";
+import Link from "../components/primitive/Link";
+import Fade from "../components/Fade";
+import ErrorText from "../components/ErrorText";
 
 const captchaKey = "a57a57d4-6845-48a7-b89a-46b130e90f47";
 
@@ -23,12 +29,19 @@ const captchaKey = "a57a57d4-6845-48a7-b89a-46b130e90f47";
 //     return password; // dummy for now before we actually generate keys
 // };
 
-const Register = () => {
+const ButtonContainer = styled.div`
+    & > :not([hidden]) ~ :not([hidden]) {
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+`;
+
+type RegisterStage = "details" | "verify" | "done" | "skip";
+
+const Register = ({ loading, setLoading, lang }: { loading: boolean; setLoading: StateUpdater<boolean>; lang: string; }) => {
     const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [stage, setStage] = useState("details");
+    const [stage, setStage] = useState<RegisterStage>("details");
     const [checked, setChecked] = useState(false);
-    const [lang, setLang] = useState(localStorage.getItem("lang") || "fr");
 
     const [username, setUsername] = useState("");
     const [displayName, setDisplayName] = useState("");
@@ -47,8 +60,8 @@ const Register = () => {
     // const [iaEncryption, setIaEncryption] = useState(true);
     // const [mfaEnable, setMfaEnable] = useState(true);
 
-    const fade = useRef<HTMLDivElement>(null);
-    const submit = useRef<HTMLDivElement>(null);
+    const [hiding, setHiding] = useState(false);
+
     const captcha = useRef<HCaptcha>(null);
 
     const navigate = useNavigate();
@@ -78,10 +91,10 @@ const Register = () => {
                 return;
             }
             setLoading(false);
-            if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
+            setHiding(true);
             await new Promise(r => setTimeout(r, 1000));
             setStage("verify");
-            if (fade.current) fade.current.style.animation = "1s fadeInRight";
+            setHiding(false);
         }
         if (stage === "verify") {
             const request = await createProtectedRequest("/api/user", "POST", JSON.stringify({
@@ -97,11 +110,11 @@ const Register = () => {
                     // setContinueToken(data.continue_token);
                     setToken(data.token);
                     setLoading(false);
-                    if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
+                    setHiding(true);
                     await new Promise(r => setTimeout(r, 1000));
                     // setStage("verify");
                     setStage("done");
-                    if (fade.current) fade.current.style.animation = "1s fadeInRight";
+                    setHiding(false);
 
                     localStorage.setItem("token", token as string);
                     setTimeout(() => {
@@ -230,10 +243,10 @@ const Register = () => {
     };
     const back = async () => {
         setLoading(false);
-        if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
+        setHiding(true);
         await new Promise(r => setTimeout(r, 1000));
         setStage("details");
-        if (fade.current) fade.current.style.animation = "1s fadeInRight";
+        setHiding(false);
     };
     const initCaptcha = () => {
         captcha.current?.execute();
@@ -255,93 +268,77 @@ const Register = () => {
     }
     if (stage === "details") {
         return (
-            <FormBase loading={loading} setLang={setLang} lang={lang}>
-                <div ref={fade} style={{
-                    animation: "1s fadeInRight"
-                }}>
-                    <h1 class="text-3xl mb-5"><b>{i18n.translate(lang, "register")}</b></h1>
-                    <div class="inside">
-                        <label><b>{i18n.translate(lang, "credentials")}</b></label>
-                        <div class="my-1">
-                            <input
-                                class="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2 focus:border-green-400"
-                                type="text"
-                                placeholder={i18n.translate(lang, "enterDisplayName")}
-                                disabled={loading}
-                                onKeyDown={press}
-                                value={displayName}
-                                onChange={v => setDisplayName((v.target as HTMLInputElement).value)}
-                            />
-                            <input
-                                class="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2 focus:border-green-400"
-                                type="text"
-                                placeholder={i18n.translate(lang, "enterUsername")}
-                                disabled={loading}
-                                onKeyDown={press}
-                                value={username}
-                                onChange={v => setUsername((v.target as HTMLInputElement).value)}
-                            />
-                            <input
-                                class="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2 focus:border-green-400"
-                                type="text"
-                                placeholder={i18n.translate(lang, "enterEmail")}
-                                disabled={loading}
-                                onKeyDown={press}
-                                value={email}
-                                onChange={v => setEmail((v.target as HTMLInputElement).value)}
-                            />
-                            <input 
-                                class="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2" 
-                                type="password" 
-                                placeholder={i18n.translate(lang, "enterPassword")} 
-                                disabled={loading} 
-                                onKeyDown={press} 
-                                value={password} 
-                                onChange={v => setPassword((v.target as HTMLInputElement).value)} 
-                            />
-                        </div>
-                        <Button onClick={register} divRef={submit} disabled={loading}>{i18n.translate(lang, "next")}</Button>
-                    </div>
-                    <div class="inside" />
-                    <p class="inside">
-                        {i18n.translate(lang, "haveAnAccount")} <a href="javascript:void(0)" onClick={login} class="text-blue-600">{i18n.translate(lang, "login")}</a>
-                    </p>
-                    <p class="inside error">
-                        {error}
-                    </p>
+            <Fade hiding={hiding}>
+                <Title>{i18n.translate(lang, "register")}</Title>
+                <div>
+                    <label>{i18n.translate(lang, "credentials")}</label>
+                    <Input
+                        placeholder={i18n.translate(lang, "enterDisplayName")}
+                        loading={loading}
+                        onKeyDown={press}
+                        value={displayName}
+                        onChange={v => setDisplayName((v.target as HTMLInputElement).value)}
+                    />
+                    <Input
+                        placeholder={i18n.translate(lang, "enterUsername")}
+                        loading={loading}
+                        onKeyDown={press}
+                        value={username}
+                        onChange={v => setUsername((v.target as HTMLInputElement).value)}
+                    />
+                    <Input
+                        placeholder={i18n.translate(lang, "enterEmail")}
+                        loading={loading}
+                        onKeyDown={press}
+                        value={email}
+                        onChange={v => setEmail((v.target as HTMLInputElement).value)}
+                    />
+                    <Input 
+                        password={true}
+                        placeholder={i18n.translate(lang, "enterPassword")} 
+                        loading={loading} 
+                        onKeyDown={press} 
+                        value={password} 
+                        onChange={v => setPassword((v.target as HTMLInputElement).value)} 
+                    />
+                    <Button onClick={register} disabled={loading}>{i18n.translate(lang, "next")}</Button>
                 </div>
-            </FormBase>
+                <p>
+                    {i18n.translate(lang, "haveAnAccount")} <Link href="javascript:void(0)" onClick={login}>{i18n.translate(lang, "login")}</Link>
+                </p>
+                <ErrorText>
+                    {error}
+                </ErrorText>
+            </Fade>
         );
     }
     if (stage === "verify") {
         return (
-            <FormBase loading={loading} setLang={setLang} lang={lang}>
-                <div ref={fade} style={{
-                    animation: "1s fadeInRight"
-                }}>
-                    <h1 class="text-3xl mb-5"><b>{i18n.translate(lang, "verification")}</b></h1>
-                    <div class="inside">
-                        <div class="bg-green-100 border-green-600 rounded-md border-2 my-2 px-2 py-2"><p>{i18n.translate(lang, "verificationDescription")}</p></div>
-                        <div class="bg-blue-100 border-blue-600 rounded-md border-2 my-2 px-2 py-2">
-                            {/* @ts-expect-error HCaptcha is a React component and it doesn't type well in Preact */}
-                            <HCaptcha
-                                sitekey={captchaKey}
-                                onVerify={setCaptchaToken}
-                                ref={captcha}
-                                onLoad={initCaptcha}
-                            />
-                        </div>
-                        <div class="space-y-3">
-                            <Button onClick={back} divRef={submit} disabled={loading}>{i18n.translate(lang, "previous")}</Button>
-                            <Button onClick={register} divRef={submit} disabled={loading}>{i18n.translate(lang, "next")}</Button>
-                        </div>
-                    </div>
-                    <div class="inside" />
-                    <p class="inside error">
-                        {error}
-                    </p>
+            <Fade hiding={hiding}>
+                <Title>{i18n.translate(lang, "verification")}</Title>
+                <div>
+                    <Box type="success">
+                        <p>{i18n.translate(lang, "verificationDescription")}</p>
+                    </Box>
+                    <Box type="information">
+                        <HCaptcha 
+                            languageOverride={lang}
+                            theme="dark"
+                            sitekey={captchaKey}
+                            onVerify={setCaptchaToken}
+                            ref={captcha}
+                            onLoad={initCaptcha}
+                        />
+                    </Box>
+                    <ButtonContainer>
+                        <Button onClick={back} disabled={loading}>{i18n.translate(lang, "previous")}</Button>
+                        <Button onClick={register} disabled={loading}>{i18n.translate(lang, "next")}</Button>
+                    </ButtonContainer>
                 </div>
-            </FormBase>
+                <ErrorText>
+                    {error}
+                </ErrorText>
+            </Fade>
         );
     }
     // if (stage === "security") {
@@ -414,36 +411,28 @@ const Register = () => {
     // }
     if (stage === "done") {
         return (
-            <FormBase loading={loading} setLang={setLang} lang={lang}>
-                <div ref={fade} style={{
-                    animation: "1s fadeInRight"
-                }}>
-                    <h1 class="text-3xl mb-5"><b>{i18n.translate(lang, "continue")}</b></h1>
-                    <div class="inside">
-                        <label>{i18n.translate(lang, "loggedIn")}</label>
-                    </div>
-                    <p class="inside error">
-                        {error}
-                    </p>
+            <Fade hiding={hiding}>
+                <Title>{i18n.translate(lang, "continue")}</Title>
+                <div>
+                    <label>{i18n.translate(lang, "loggedIn")}</label>
                 </div>
-            </FormBase>
+                <ErrorText>
+                    {error}
+                </ErrorText>
+            </Fade>
         );
     }
     if (stage === "skip") {
         return (
-            <FormBase loading={loading} setLang={setLang} lang={lang}>
-                <div ref={fade} style={{
-                    animation: "1s fadeInRight"
-                }}>
-                    <h1 class="text-3xl mb-5"><b>{i18n.translate(lang, "continue")}</b></h1>
-                    <div class="inside">
-                        <label>{i18n.translate(lang, "alreadyLoggedIn")}</label>
-                    </div>
-                    <p class="inside error">
-                        {error}
-                    </p>
+            <Fade hiding={hiding}>
+                <Title>{i18n.translate(lang, "continue")}</Title>
+                <div>
+                    <label>{i18n.translate(lang, "alreadyLoggedIn")}</label>
                 </div>
-            </FormBase>
+                <ErrorText>
+                    {error}
+                </ErrorText>
+            </Fade>
         );
     }
 

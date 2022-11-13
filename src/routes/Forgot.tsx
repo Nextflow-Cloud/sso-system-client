@@ -30,7 +30,7 @@ const Forgot = () => {
                             This page will walk you through the process of resetting your password.
                         </div>
                         <div class="bg-yellow-100 border-yellow-600 border-2 rounded-md my-2 px-2 py-2"><b>WARNING!</b><p>Before you continue, we must remind you that resetting your password will result in irreversable changes! If encryption is enabled for any services, encrypted data in those services will be lost as a result of this operation unless you have a recovery key. Only you know the encryption key to your data, and not us. This grants you maximum privacy, however, we cannot assist in recovering your data.</p><br /><p>Only click Next if you are sure of what you are doing.</p></div>
-                        <Button onClick={next} divRef={submit} disabled={loading}>{i18n.translate(lang, "next")}</Button>
+                        <Button onClick={next} disabled={loading}>{i18n.translate(lang, "next")}</Button>
                     </div>
                     <div class="inside" />
                     <p class="inside error">

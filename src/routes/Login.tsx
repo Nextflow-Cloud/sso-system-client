@@ -1,15 +1,20 @@
-import { useEffect, useRef, useState } from "preact/hooks";
+import { JSX } from "preact";
+import { StateUpdater, useEffect, useState } from "preact/hooks";
 import i18n from "../utilities/i18n";
 import { useNavigate } from "react-router-dom";
-import FormBase from "../components/FormBase";
 import Button from "../components/primitive/Button";
+import Input from "../components/primitive/Input";
+import Title from "../components/primitive/Title";
+import Link from "../components/primitive/Link";
+import Fade from "../components/Fade";
+import ErrorText from "../components/ErrorText";
 
-const Login = () => {
+type LoginStage = "email" | "password" | "2fa" | "done" | "skip";
+
+const Login = ({ loading, setLoading, lang }: { loading: boolean; setLoading: StateUpdater<boolean>; lang: string; }) => {
     const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [stage, setStage] = useState("email");
+    const [stage, setStage] = useState<LoginStage>("email");
     const [checked, setChecked] = useState(false);
-    const [lang, setLang] = useState(localStorage.getItem("lang") || "fr");
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -17,8 +22,7 @@ const Login = () => {
     const [persist, setPersist] = useState(false);
     const [continueToken, setContinueToken] = useState("");
 
-    const fade = useRef<HTMLDivElement>(null);
-    const submit = useRef<HTMLDivElement>(null);
+    const [hiding, setHiding] = useState(false);
 
     const navigate = useNavigate();
 
@@ -73,10 +77,10 @@ const Login = () => {
             console.log("[LOG] Login response: ", response);
             setContinueToken(response.continue_token);
             setLoading(false);
-            if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
+            setHiding(true);
             await new Promise(r => setTimeout(r, 1000));
             setStage("password");
-            if (fade.current) fade.current.style.animation = "1s fadeInRight";
+            setHiding(false);
         } else if (stage === "password") {
             if (!password.trim()) {
                 setError("Password is blank");
@@ -112,12 +116,12 @@ const Login = () => {
                 }
                 if (request.status === 403) {
                     console.error("[ERROR] Session expired");
-                    if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
+                    setHiding(true);
                     await new Promise(r => setTimeout(r, 1000));
                     setStage("email");
                     setError("Hmm, you seem to have waited too long to log in. Please try again.");
                     // setError("Your email or password is incorrect. Please try again.");
-                    if (fade.current) fade.current.style.animation = "1s fadeInRight";
+                    setHiding(false);
                 }
                 if (request.status === 429) {
                     console.error("[ERROR] Rate limited");
@@ -130,16 +134,16 @@ const Login = () => {
             if (response.mfa_enabled) {
                 setContinueToken(response.continue_token);
                 setLoading(false);
-                if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
+                setHiding(true);
                 await new Promise(r => setTimeout(r, 1000));
                 setStage("2fa");
-                if (fade.current) fade.current.style.animation = "1s fadeInRight";
+                setHiding(false);
             } else {
                 setLoading(false);
-                if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
+                setHiding(true);
                 await new Promise(r => setTimeout(r, 1000));
                 setStage("done");
-                if (fade.current) fade.current.style.animation = "1s fadeInRight";
+                setHiding(false);
 
                 localStorage.setItem("token", response.token);
                 setTimeout(() => {
@@ -195,11 +199,11 @@ const Login = () => {
                 }
                 if (request.status === 403) {
                     console.error("[ERROR] Session expired");
-                    if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
+                    setHiding(true);
                     await new Promise(r => setTimeout(r, 1000));
                     setStage("email");
                     setError("Hmm, you seem to have waited too long to log in. Please try again.");
-                    if (fade.current) fade.current.style.animation = "1s fadeInRight";
+                    setHiding(false);
                 }
                 if (request.status === 429) {
                     console.error("[ERROR] Rate limited");
@@ -210,10 +214,10 @@ const Login = () => {
             const response = await request.json();
             console.log("[LOG] Login response: ", response);
             setLoading(false);
-            if (fade.current) fade.current.style.animation = "1s fadeOutLeft";
+            setHiding(true);
             await new Promise(r => setTimeout(r, 1000));
             setStage("done");
-            if (fade.current) fade.current.style.animation = "1s fadeInRight";
+            setHiding(false);
             localStorage.setItem("token", response.token);
             setTimeout(() => {
                 const continueUrl = new URLSearchParams(location.search).get("continue");
@@ -226,17 +230,25 @@ const Login = () => {
             }, 1000);
         }
     };
-    const register = () => {
+
+    const register = (e: JSX.TargetedMouseEvent<HTMLAnchorElement>) => {
+        e.preventDefault();
         const continueUrl = new URLSearchParams(window.location.search).get("continue");
         const href = continueUrl ? `/register?continue=${encodeURIComponent(continueUrl)}` : "/register";
         navigate(href);
     };
+    const forgot = (e: JSX.TargetedMouseEvent<HTMLAnchorElement>) => {
+        e.preventDefault();
+        navigate("/forgot");
+    };
+
     const press = (e: KeyboardEvent) => {
         if (e.key === "Enter") {
             e.preventDefault();
             login();
         }
     };
+
     const checkToken = async () => {
         const token = localStorage.getItem("token");
         if (token) {
@@ -273,127 +285,99 @@ const Login = () => {
     }
     if (stage === "email") {
         return (
-            <FormBase loading={loading} setLang={setLang} lang={lang}>
-                <div ref={fade} style={{
-                    animation: "1s fadeInRight"
-                }}>
-                    <h1 class="text-3xl mb-5"><b>{i18n.translate(lang, "login")}</b></h1>
-                    <div class="inside">
-                        <label><b>{i18n.translate(lang, "email")}</b></label>
-                        <div class="my-1">
-                            <input
-                                class="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2 focus:border-green-400"
-                                type="text"
-                                placeholder={i18n.translate(lang, "enterEmail")}
-                                disabled={loading}
-                                onKeyDown={press}
-                                value={email}
-                                onChange={v => setEmail((v.target as HTMLInputElement).value)}
-                            />
-                        </div>
-                        <Button onClick={login} divRef={submit} disabled={loading}>{i18n.translate(lang, "next")}</Button>
-                    </div>
-                    <div class="inside" />
-                    <p class="inside">
-                        {i18n.translate(lang, "noAccount")} <a href="javascript:void(0)" onClick={register} class="text-blue-600">{i18n.translate(lang, "register")}</a>
-                    </p>
-                    <p class="inside error">
-                        {error}
-                    </p>
+            <Fade hiding={hiding}>
+                <Title>{i18n.translate(lang, "login")}</Title>
+                <div>
+                    <label>{i18n.translate(lang, "email")}</label>
+                    <Input
+                        placeholder={i18n.translate(lang, "enterEmail")}
+                        loading={loading}
+                        onKeyDown={press}
+                        value={email}
+                        onChange={v => setEmail((v.target as HTMLInputElement).value)}
+                    />
+                    <Button onClick={login} disabled={loading}>{i18n.translate(lang, "next")}</Button>
                 </div>
-            </FormBase>
+                <p>
+                    {i18n.translate(lang, "noAccount")} <Link href="/register" onClick={register}>{i18n.translate(lang, "register")}</Link>
+                </p>
+                <ErrorText>
+                    {error}
+                </ErrorText>
+            </Fade>
         );
     }
     if (stage === "password") {
         return (
-            <FormBase loading={loading} setLang={setLang} lang={lang}>
-                <div ref={fade} style={{
-                    animation: "1s fadeInRight"
-                }}>
-                    <h1 class="text-3xl mb-5"><b>{i18n.translate(lang, "login")}</b></h1>
-
-                    <div class="inside">
-                        <label><b>{i18n.translate(lang, "password")}</b></label>
-                        <div class="my-1">
-                            <input class="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2" type="password" placeholder={i18n.translate(lang, "enterPassword")} disabled={loading} onKeyDown={press} value={password} onChange={v => setPassword((v.target as HTMLInputElement).value)} />
-                        </div>
-                        <Button onClick={login} divRef={submit} disabled={loading}>{i18n.translate(lang, "next")}</Button>
-                    </div>
-                    <div class="inside">
-                        <label><input checked={persist} onChange={v => setPersist((v.target as HTMLInputElement).checked)} type="checkbox" label="" /> {i18n.translate(lang, "staySignedIn")}</label>
-                    </div>
-                    <p class="inside">
-                        <a href="/forgot" onClick={e => {
-                            e.preventDefault();
-                            navigate("/forgot");
-                        }}>{i18n.translate(lang, "forgot")}</a>
-                    </p>
-                    <p class="inside error">
-                        {error}
-                    </p>
+            <Fade hiding={hiding}>
+                <Title>{i18n.translate(lang, "login")}</Title>
+                <div>
+                    <label>{i18n.translate(lang, "password")}</label>
+                    <Input 
+                        password={true}
+                        placeholder={i18n.translate(lang, "enterPassword")} 
+                        loading={loading} 
+                        onKeyDown={press} 
+                        value={password} 
+                        onChange={v => setPassword((v.target as HTMLInputElement).value)} 
+                    />
+                    <Button onClick={login} disabled={loading}>{i18n.translate(lang, "next")}</Button>
+                    <label><input checked={persist} onChange={v => setPersist((v.target as HTMLInputElement).checked)} type="checkbox" label="" /> {i18n.translate(lang, "staySignedIn")}</label>
                 </div>
-            </FormBase>
+                <p>
+                    <Link href="/forgot" onClick={forgot}>{i18n.translate(lang, "forgot")}</Link>
+                </p>
+                <ErrorText>
+                    {error}
+                </ErrorText>
+            </Fade>
         );
     }
     if (stage === "2fa") {
         return (
-            <FormBase loading={loading} setLang={setLang} lang={lang}>
-                <div ref={fade} style={{
-                    animation: "1s fadeInRight"
-                }}>
-                    <h1 class="text-3xl mb-5"><b>{i18n.translate(lang, "twoFactorAuthentication")}</b></h1>
-                    <div class="inside">
-                        <label><b>{i18n.translate(lang, "enterCodeDescription")}</b></label>
-                        <input
-                            class="w-full p-2 border-gray-200 border rounded-md hover:border-green-400 mb-2"
-                            type="text" placeholder={i18n.translate(lang, "enterCode")}
-                            disabled={loading}
-                            onKeyDown={press}
-                            value={code}
-                            onChange={v => setCode((v.target as HTMLInputElement).value)}
-                        />
-                        <Button onClick={login} divRef={submit} disabled={loading}>{i18n.translate(lang, "next")}</Button>
-                    </div>
-                    <div class="inside" />
-                    <p class="inside error">
-                        {error}
-                    </p>
+            <Fade hiding={hiding}>
+                <Title>{i18n.translate(lang, "twoFactorAuthentication")}</Title>
+                <div>
+                    <label>{i18n.translate(lang, "enterCodeDescription")}</label>
+                    <Input
+                        placeholder={i18n.translate(lang, "enterCode")}
+                        loading={loading}
+                        onKeyDown={press}
+                        value={code}
+                        onChange={v => setCode((v.target as HTMLInputElement).value)}
+                    />
+                    <Button onClick={login} disabled={loading}>{i18n.translate(lang, "next")}</Button>
                 </div>
-            </FormBase>
+                <ErrorText>
+                    {error}
+                </ErrorText>
+            </Fade>
         );
     }
     if (stage === "done") {
         return (
-            <FormBase loading={loading} setLang={setLang} lang={lang}>
-                <div ref={fade} style={{
-                    animation: "1s fadeInRight"
-                }}>
-                    <h1 class="text-3xl mb-5"><b>{i18n.translate(lang, "continue")}</b></h1>
-                    <div class="inside">
-                        <label>{i18n.translate(lang, "loggedIn")}</label>
-                    </div>
-                    <p class="inside error">
-                        {error}
-                    </p>
+            <Fade hiding={hiding}>
+                <Title>{i18n.translate(lang, "continue")}</Title>
+                <div>
+                    <label>{i18n.translate(lang, "loggedIn")}</label>
                 </div>
-            </FormBase>
+                <ErrorText>
+                    {error}
+                </ErrorText>
+            </Fade>
         );
     }
     if (stage === "skip") {
         return (
-            <FormBase loading={loading} setLang={setLang} lang={lang}>
-                <div ref={fade} style={{
-                    animation: "1s fadeInRight"
-                }}>
-                    <h1 class="text-3xl mb-5"><b>{i18n.translate(lang, "continue")}</b></h1>
-                    <div class="inside">
-                        <label>{i18n.translate(lang, "alreadyLoggedIn")}</label>
-                    </div>
-                    <p class="inside error">
-                        {error}
-                    </p>
+            <Fade hiding={hiding}>
+                <Title>{i18n.translate(lang, "continue")}</Title>
+                <div>
+                    <label>{i18n.translate(lang, "alreadyLoggedIn")}</label>
                 </div>
-            </FormBase>
+                <ErrorText>
+                    {error}
+                </ErrorText>
+            </Fade>
         );
     }
 

@@ -1,10 +1,32 @@
-import { ComponentChildren, JSX, Ref } from "preact";
+import { ComponentChildren, JSX } from "preact";
+import styled from "styled-components";
 
-const Button = (props: { children: ComponentChildren; onClick?: JSX.MouseEventHandler<HTMLDivElement>, divRef?: Ref<HTMLDivElement>, disabled?: boolean }) => {
+const ButtonBase = styled.button`
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    color: white;
+    text-align: center;
+    cursor: default;
+    user-select: none;
+    background-color: #38a169;
+    &:hover {
+        background-color: #2f855a;
+    }
+    &:disabled {
+        background-color: #cbd5e0;
+    }
+    width: 100%;
+
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 250ms;
+`;
+
+const Button = (props: { children: ComponentChildren; onClick?: JSX.MouseEventHandler<HTMLDivElement>, disabled?: boolean }) => {
     return (
-        <div class={`rounded-lg hover:bg-opacity-60 p-2 text-white text-center cursor-default select-none ${props.disabled ? "bg-gray-400" : "bg-green-500 hover:bg-green-400"}`} onClick={props.disabled ? () => void 0 : props.onClick} ref={props.divRef} disabled={props.disabled}>
+        <ButtonBase onClick={props.onClick} disabled={props.disabled} type="submit">
             {props.children}
-        </div>
+        </ButtonBase>
     );
 };
 

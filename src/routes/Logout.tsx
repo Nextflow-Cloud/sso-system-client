@@ -1,10 +1,10 @@
 import { useEffect, useState } from "preact/hooks";
-import FormBase from "../components/FormBase";
+import Fade from "../components/Fade";
+import Title from "../components/primitive/Title";
 import createProtectedRequest from "../utilities/createProtectedRequest";
 // import i18n from "../utilities/i18n";
 
 const Logout = () => {
-    const [lang, setLang] = useState(localStorage.getItem("lang") || "fr");
     const [loading, setLoading] = useState(true);
 
     const logout = async () => {
@@ -24,16 +24,12 @@ const Logout = () => {
     }, []);
 
     return (
-        <FormBase loading={false} setLang={setLang} lang={lang}>
-            <div style={{
-                animation: "1s fadeInRight"
-            }}>
-                <h1 className="text-3xl mb-5"><b>Logout</b></h1>
-                <div className="inside">
-                    <label>{loading ? "Please wait while you are being logged out." : "You have been logged out. Have a great day!"}</label>
-                </div>
+        <Fade hiding={false}>
+            <Title>Logout</Title>
+            <div>
+                <label>{loading ? "Please wait while you are being logged out." : "You have been logged out. Have a great day!"}</label>
             </div>
-        </FormBase>
+        </Fade>
     );
 };
 
