@@ -49,7 +49,7 @@ const Input = (props: Props) => {
                 onChange={props.onChange}
             />
         </InputContainer>
-    )
+    );
 };
 
 export default Input;

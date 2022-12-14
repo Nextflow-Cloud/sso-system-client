@@ -35,13 +35,13 @@ const Box = (props: { children: ComponentChildren, type: "success" | "error" | "
                 {props.children}
             </InformationBox>
         );
-    } else {
-        return (
-            <div>
-                {props.children}
-            </div>
-        );
-    }
+    } 
+    return (
+        <div>
+            {props.children}
+        </div>
+    );
+    
 };
 
 export default Box;
