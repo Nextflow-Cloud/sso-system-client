@@ -432,7 +432,7 @@ class i18n {
         },
         fr: {
             welcome: "Bienvenue",
-            description: "Sécurisé, privé, avec source ouvert et rapide. Ne choisissez pas l'une d'entre elles, choisissez-les toutes.",
+            description: "Sécurisé, privé, avec code ouvert et rapide. Ne choisissez pas l'une d'entre elles, choisissez-les toutes.",
             email: "Email",
             enterEmail: "Entrez l'adresse email",
             next: "Suivant",

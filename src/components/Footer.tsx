@@ -11,15 +11,15 @@ const FooterBase = styled.footer`
 const Footer = ({ desktop, lang }: { desktop: boolean; lang: string; }) => {
     return (
         <FooterBase desktop={desktop}>
-            <div class="image-credit" style={{
-                textAlign: desktop ? "right" : "center",
-                margin: "1rem"
-            }}>
-                <div>Nextflow SSO System</div>
-                <div>version 0.9 build 6 (dev)</div>
-                {/* Photo by <a href="https://unsplash.com/@orwhat">Richard Horvath</a> on <a href="https://unsplash.com/">Unsplash</a> */}
-                <div>Copyright &copy; {new Date().getUTCFullYear()} Nextflow Cloud Technologies. All rights reserved.</div>
-            </div>
+            {/* <p>Nextflow SSO system</p>
+            <p>version 0.10.0 (alpha)</p>
+            <p>Copyright &copy; {new Date().getUTCFullYear()} Nextflow Cloud Technologies. All rights reserved.</p> */}
+            {/* <div>Système SSO de Nextflow</p>
+            <p>version 0.10.0 (alpha)</p>
+            <p>Droits d'auteur &copy; {new Date().getUTCFullYear()} Nextflow Cloud Technologies. Tous droits réservés.</p> */}
+            <p>{footer[lang as keyof typeof footer]?.ssoSystem || footer.en.ssoSystem}</p>
+            <p>{(footer[lang as keyof typeof footer]?.ssoSystemVersion || footer.en.ssoSystemVersion).replace("{}", "0.10.0")}</p>
+            <p>{(footer[lang as keyof typeof footer]?.ssoSystemCopyright || footer.en.ssoSystemCopyright).replace("{}", new Date().getUTCFullYear().toString())}</p>
         </FooterBase>
     );
 };
