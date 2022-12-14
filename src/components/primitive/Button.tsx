@@ -8,9 +8,9 @@ const ButtonBase = styled.button`
     text-align: center;
     cursor: default;
     user-select: none;
-    background-color: #38a169;
+    background-color: var(--primary);
     &:hover {
-        background-color: #2f855a;
+        filter: brightness(0.85);
     }
     &:disabled {
         background-color: #cbd5e0;

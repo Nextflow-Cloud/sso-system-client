@@ -17,6 +17,13 @@ html, body, #app {
     box-sizing: border-box;
     padding: 0px;
     margin: 0px;
+
+    /* TODO: update colours */
+    --primary-light: #7be7ab;
+    --primary: #12d792;
+    --neutral: #0077c1;
+    --secondary-light: #cc95ff;
+    --secondary: #a045d2;
 }
 
 body {
