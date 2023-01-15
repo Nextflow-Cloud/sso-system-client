@@ -75,7 +75,7 @@ const Login = ({ loading, setLoading, lang }: { loading: boolean; setLoading: St
             }
             const response = await request.json();
             console.log("[LOG] Login response: ", response);
-            setContinueToken(response.continue_token);
+            setContinueToken(response.continueToken);
             setLoading(false);
             setHiding(true);
             await new Promise(r => setTimeout(r, 1000));
@@ -94,7 +94,7 @@ const Login = ({ loading, setLoading, lang }: { loading: boolean; setLoading: St
                 },
                 body: JSON.stringify({
                     stage: 2,
-                    continue_token: continueToken,
+                    continueToken,
                     password,
                     persist
                 })
@@ -131,8 +131,8 @@ const Login = ({ loading, setLoading, lang }: { loading: boolean; setLoading: St
             }
             const response = await request.json();
             console.log("[LOG] Login response: ", response);
-            if (response.mfa_enabled) {
-                setContinueToken(response.continue_token);
+            if (response.mfaEnabled) {
+                setContinueToken(response.continueToken);
                 setLoading(false);
                 setHiding(true);
                 await new Promise(r => setTimeout(r, 1000));
@@ -177,7 +177,7 @@ const Login = ({ loading, setLoading, lang }: { loading: boolean; setLoading: St
                 },
                 body: JSON.stringify({
                     stage: 3,
-                    continue_token: continueToken,
+                    continueToken,
                     code,
                     password
                 })

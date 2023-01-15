@@ -98,16 +98,16 @@ const Register = ({ loading, setLoading, lang }: { loading: boolean; setLoading:
         }
         if (stage === "verify") {
             const request = await createProtectedRequest("/api/user", "POST", JSON.stringify({
-                display_name: displayName,
+                displayName,
                 username,
                 email,
                 password,
-                captcha_token: captchaToken,
+                captchaToken,
             }));
             if (request) {
                 if (request.ok) {
                     const data = await request.json();
-                    // setContinueToken(data.continue_token);
+                    // setContinueToken(data.continueToken);
                     setToken(data.token);
                     setLoading(false);
                     setHiding(true);
@@ -143,16 +143,16 @@ const Register = ({ loading, setLoading, lang }: { loading: boolean; setLoading:
         }
         // if (stage === "security") {
         //     const request = await createProtectedRequest("/api/user/onboarding", "POST", JSON.stringify({
-        //         continue_token: continueToken,
-        //         encrypt_ti: superSecureMode || tiEncryption,
-        //         encrypt_ia: superSecureMode || iaEncryption,
+        //         continueToken,
+        //         encryptTi: superSecureMode || tiEncryption,
+        //         encryptIa: superSecureMode || iaEncryption,
         //         mfa: superSecureMode || mfaEnable,
         //     }));
         //     if (request) {
         //         if (request.ok) {
         //             const data = await request.json();
-        //             setContinueToken(data.continue_token);
-        //             setMfaSecret(`data:image/png;base64,${data.mfa_secret}`);
+        //             setContinueToken(data.continueToken);
+        //             setMfaSecret(`data:image/png;base64,${data.mfaSecret}`);
         //             const bin = new TextEncoder().encode(generateSecurityKeys(password));
         //             const keyBlob = URL.createObjectURL(new Blob([bin], { type: "application/octet-stream" }));
         //             setBackupFile(keyBlob);
@@ -179,7 +179,7 @@ const Register = ({ loading, setLoading, lang }: { loading: boolean; setLoading:
         // }
         // if (stage === "backup") {
         //     const request = await createProtectedRequest("/api/user/security", "POST", JSON.stringify({
-        //         continue_token: continueToken,
+        //         continueToken,
         //         code
         //     }));
         //     if (request) {
