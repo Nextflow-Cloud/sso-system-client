@@ -42,7 +42,7 @@ const Login = ({ loading, setLoading, lang }: { loading: boolean; setLoading: St
             }
             setLoading(true);
             setEmail(match[0]);
-            const request = await Promise.race([fetch("/api/login", {
+            const request = await Promise.race([fetch("/api/session", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -87,7 +87,7 @@ const Login = ({ loading, setLoading, lang }: { loading: boolean; setLoading: St
                 return;
             }
             setLoading(true);
-            const request = await Promise.race([fetch("/api/login", {
+            const request = await Promise.race([fetch("/api/session", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -170,7 +170,7 @@ const Login = ({ loading, setLoading, lang }: { loading: boolean; setLoading: St
                 return;
             }
             setLoading(true);
-            const request = await Promise.race([fetch("/api/login", {
+            const request = await Promise.race([fetch("/api/session", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

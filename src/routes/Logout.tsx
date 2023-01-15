@@ -10,7 +10,7 @@ const Logout = () => {
     const logout = async () => {
         const token = localStorage.getItem("token");
         if (token) {
-            await createProtectedRequest("/api/login", "DELETE", JSON.stringify({}), {
+            await createProtectedRequest("/api/session", "DELETE", JSON.stringify({}), {
                 Authorization: `Bearer ${token}`
             });
             localStorage.removeItem("token");
@@ -19,7 +19,6 @@ const Logout = () => {
     };
 
     useEffect(() => {
-        // TODO: use POST /api/session to login and DELETE /api/session to logout
         logout();
     }, []);
 

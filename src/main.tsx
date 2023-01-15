@@ -2,6 +2,8 @@ import { render } from "preact";
 import App from "./app";
 import "./index.css";
 
+// TODO: Possibly convert to Solid app
+
 import Internals from "./utilities/Internals";
 const internals = new Internals();
 
