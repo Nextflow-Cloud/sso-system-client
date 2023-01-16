@@ -12,7 +12,6 @@ import Link from "../components/primitive/Link";
 import Fade from "../components/Fade";
 import ErrorText from "../components/ErrorText";
 import { TRUSTED_SERVICES } from "../constants";
-import { PasswordStrength } from "tai-password-strength";
 
 const captchaKey = "a57a57d4-6845-48a7-b89a-46b130e90f47";
 
@@ -37,6 +36,13 @@ const ButtonContainer = styled.div`
         margin-bottom: 0.5rem;
     }
 `;
+
+const calculateEntropy = (string?: string) => string ? Math.round(string.length * Math.log([
+    { re: /[a-z]/, length: 26 }, 
+    { re: /[A-Z]/, length: 26 }, 
+    { re: /[0-9]/, length: 10 }, 
+    { re: /[^a-zA-Z0-9]/, length: 33 },
+].reduce((length, charset) => length + (charset.re.test(string) ? charset.length : 0), 0)) / Math.LN2): 0;
 
 type RegisterStage = "details" | "verify" | "done" | "skip";
 
@@ -86,9 +92,8 @@ const Register = ({ loading, setLoading, lang }: { loading: boolean; setLoading:
                 return;
             }
             setEmail(match[0]);
-            const strength = new PasswordStrength();
-            const result = strength.check(password);
-            if (!result.trigraphEntropyBits || result.trigraphEntropyBits < 64) {
+            const entropy = calculateEntropy(password);
+            if (entropy < 64) {
                 setLoading(false);
                 setError("Password is not strong enough - the trigraph entropy level must be 64 or higher. Try adding a variety of letters, numbers, and symbols.");
                 return;
