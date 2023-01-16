@@ -11,6 +11,7 @@ import styled from "styled-components";
 import Link from "../components/primitive/Link";
 import Fade from "../components/Fade";
 import ErrorText from "../components/ErrorText";
+import { TRUSTED_SERVICES } from "../constants";
 
 const captchaKey = "a57a57d4-6845-48a7-b89a-46b130e90f47";
 
@@ -119,11 +120,10 @@ const Register = ({ loading, setLoading, lang }: { loading: boolean; setLoading:
                     localStorage.setItem("token", token as string);
                     setTimeout(() => {
                         const getContinueUrl = new URLSearchParams(window.location.search).get("continue");
-                        const url = new URL(getContinueUrl ? getContinueUrl : "https://nextflow.cloud");
-                        if (getContinueUrl === "nextpass://auth") {
-                            url.searchParams.set("token", localStorage.getItem("token") as string);
+                        const url = new URL(getContinueUrl ? getContinueUrl : TRUSTED_SERVICES[0]);
+                        if (TRUSTED_SERVICES.some(x => x === url.origin + url.pathname)) {
+                            url.searchParams.set("token", token as string);
                         }
-                        // url.searchParams.set("token", token);
                         window.location.href = url.toString();
                     }, 1000);
                 } else if (request.status === 401) {
@@ -225,10 +225,9 @@ const Register = ({ loading, setLoading, lang }: { loading: boolean; setLoading:
                 setStage("skip");
                 setTimeout(() => {
                     const getContinueUrl = new URLSearchParams(window.location.search).get("continue");
-                    const url = new URL(getContinueUrl ? getContinueUrl : "https://nextflow.cloud");
-                    if (getContinueUrl === "nextpass://auth") {
-                        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                        url.searchParams.set("token", localStorage.getItem("token")!);
+                    const url = new URL(getContinueUrl ? getContinueUrl : TRUSTED_SERVICES[0]);
+                    if (TRUSTED_SERVICES.some(x => x === url.origin + url.pathname)) {
+                        url.searchParams.set("token", token as string);
                     }
                     window.location.href = url.toString();
                 }, 1000);

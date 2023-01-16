@@ -8,6 +8,7 @@ import Title from "../components/primitive/Title";
 import Link from "../components/primitive/Link";
 import Fade from "../components/Fade";
 import ErrorText from "../components/ErrorText";
+import { TRUSTED_SERVICES } from "../constants";
 
 type LoginStage = "email" | "password" | "2fa" | "done" | "skip";
 
@@ -220,13 +221,12 @@ const Login = ({ loading, setLoading, lang }: { loading: boolean; setLoading: St
             setHiding(false);
             localStorage.setItem("token", response.token);
             setTimeout(() => {
-                const continueUrl = new URLSearchParams(location.search).get("continue");
-                const url = new URL(continueUrl ? continueUrl : "https://nextflow.cloud");
-                if (continueUrl === "nextpass://auth") {
-                    url.searchParams.set("token", localStorage.getItem("token") as string);
+                const getContinueUrl = new URLSearchParams(window.location.search).get("continue");
+                const url = new URL(getContinueUrl ? getContinueUrl : TRUSTED_SERVICES[0]);
+                if (TRUSTED_SERVICES.some(x => x === url.origin + url.pathname)) {
+                    url.searchParams.set("token", response.token);
                 }
-                // url.searchParams.set("token", token);
-                location.href = url.toString();
+                window.location.href = url.toString();
             }, 1000);
         }
     };
@@ -263,10 +263,9 @@ const Login = ({ loading, setLoading, lang }: { loading: boolean; setLoading: St
                 setStage("skip");
                 setTimeout(() => {
                     const getContinueUrl = new URLSearchParams(window.location.search).get("continue");
-                    const url = new URL(getContinueUrl ? getContinueUrl : "https://nextflow.cloud");
-                    if (getContinueUrl === "nextpass://auth") {
-                        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                        url.searchParams.set("token", localStorage.getItem("token")!);
+                    const url = new URL(getContinueUrl ? getContinueUrl : TRUSTED_SERVICES[0]);
+                    if (TRUSTED_SERVICES.some(x => x === url.origin + url.pathname)) {
+                        url.searchParams.set("token", token);
                     }
                     window.location.href = url.toString();
                 }, 1000);
