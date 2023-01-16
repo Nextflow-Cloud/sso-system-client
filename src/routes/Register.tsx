@@ -95,7 +95,7 @@ const Register = ({ loading, setLoading, lang }: { loading: boolean; setLoading:
             const entropy = calculateEntropy(password);
             if (entropy < 64) {
                 setLoading(false);
-                setError("Password is not strong enough - the trigraph entropy level must be 64 or higher. Try adding a variety of letters, numbers, and symbols.");
+                setError("Password is not strong enough - the entropy level must be 64 or higher. Try adding a variety of letters, numbers, and symbols.");
                 return;
             }
             setLoading(false);
