@@ -148,13 +148,12 @@ const Login = ({ loading, setLoading, lang }: { loading: boolean; setLoading: St
 
                 localStorage.setItem("token", response.token);
                 setTimeout(() => {
-                    const continueUrl = new URLSearchParams(location.search).get("continue");
-                    const url = new URL(continueUrl ? continueUrl : "https://nextflow.cloud");
-                    if (continueUrl === "nextpass://auth") {
-                        url.searchParams.set("token", localStorage.getItem("token") as string);
+                    const getContinueUrl = new URLSearchParams(window.location.search).get("continue");
+                    const url = new URL(getContinueUrl ? getContinueUrl : TRUSTED_SERVICES[0]);
+                    if (TRUSTED_SERVICES.some(x => x === url.origin + url.pathname)) {
+                        url.searchParams.set("token", response.token);
                     }
-                    // url.searchParams.set("token", token);
-                    location.href = url.toString();
+                    window.location.href = url.toString();
                 }, 1000);
             }
         } else if (stage === "2fa") {
