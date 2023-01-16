@@ -12,6 +12,7 @@ import Link from "../components/primitive/Link";
 import Fade from "../components/Fade";
 import ErrorText from "../components/ErrorText";
 import { TRUSTED_SERVICES } from "../constants";
+import { PasswordStrength } from "tai-password-strength";
 
 const captchaKey = "a57a57d4-6845-48a7-b89a-46b130e90f47";
 
@@ -85,10 +86,11 @@ const Register = ({ loading, setLoading, lang }: { loading: boolean; setLoading:
                 return;
             }
             setEmail(match[0]);
-            const passwordRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{12,}$/;
-            if (!password.match(passwordRegex)) {
+            const strength = new PasswordStrength();
+            const result = strength.check(password);
+            if (!result.trigraphEntropyBits || result.trigraphEntropyBits < 64) {
                 setLoading(false);
-                setError("Invalid password - must be at least 12 characters and contain at least one of each: lowercase letter, uppercase letter, number, and special character");
+                setError("Password is not strong enough - the trigraph entropy level must be 64 or higher. Try adding a variety of letters, numbers, and symbols.");
                 return;
             }
             setLoading(false);
@@ -134,7 +136,7 @@ const Register = ({ loading, setLoading, lang }: { loading: boolean; setLoading:
                     setError("This email is already registered.");
                 } else {
                     setLoading(false);
-                    setError("Unknown error occured, please check console for technical information.");
+                    setError("Unknown error occurred - please check console for technical information.");
                 }
             } else {
                 setLoading(false);
