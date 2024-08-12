@@ -1,3 +1,10 @@
+const wrappedFetch = async (input: RequestInfo, init?: RequestInit): Promise<Response> => Promise.race([
+    fetch(input, init).catch(() => {
+        throw new SessionError("UNKNOWN_ERROR");
+    }), 
+    new Promise((_, reject) => setTimeout(() => reject(new SessionError("TIMED_OUT")), 5000))
+]) as Promise<Response>;
+
 export class Session {
     constructor(private id: string | null, private accessToken: string) {}
     needsContinuation(): this is PartialSession {
@@ -7,6 +14,110 @@ export class Session {
     get token(): string {
         return this.accessToken;
     }
+
+    async getSettings(): Promise<Settings> {
+        // FIXME: stop duplicating this code
+        const request = await wrappedFetch("/api/user", {
+            headers: {
+                Authorization: `Bearer ${this.accessToken}`,
+                "Content-Type": "application/json",
+            },
+        });
+        if (request.status === 401) {
+            throw new SessionError("SESSION_EXPIRED");
+        }
+        if (request.status === 429) {
+            throw new SessionError("TOO_MANY_REQUESTS");
+        }
+        if (!request.ok) {
+            throw new SessionError("UNKNOWN_ERROR");
+        }
+        return await request.json();
+    }
+
+    async commitAccountSettings(password: string, settings: Partial<AccountSettings>): Promise<void | AccountUpdateContinueFunction> {
+        const request = await wrappedFetch("/api/user", {
+            method: "PATCH",
+            headers: {
+                Authorization: `Bearer ${this.accessToken}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ currentPassword: password, ...settings, stage: 1 }),
+        });
+        if (request.status === 401) {
+            throw new SessionError("INVALID_CREDENTIALS");
+        }
+        if (request.status === 429) {
+            throw new SessionError("TOO_MANY_REQUESTS");
+        }
+        if (!request.ok) {
+            throw new SessionError("UNKNOWN_ERROR");
+        }
+        const response: { success: null; continueToken: string } | { success: true; continueToken: null; } = await request.json();
+        if (response.continueToken) {
+            return async (code: string) => {
+                const request = await wrappedFetch("/api/user", {
+                    method: "PATCH",
+                    headers: {
+                        Authorization: `Bearer ${this.accessToken}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ code, continueToken: response.continueToken, stage: 2 }),
+                });
+                if (request.status === 401) {
+                    throw new SessionError("INVALID_CREDENTIALS");
+                }
+                if (request.status === 429) {
+                    throw new SessionError("TOO_MANY_REQUESTS");
+                }
+                if (!request.ok) {
+                    throw new SessionError("UNKNOWN_ERROR");
+                }
+            };
+        }
+    }
+
+    async commitProfile(profile: Partial<Profile>): Promise<void> {
+        const request = await wrappedFetch("/api/user/profile", {
+            method: "PATCH",
+            headers: {
+                Authorization: `Bearer ${this.accessToken}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ ...profile }),
+        });
+        if (request.status === 401) {
+            throw new SessionError("INVALID_CREDENTIALS");
+        }
+        if (request.status === 429) {
+            throw new SessionError("TOO_MANY_REQUESTS");
+        }
+        if (!request.ok) {
+            throw new SessionError("UNKNOWN_ERROR");
+        }
+    }
+}
+
+type AccountUpdateContinueFunction = (code: string) => Promise<void>;
+
+export interface Settings {
+    id: string;
+    username: string;
+    mfaEnabled: boolean;
+    displayName: string;
+    description: string;
+    avatar: string;
+}
+
+export interface AccountSettings {
+    username: string;
+    newPassword: string;
+}
+
+export interface Profile {
+    displayName: string;
+    description: string;
+    avatar: string;
 }
 
 export class PartialSession {
@@ -16,18 +127,13 @@ export class PartialSession {
     }
 
     async continue(code: string): Promise<Session> {
-        const request = await Promise.race([
-            fetch("/api/session", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ stage: 2, continueToken: this.continuation, code }),
-            }).catch(() => {
-                throw new SessionError("UNKNOWN_ERROR");
-            }), 
-            new Promise((_, reject) => setTimeout(() => reject(new SessionError("TIMED_OUT")), 5000))
-        ]) as Response;
+        const request = await wrappedFetch("/api/session", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ stage: 2, continueToken: this.continuation, code }),
+        });
         if (request.status === 401) {
             throw new SessionError("INVALID_CREDENTIALS");
         }
@@ -67,18 +173,13 @@ export class SessionError extends Error {
 }
 
 export const createSession = async (email: string, password: string, persist?: boolean): Promise<Session | PartialSession> => {
-    const request = await Promise.race([
-        fetch("/api/session", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ stage: 1, email, password, persist }),
-        }).catch(() => {
-            throw new SessionError("UNKNOWN_ERROR");
-        }), 
-        new Promise((_, reject) => setTimeout(() => reject(new SessionError("TIMED_OUT")), 5000))
-    ]) as Response;
+    const request = await wrappedFetch("/api/session", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ stage: 1, email, password, persist }),
+    });
     if (request.status === 429) {
         throw new SessionError("TOO_MANY_REQUESTS");
     }
@@ -122,18 +223,13 @@ export interface Credentials {
 }
 
 export const createAccount = async (credentials: Credentials): Promise<Session> => {
-    const request = await Promise.race([
-        fetch("/api/user", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(credentials),
-        }).catch(() => {
-            throw new SessionError("UNKNOWN_ERROR");
-        }), 
-        new Promise((_, reject) => setTimeout(() => reject(new SessionError("TIMED_OUT")), 5000))
-    ]) as Response;
+    const request = await wrappedFetch("/api/user", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+    });
     if (request.status === 429) {
         throw new SessionError("TOO_MANY_REQUESTS");
     }
