@@ -68,7 +68,7 @@ const SidePanel = styled.div`
 `;
 
 const MainDesktop = styled.main`
-    background: linear-gradient(135deg, rgba(177,115,255,1) 0%, rgba(255,196,194,1) 40%, rgba(141,255,144,1) 100%);
+    background: var(--background);
     background-repeat: no-repeat;
     background-size: cover;
     min-height: 100vh;

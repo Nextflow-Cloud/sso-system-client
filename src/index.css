@@ -25,6 +25,8 @@ html, body, #root {
 
   --foreground: hsl(240 3.7% 15.9%);
   --foreground-border: #7a7a7a;
+
+  --background: linear-gradient(135deg, rgba(177,115,255,1) 0%, rgba(255,196,194,1) 40%, rgba(141,255,144,1) 100%);
 }
 
 body {
