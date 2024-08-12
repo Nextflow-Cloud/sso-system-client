@@ -1,5 +1,9 @@
 <h1 align="center">Nextflow SSO authentication system client</h1>
-<p align="center">[![License](https://img.shields.io/github/license/Nextflow-Cloud/sso-system-client)](https://github.com/Nextflow-Cloud/sso-system-client/blob/main/LICENSE)</p>
+<div align="center">
+  
+[![License](https://img.shields.io/github/license/Nextflow-Cloud/sso-system-client)](https://github.com/Nextflow-Cloud/sso-system-client/blob/main/LICENSE)
+
+</div>
 
 > [!WARNING]
 > Initial translations are provided by AI and may not be accurate. If you see anything that doesn't look right, please submit a pull request.
