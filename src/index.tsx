@@ -1,8 +1,8 @@
-import { render } from "preact";
-import App from "./app";
-import "./index.css";
+/* @refresh reload */
+import { render } from "solid-js/web";
 
-// TODO: Possibly convert to Solid app
+import "./index.css";
+import App from "./App";
 
 import Internals from "./utilities/Internals";
 const internals = new Internals();
@@ -13,4 +13,6 @@ Object.defineProperty(window, "internals", {
     configurable: false
 });
 
-render(<App />, document.getElementById("app") as HTMLElement);
+const root = document.getElementById("root");
+
+render(() => <App />, root!);
