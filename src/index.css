@@ -22,6 +22,7 @@ html, body, #root {
   --neutral: #0077c1;
   --secondary-light: #cc95ff;
   --secondary: rgb(151, 90, 248);
+  --secondary-a: rgba(204,149,255, 0.5);
 
   --foreground: hsl(240 3.7% 15.9%);
   --foreground-border: #7a7a7a;
