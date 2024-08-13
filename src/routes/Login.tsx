@@ -12,6 +12,7 @@ import { Switch as ConditionalSwitch } from "solid-js";
 import { createSession, PartialSession, SessionError, SessionErrorType, validateSession } from "../utilities/lib/authentication";
 import OtpInput from "../components/primitive/OtpInput";
 import { useNavigate } from "@solidjs/router";
+import { TRUSTED_SERVICES } from "../constants";
 
 type LoginStage = "credentials" | "2fa" | "done" | "skip";
 type InputError = "EMPTY_EMAIL" | "INVALID_EMAIL" | "EMPTY_PASSWORD" | "EMPTY_CODE" | "INVALID_CODE";
@@ -114,14 +115,14 @@ const Login = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; setL
             const response = await tauri.invoke("login", { token });
             console.log(response);
         } else {
-            // setTimeout(() => {
-            //     const getContinueUrl = new URLSearchParams(window.location.search).get("continue");
-            //     const url = new URL(getContinueUrl ? getContinueUrl : TRUSTED_SERVICES[0]);
-            //     if (TRUSTED_SERVICES.some(x => x === url.origin + url.pathname)) {
-            //         url.searchParams.set("token", response.token);
-            //     }
-            //     window.location.href = url.toString();
-            // }, 1000);
+            setTimeout(() => {
+                const getContinueUrl = new URLSearchParams(window.location.search).get("continue");
+                const url = new URL(getContinueUrl ? getContinueUrl : TRUSTED_SERVICES[0]);
+                if (TRUSTED_SERVICES.some(x => x === url.origin + url.pathname)) {
+                    url.searchParams.set("token", token);
+                }
+                window.location.href = url.toString();
+            }, 1000);
         }
     }
 

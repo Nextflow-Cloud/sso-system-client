@@ -4,6 +4,7 @@ import { createSignal } from "solid-js";
 import { Language } from "./utilities/i18n";
 import Login from "./routes/Login";
 import ManageAccount from "./routes/ManageAccount";
+import Register from "./routes/Register";
 import Authenticated from "./components/Authenticated";
 
 const App = () => {
@@ -21,6 +22,11 @@ const App = () => {
         <Route path="/login" component={() => (
           <FormBase loading={loading} lang={lang} setLang={setLang}>
             <Login loading={loading} setLoading={setLoading} lang={lang} />
+          </FormBase>
+        )} />
+        <Route path="/register" component={() => (
+          <FormBase loading={loading} lang={lang} setLang={setLang}>
+            <Register loading={loading} setLoading={setLoading} lang={lang} />
           </FormBase>
         )} />
         <Route path="/manage">
