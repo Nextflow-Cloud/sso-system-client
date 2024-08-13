@@ -3,12 +3,16 @@ import SearchBar from "../components/primitive/Search";
 import Logo from "../components/Logo";
 import Input from "../components/primitive/Input";
 import Button from "../components/primitive/Button";
-import { RiBusinessProfileLine, RiUserFacesAccountBoxLine } from "solid-icons/ri";
+import { RiBusinessProfileFill, RiBusinessProfileLine, RiSystemShieldKeyholeFill, RiSystemShieldKeyholeLine, RiUserFacesAccountBoxFill, RiUserFacesAccountBoxLine } from "solid-icons/ri";
 import MenuItem from "../components/MenuItem";
 import { Route, Router } from "@solidjs/router";
 import { createSignal, Match, Switch } from "solid-js";
 import Account from "./manage/Account";
 import Profile from "./manage/Profile";
+import Dialog from "@corvu/dialog";
+import Popover from "@corvu/popover";
+import AccountContainer from "../components/AccountContainer";
+import Sessions from "./manage/Sessions";
 
 const MainDesktop = styled.main`
     background: var(--background);
@@ -79,12 +83,6 @@ const TopBar = styled.div`
     height: 64px;
 `;
 
-const AccountContainer = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-`;
-
 const Content = styled.div`
     display: flex;
     flex-direction: column;
@@ -102,45 +100,80 @@ const LogoContainer = styled.div`
 `;
 
 export const Section = styled.div`
-display: flex;
-flex-direction: column;
-max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
 `;
 
-type Active = "account" | "profile";
+const Overlay = styled(Popover.Overlay)`
+    z-index: 1000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+`;
+
+const PopoverContent = styled(Popover.Content)`
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px;
+    z-index: 1001;
+    box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.4);
+`;
+
+type Active = "account" | "profile" | "sessions";
 
 const ManageAccount = (props: { active: Active }) => {
     return (
-        <MainDesktop>
-            <ManageBase>
-                <LeftPanel>
-                    <LogoContainer>
-                        <Logo />
-                    </LogoContainer>
-                    <Navigation>
-                        <MenuItem Icon={RiUserFacesAccountBoxLine} name="Account" id={"account"} active={props.active} />
-                        <MenuItem Icon={RiBusinessProfileLine} name="Profile" id="profile" active={props.active} />
-                    </Navigation>
-                </LeftPanel>
-                <RightPanel>
-                    <TopBar>
-                        
-                        <SearchBar />
-                        <AccountContainer> avatar goes here</AccountContainer>
-                    </TopBar>
-                    <Content>
-                        <Switch>
-                            <Match when={props.active === "account"}>
-                                <Account />
-                            </Match>
-                            <Match when={props.active === "profile"}>
-                                <Profile />
-                            </Match>
-                        </Switch>
-                    </Content>
-                </RightPanel>
-            </ManageBase>
-        </MainDesktop>
+        <Dialog>
+            <Popover placement="bottom-start">
+                <MainDesktop>
+                    <ManageBase>
+                        <LeftPanel>
+                            <LogoContainer>
+                                <Logo />
+                            </LogoContainer>
+                            <Navigation>
+                                <MenuItem Icon={RiUserFacesAccountBoxLine} BoldIcon={RiUserFacesAccountBoxFill} name="Account" id="account" active={props.active} />
+                                <MenuItem Icon={RiBusinessProfileLine} BoldIcon={RiBusinessProfileFill} name="Profile" id="profile" active={props.active} />
+                                <MenuItem Icon={RiSystemShieldKeyholeLine} BoldIcon={RiSystemShieldKeyholeFill} name="Sessions" id="sessions" active={props.active} />
+                            </Navigation>
+                        </LeftPanel>
+                        <RightPanel>
+                            <TopBar>
+                                
+                                <SearchBar />
+                                <AccountContainer />
+                            </TopBar>
+                            <Content>
+                                <Switch>
+                                    <Match when={props.active === "account"}>
+                                        <Account />
+                                    </Match>
+                                    <Match when={props.active === "profile"}>
+                                        <Profile />
+                                    </Match>
+                                    <Match when={props.active === "sessions"}>
+                                        <Sessions />
+                                    </Match>
+                                </Switch>
+                            </Content>
+                        </RightPanel>
+                    </ManageBase>
+                </MainDesktop>
+                <Popover.Portal>
+                    <Overlay />
+                    <PopoverContent>
+                        <Button>Logout</Button>
+                    </PopoverContent>
+                </Popover.Portal>
+            </Popover>
+        </Dialog>
     );
 }
 

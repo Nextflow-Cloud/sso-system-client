@@ -45,7 +45,15 @@ const App = () => {
               <ManageAccount active="profile" />
             // </Authenticated>
           )} />
+          <Route path="/sessions" component={() => (
+            // <Authenticated>
+              <ManageAccount active="sessions" />
+            // </Authenticated>
+          )} />
         </Route>
+        <Route path="/logout" component={() => (
+          <div>TODO</div>
+        )} />
       </Router>
   );
 };

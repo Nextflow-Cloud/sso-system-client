@@ -54,4 +54,13 @@ const Switch = (props: { checked?: boolean; onChange?: JSX.ChangeEventHandlerUni
     )
 };
 
+export const SwitchContainer = styled.div`
+    display: flex;
+    & > * + * {
+        margin-left: 5px;
+    }
+    align-items: center;
+`;
+
+
 export default Switch;

@@ -1,5 +1,6 @@
 import { useNavigate } from "@solidjs/router";
 import { IconTypes } from "solid-icons";
+import { Match, Show, Switch } from "solid-js";
 import { styled } from "solid-styled-components";
 
 const MenuItemBase = styled.div`
@@ -28,13 +29,24 @@ const MenuItemBase = styled.div`
     ` : ""}
 `;
 
-const MenuItem = (props: { id: string; name: string; active: string; Icon: IconTypes }) => {
+const MenuItemBaseBold = styled(MenuItemBase)`
+    font-weight: bold;
+`;
+
+const MenuItem = (props: { id: string; name: string; active: string; Icon: IconTypes, BoldIcon: IconTypes }) => {
     const navigate = useNavigate();
     return (
-        <MenuItemBase active={props.active === props.id} onClick={() => navigate(`/manage/${props.id}`)}>
-            <props.Icon />
-            <div>{props.name}</div>
-        </MenuItemBase>
+        <Show when={props.active === props.id} fallback={
+            <MenuItemBase active={props.active === props.id} onClick={() => navigate(`/manage/${props.id}`)}>
+                <props.Icon />
+                <div>{props.name}</div>
+            </MenuItemBase>
+        }>
+            <MenuItemBaseBold active={props.active === props.id} onClick={() => navigate(`/manage/${props.id}`)}>
+                <props.BoldIcon />
+                <div>{props.name}</div>
+            </MenuItemBaseBold>
+        </Show>
     );
 }
 

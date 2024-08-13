@@ -79,3 +79,7 @@ select, button {
      transform: translateX(-100%);
   }
 }
+
+th {
+  text-align: left;
+}
