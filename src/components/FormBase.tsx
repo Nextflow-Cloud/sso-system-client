@@ -100,6 +100,10 @@ const LogoContainerMobile = styled.div`
     justify-content: center;
 `;
 
+const LogoContainerDesktop = styled.div`
+    margin-bottom: 1.25rem;
+`;
+
 
 const Container = ({ children, loading, lang, setLang }: ParentProps<{ loading: Accessor<boolean>; lang: Accessor<Language>; setLang: Setter<Language> }>) => {
     const [isDesktop, setIsDesktop] = createSignal(window.innerWidth >= 768);
@@ -125,7 +129,9 @@ const Container = ({ children, loading, lang, setLang }: ParentProps<{ loading: 
                 <FormContainerDesktop> 
                     <SidePanel>
                         <div>
-                            <Logo />
+                            <LogoContainerDesktop>
+                                <Logo />
+                            </LogoContainerDesktop>
                             <h2>{translate(lang(), "WELCOME")}</h2>
                             <p>{translate(lang(), "DESCRIPTION")}</p>
                         </div>

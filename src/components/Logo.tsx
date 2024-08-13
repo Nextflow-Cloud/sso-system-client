@@ -12,7 +12,6 @@ const Logo = () => {
 
 const LogoBase = styled.svg`
     height: 2rem;
-    margin-bottom: 1.25rem;
     width: 10rem;
 `;
 
