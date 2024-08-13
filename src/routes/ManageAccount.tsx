@@ -31,7 +31,8 @@ const ManageBase = styled.div`
     background-color: rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(5px   );
     border-radius: 5px;
-    padding: 10px;
+    padding-left: 10px;
+    padding-right:10px;
     height: 100%;
     min-height: 100% !important;
 `;
@@ -40,13 +41,14 @@ const LeftPanel = styled.div`
     display: flex;
     flex-direction: column;
     width: 250px;
+    padding-right: 10px;
     border-right: 1px solid black;
 `;
 
 const RightPanel = styled.div`
     display: flex;
     flex-direction: column;
-    width: 80%;
+    width: 100%;
 `;
 
 const Navigation = styled.nav`
