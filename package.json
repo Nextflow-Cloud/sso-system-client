@@ -9,9 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@corvu/dialog": "^0.2.2",
     "@corvu/otp-field": "^0.1.2",
     "@solidjs/router": "^0.14.1",
     "solid-hcaptcha": "^0.4.0",
+    "solid-icons": "^1.1.0",
     "solid-js": "^1.8.17",
     "solid-styled-components": "^0.28.5"
   },

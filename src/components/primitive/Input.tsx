@@ -24,7 +24,7 @@ const InputBase = styled.input`
     /* :disabled {
         border: #e5e7eb 1px solid;
     } */
-     transition: 50ms ease-in-out;
+    transition: 50ms ease-in-out;
 `;
 
 const InputLabel = styled.label`

@@ -3,6 +3,12 @@ import SearchBar from "../components/primitive/Search";
 import Logo from "../components/Logo";
 import Input from "../components/primitive/Input";
 import Button from "../components/primitive/Button";
+import { RiBusinessProfileLine, RiUserFacesAccountBoxLine } from "solid-icons/ri";
+import MenuItem from "../components/MenuItem";
+import { Route, Router } from "@solidjs/router";
+import { createSignal, Match, Switch } from "solid-js";
+import Account from "./manage/Account";
+import Profile from "./manage/Profile";
 
 const MainDesktop = styled.main`
     background: var(--background);
@@ -33,7 +39,6 @@ const ManageBase = styled.div`
 const LeftPanel = styled.div`
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     width: 250px;
     border-right: 1px solid black;
 `;
@@ -53,8 +58,15 @@ const Navigation = styled.nav`
 const Category = styled.a`
     color: black;
     text-decoration: none;
-    font-size: 1.5em;
+    font-size: 1em;
     padding: 10px;
+    & > * + * {
+        margin-left: 5px;
+    }
+    display: flex;
+    align-items: center;
+    background-color: var(--secondary-a);
+    border-radius: 5px;
 `;
 
 const TopBar = styled.div`
@@ -62,10 +74,10 @@ const TopBar = styled.div`
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    max-height: 64px;
+    height: 64px;
 `;
 
-const Account = styled.div`
+const AccountContainer = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -74,24 +86,28 @@ const Account = styled.div`
 const Content = styled.div`
     display: flex;
     flex-direction: column;
-    padding: 10px;
+    padding: 20px;
+    & > * + * {
+        margin-top: 20px;
+    }
 `;
 
 const LogoContainer = styled.div`
     display: flex;
     padding: 10px;
-    max-height: 64px;;
+    height: 64px;
     align-items: center;
 `;
 
-const Section = styled.div`
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-    max-width: 450px;
+export const Section = styled.div`
+display: flex;
+flex-direction: column;
+max-width: 400px;
 `;
 
-const ManageAccount = () => {
+type Active = "account" | "profile";
+
+const ManageAccount = (props: { active: Active }) => {
     return (
         <MainDesktop>
             <ManageBase>
@@ -100,22 +116,25 @@ const ManageAccount = () => {
                         <Logo />
                     </LogoContainer>
                     <Navigation>
-                        <Category>Account</Category>
+                        <MenuItem Icon={RiUserFacesAccountBoxLine} name="Account" id={"account"} active={props.active} />
+                        <MenuItem Icon={RiBusinessProfileLine} name="Profile" id="profile" active={props.active} />
                     </Navigation>
                 </LeftPanel>
                 <RightPanel>
                     <TopBar>
                         
                         <SearchBar />
-                        <Account> avatar goes here</Account>
+                        <AccountContainer> avatar goes here</AccountContainer>
                     </TopBar>
                     <Content>
-                        <h1>Manage Account</h1>
-                        <Section>
-                            <Input placeholder="Username" loading={false} />
-                            <Input placeholder="New password" loading={false} />
-                            <Button>Commit</Button>
-                        </Section>
+                        <Switch>
+                            <Match when={props.active === "account"}>
+                                <Account />
+                            </Match>
+                            <Match when={props.active === "profile"}>
+                                <Profile />
+                            </Match>
+                        </Switch>
                     </Content>
                 </RightPanel>
             </ManageBase>
