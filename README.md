@@ -12,4 +12,5 @@
 This is the new SolidJS based client for the [SSO system](https://github.com/Nextflow-Cloud/sso-system). The SSO system allows users to use a single account to access Nextflow services. It aims to support modern authentication practices such as asymmetrical password authenticated key exchange, WebAuthn (passkeys), and TOTP multi-factor authentication. 
 
 ## Configuration
-The `NEXTFLOW_TRUSTED_SERVICES` environment variable should be set to a list of authentication routes that the token is allowed to be sent to.
+- `NEXTFLOW_TRUSTED_SERVICES`: a list of authentication routes that the token is allowed to be sent to
+- `NEXTFLOW_CAPTCHA_KEY`: the hCaptcha key used for registration
