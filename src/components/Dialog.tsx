@@ -30,4 +30,5 @@ export const Content = styled(Dialog.Content)`
      & > * + * {
         margin-top: 10px;
     }
+    max-width: 1000px;
 `;
