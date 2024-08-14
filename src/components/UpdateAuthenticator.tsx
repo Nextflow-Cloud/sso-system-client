@@ -23,7 +23,7 @@ const UpdateAuthenticator = (props: { type?: AuthenticateType }) => {
     const next = async () => {
         if (stage() === "PASSWORD") {
             if (props.type === "ENABLE_MFA") {
-                const session = state()?.session;
+                const session = state().session;
                 if (!session) return console.error("No session found");
                 // FIXME: potential state out of sync issue if MFA is enabled elsewhere
                 const result = await session.configureMfa(password());
@@ -34,7 +34,7 @@ const UpdateAuthenticator = (props: { type?: AuthenticateType }) => {
 
                 setStage("ONBOARD");
             } else if (props.type === "DISABLE_MFA") {
-                const session = state()?.session;
+                const session = state().session;
                 if (!session) return console.error("No session found");
                 const result = await session.configureMfa(password());
                 if (result.pendingEnable) throw new Error("State is out of sync!");
@@ -42,9 +42,9 @@ const UpdateAuthenticator = (props: { type?: AuthenticateType }) => {
 
                 setStage("MFA");
             } else {
-                const session = state()?.session;
+                const session = state().session;
                 if (!session) return console.error("No session found");
-                const stagedAccountSettings = state()?.stagedAccountSettings;
+                const stagedAccountSettings = state().stagedAccountSettings;
                 if (!stagedAccountSettings) return console.error("No staged account settings found");
                 const result = await session.commitAccountSettings(password(), stagedAccountSettings); // FIXME: get the state somehow
                 if (!result) dialogContext().setOpen(false); // we're finished here since user doesn't use MFA

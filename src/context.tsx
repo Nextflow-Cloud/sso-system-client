@@ -3,7 +3,11 @@ import { AccountSettings, Client, Settings } from "./utilities/lib/authenticatio
 
 const StateContext = createContext<GlobalState>();
 
-export const useGlobalState = () => useContext(StateContext);
+export const useGlobalState = () => {
+    const context = useContext(StateContext);
+    if (!context) throw new Error("useGlobalState must be used within a StateProvider");
+    return context;
+};
 
 class GlobalState {
     session?: Client;
@@ -15,10 +19,13 @@ class GlobalState {
     clearSession() {
         this.session = undefined;
     }
-    updateSettings(settings: Settings) {
-        this.settings = settings;
+    updateSettings(settings: Partial<Settings>) {
+        if (this.settings)
+            this.settings = { ...this.settings, ...settings };
+        else
+            this.settings = settings as Settings;
     }
-    setStagedAccountSettings(settings: Partial<AccountSettings>) {
+    setStagedAccountSettings(settings?: Partial<AccountSettings>) {
         this.stagedAccountSettings = settings;
     }
 }

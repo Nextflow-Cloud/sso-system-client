@@ -61,15 +61,16 @@ const Profile = () => {
     };
 
     onMount(async () => {
-        const session = state()?.session;
+        const session = state().session;
         if (!session) return console.error("No session found");
         const user = await session.getSettings();
+        state().updateSettings(user);
         setDisplayName(user.displayName);
         setDescription(user.description);
     });
 
     createEffect(() => {
-        const session = state()?.session;
+        const session = state().session;
         if (!session) return console.error("No session found");
         session.commitProfile({
             displayName: displayName(),

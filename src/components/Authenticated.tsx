@@ -14,7 +14,7 @@ const Authenticated = (props: ParentProps) => {
             const session = await validateSession(token);
             if (session) {
                 setAuthenticated(true);
-                state()?.setSession(session);
+                state().setSession(session);
             }
         }
         setChecked(true);

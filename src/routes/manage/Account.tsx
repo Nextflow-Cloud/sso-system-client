@@ -24,9 +24,9 @@ const Account = () => {
     });
 
     onMount(async () => {
-        let settings = state()?.settings;
+        let settings = state().settings;
         if (!settings) {
-            const session = state()?.session;
+            const session = state().session;
             if (!session) return console.error("No session found");
             settings = await session.getSettings();
         }
@@ -37,11 +37,11 @@ const Account = () => {
     const updateAccount = () => {
         // TODO: check for invalid passwords
         let newUsername: string|undefined = username();
-        if (newUsername === state()?.settings?.username || !newUsername) newUsername = undefined;
+        if (newUsername === state().settings?.username || !newUsername) newUsername = undefined;
         let newPasswordUnwrap: string|undefined = newPassword();
         if (!newPasswordUnwrap) newPasswordUnwrap = undefined;
         if (!newUsername && !newPassword) return;
-        state()?.setStagedAccountSettings({
+        state().setStagedAccountSettings({
             username: newUsername,
             newPassword: newPasswordUnwrap,
         });
