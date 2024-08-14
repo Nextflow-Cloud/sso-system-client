@@ -13,7 +13,7 @@ const Logout = () => {
             const session = await validateSession(token);
             if (session) {
                 setValidSession(true);
-                await session.logout();
+                await session.logout().then(() => localStorage.removeItem("token"));
             }
         }
         setChecked(true);
