@@ -109,7 +109,7 @@ export class Client {
     }
 
     async logout(id?: string): Promise<void> {
-        const request = await wrappedFetch(`/api/session/${id}`, {
+        const request = await wrappedFetch(`/api/session${id ? `/${id}` : ""}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${this.accessToken}`,
