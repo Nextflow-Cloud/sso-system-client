@@ -14,6 +14,7 @@ import Popover from "@corvu/popover";
 import AccountContainer from "../components/AccountContainer";
 import Sessions from "./manage/Sessions";
 import { Show } from "solid-js";
+import ContextMenuButton from "../components/ContextMenuButton";
 
 const MainDesktop = styled.main`
     background: var(--background);
@@ -185,7 +186,7 @@ const ManageAccount = () => {
                 <Popover.Portal>
                     <Overlay />
                     <PopoverContent>
-                        <Button onClick={logout}>Logout</Button>
+                        <ContextMenuButton onClick={logout}>Logout</ContextMenuButton>
                     </PopoverContent>
                 </Popover.Portal>
             </Popover>
