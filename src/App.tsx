@@ -6,55 +6,61 @@ import Login from "./routes/Login";
 import ManageAccount from "./routes/ManageAccount";
 import Register from "./routes/Register";
 import Authenticated from "./components/Authenticated";
+import { StateProvider } from "./context";
+import Logout from "./routes/Logout";
 
 const App = () => {
   const [loading, setLoading] = createSignal(false);
   const [lang, setLang] = createSignal(localStorage.getItem("lang") as Language || "fr");
 
   return (
-      <Router>
-        {/* <Route /> */}
-        <Route path="/" component={() => (
-          <Authenticated>
-            <Navigate href="/manage" />
-          </Authenticated>
-        )} />
-        <Route path="/login" component={() => (
-          <FormBase loading={loading} lang={lang} setLang={setLang}>
-            <Login loading={loading} setLoading={setLoading} lang={lang} />
-          </FormBase>
-        )} />
-        <Route path="/register" component={() => (
-          <FormBase loading={loading} lang={lang} setLang={setLang}>
-            <Register loading={loading} setLoading={setLoading} lang={lang} />
-          </FormBase>
-        )} />
-        <Route path="/manage">
+      <StateProvider>
+        <Router>
+          {/* <Route /> */}
           <Route path="/" component={() => (
-            // <Authenticated>
-            <Navigate href="/manage/account" />
-            // </Authenticated>
+            <Authenticated>
+              <Navigate href="/manage" />
+            </Authenticated>
           )} />
-          <Route path="/account" component={() => (
-            // <Authenticated>
-              <ManageAccount active="account" />
-            // </Authenticated>
+          <Route path="/login" component={() => (
+            <FormBase loading={loading} lang={lang} setLang={setLang}>
+              <Login loading={loading} setLoading={setLoading} lang={lang} />
+            </FormBase>
           )} />
-          <Route path="/profile" component={() => (
-            // <Authenticated>
-              <ManageAccount active="profile" />
-            // </Authenticated>
+          <Route path="/register" component={() => (
+            <FormBase loading={loading} lang={lang} setLang={setLang}>
+              <Register loading={loading} setLoading={setLoading} lang={lang} />
+            </FormBase>
           )} />
-          <Route path="/sessions" component={() => (
-            // <Authenticated>
-              <ManageAccount active="sessions" />
-            // </Authenticated>
+          <Route path="/manage">
+            <Route path="/" component={() => (
+              // <Authenticated>
+              <Navigate href="/manage/account" />
+              // </Authenticated>
+            )} />
+            <Route path="/account" component={() => (
+              // <Authenticated>
+                <ManageAccount active="account" />
+              // </Authenticated>
+            )} />
+            <Route path="/profile" component={() => (
+              // <Authenticated>
+                <ManageAccount active="profile" />
+              // </Authenticated>
+            )} />
+            <Route path="/sessions" component={() => (
+              // <Authenticated>
+                <ManageAccount active="sessions" />
+              // </Authenticated>
+            )} />
+          </Route>
+          <Route path="/logout" component={() => (
+            <FormBase loading={loading} lang={lang} setLang={setLang}>
+              <Logout />
+            </FormBase>
           )} />
-        </Route>
-        <Route path="/logout" component={() => (
-          <div>TODO</div>
-        )} />
-      </Router>
+        </Router>
+      </StateProvider>
   );
 };
 

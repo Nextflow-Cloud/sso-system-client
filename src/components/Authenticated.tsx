@@ -1,10 +1,12 @@
-import { createSignal, Match, onMount, ParentProps, Show, Switch } from "solid-js";
+import { createMemo, createSignal, Match, onMount, ParentProps, Show, Switch } from "solid-js";
 import { validateSession } from "../utilities/lib/authentication";
 import { Navigate } from "@solidjs/router";
+import { useGlobalState } from "../context";
 
 const Authenticated = (props: ParentProps) => {
     const [checked, setChecked] = createSignal(false);
     const [authenticated, setAuthenticated] = createSignal(false);
+    const state = createMemo(() => useGlobalState())
     
     const checkToken = async () => {
         const token = localStorage.getItem("token");
@@ -12,6 +14,7 @@ const Authenticated = (props: ParentProps) => {
             const session = await validateSession(token);
             if (session) {
                 setAuthenticated(true);
+                state()?.setSession(session);
             }
         }
         setChecked(true);
