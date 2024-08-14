@@ -12,19 +12,13 @@ import { Language, translate } from "../utilities/i18n";
 import { Accessor, createSignal, Match, onMount, Setter, Show, Switch } from "solid-js";
 import { createAccount, SessionError, SessionErrorType, validateSession } from "../utilities/lib/authentication";
 import { useNavigate } from "@solidjs/router";
+import { calculateEntropy } from "../utilities/client";
 const ButtonContainer = styled.div`
     & > :not([hidden]) ~ :not([hidden]) {
         margin-top: 0.5rem;
         margin-bottom: 0.5rem;
     }
 `;
-
-const calculateEntropy = (string?: string) => string ? Math.round(string.length * Math.log([
-    { re: /[a-z]/, length: 26 }, 
-    { re: /[A-Z]/, length: 26 }, 
-    { re: /[0-9]/, length: 10 }, 
-    { re: /[^a-zA-Z0-9]/, length: 33 },
-].reduce((length, charset) => length + (charset.re.test(string) ? charset.length : 0), 0)) / Math.LN2): 0;
 
 type RegisterStage = "credentials" | "verify" | "done" | "skip";
 type InputError = "EMPTY_EMAIL" | "INVALID_EMAIL" | "WEAK_PASSWORD" | "INVALID_CAPTCHA" | "EMPTY_DISPLAY_NAME" | "EMPTY_USERNAME" | "LONG_DISPLAY_NAME" | "INVALID_USERNAME";
