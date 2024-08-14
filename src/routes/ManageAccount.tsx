@@ -5,7 +5,7 @@ import Input from "../components/primitive/Input";
 import Button from "../components/primitive/Button";
 import { RiBusinessProfileFill, RiBusinessProfileLine, RiSystemShieldKeyholeFill, RiSystemShieldKeyholeLine, RiUserFacesAccountBoxFill, RiUserFacesAccountBoxLine } from "solid-icons/ri";
 import MenuItem from "../components/MenuItem";
-import { Route, Router } from "@solidjs/router";
+import { Navigate, useNavigate, useParams } from "@solidjs/router";
 import { createSignal, Match, Switch } from "solid-js";
 import Account from "./manage/Account";
 import Profile from "./manage/Profile";
@@ -13,6 +13,7 @@ import Dialog from "@corvu/dialog";
 import Popover from "@corvu/popover";
 import AccountContainer from "../components/AccountContainer";
 import Sessions from "./manage/Sessions";
+import { Show } from "solid-js";
 
 const MainDesktop = styled.main`
     background: var(--background);
@@ -132,54 +133,63 @@ const PopoverContent = styled(Popover.Content)`
 
 type Active = "account" | "profile" | "sessions";
 
-const ManageAccount = (props: { active: Active }) => {
+const ManageAccount = () => {
+    const params = useParams();
+    const navigate = useNavigate();
+    const logout = () => {
+        navigate("/logout");
+    };
     return (
-        <Popover placement="bottom-start">
-            <MainDesktop>
-                <ManageBase>
-                    <LeftPanel>
-                        <LogoContainer>
-                            <Logo />
-                        </LogoContainer>
-                        <Navigation>
-                            <MenuItem Icon={RiUserFacesAccountBoxLine} BoldIcon={RiUserFacesAccountBoxFill} name="Account" id="account" active={props.active} />
-                            <MenuItem Icon={RiBusinessProfileLine} BoldIcon={RiBusinessProfileFill} name="Profile" id="profile" active={props.active} />
-                            <MenuItem Icon={RiSystemShieldKeyholeLine} BoldIcon={RiSystemShieldKeyholeFill} name="Sessions" id="sessions" active={props.active} />
-                        </Navigation>
-                    </LeftPanel>
-                    <RightPanel>
-                        <TopBar>
-                            
-                            <SearchBar />
-                            <AccountContainer />
-                        </TopBar>
-                        <Content>
-                            <Switch>
-                                <Match when={props.active === "account"}>
-                                    <Dialog>
-                                        <Account />
-                                    </Dialog>
-                                </Match>
-                                <Match when={props.active === "profile"}>
-                                    <Dialog>
-                                        <Profile />
-                                    </Dialog>
-                                </Match>
-                                <Match when={props.active === "sessions"}>
-                                    <Sessions />
-                                </Match>
-                            </Switch>
-                        </Content>
-                    </RightPanel>
-                </ManageBase>
-            </MainDesktop>
-            <Popover.Portal>
-                <Overlay />
-                <PopoverContent>
-                    <Button>Logout</Button>
-                </PopoverContent>
-            </Popover.Portal>
-        </Popover>
+        <Show when={params.category} fallback={
+            <Navigate href="/manage/account" />
+        }>
+            <Popover placement="bottom-start">
+                <MainDesktop>
+                    <ManageBase>
+                        <LeftPanel>
+                            <LogoContainer>
+                                <Logo />
+                            </LogoContainer>
+                            <Navigation>
+                                <MenuItem Icon={RiUserFacesAccountBoxLine} BoldIcon={RiUserFacesAccountBoxFill} name="Account" id="account" active={params.category} />
+                                <MenuItem Icon={RiBusinessProfileLine} BoldIcon={RiBusinessProfileFill} name="Profile" id="profile" active={params.category} />
+                                <MenuItem Icon={RiSystemShieldKeyholeLine} BoldIcon={RiSystemShieldKeyholeFill} name="Sessions" id="sessions" active={params.category} />
+                            </Navigation>
+                        </LeftPanel>
+                        <RightPanel>
+                            <TopBar>
+                                
+                                <SearchBar />
+                                <AccountContainer />
+                            </TopBar>
+                            <Content>
+                                <Switch>
+                                    <Match when={params.category === "account"}>
+                                        <Dialog>
+                                            <Account />
+                                        </Dialog>
+                                    </Match>
+                                    <Match when={params.category === "profile"}>
+                                        <Dialog>
+                                            <Profile />
+                                        </Dialog>
+                                    </Match>
+                                    <Match when={params.category === "sessions"}>
+                                        <Sessions />
+                                    </Match>
+                                </Switch>
+                            </Content>
+                        </RightPanel>
+                    </ManageBase>
+                </MainDesktop>
+                <Popover.Portal>
+                    <Overlay />
+                    <PopoverContent>
+                        <Button onClick={logout}>Logout</Button>
+                    </PopoverContent>
+                </Popover.Portal>
+            </Popover>
+        </Show>
     );
 }
 
