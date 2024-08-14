@@ -5,6 +5,18 @@ const wrappedFetch = async (input: RequestInfo, init?: RequestInit): Promise<Res
     new Promise((_, reject) => setTimeout(() => reject(new SessionError("TIMED_OUT")), 5000))
 ]) as Promise<Response>;
 
+const throwErrors = (response: Response) => {
+    if (response.status === 401) {
+        throw new SessionError("SESSION_EXPIRED");
+    }
+    if (response.status === 429) {
+        throw new SessionError("TOO_MANY_REQUESTS");
+    }
+    if (!response.ok) {
+        throw new SessionError("UNKNOWN_ERROR");
+    }
+}
+
 export class Client {
     constructor(private id: string | null, private accessToken: string) {}
     needsContinuation(): this is PartialClient {
@@ -23,16 +35,9 @@ export class Client {
                 "Content-Type": "application/json",
             },
         });
-        if (request.status === 401) {
-            throw new SessionError("SESSION_EXPIRED");
-        }
-        if (request.status === 429) {
-            throw new SessionError("TOO_MANY_REQUESTS");
-        }
-        if (!request.ok) {
-            throw new SessionError("UNKNOWN_ERROR");
-        }
-        return await request.json();
+        throwErrors(request);
+        const settings = await request.json();
+        return settings;
     }
 
     async commitAccountSettings(password: string, settings: Partial<AccountSettings>): Promise<void | AccountUpdateContinueFunction> {
@@ -44,15 +49,7 @@ export class Client {
             },
             body: JSON.stringify({ currentPassword: password, ...settings, stage: 1 }),
         });
-        if (request.status === 401) {
-            throw new SessionError("INVALID_CREDENTIALS");
-        }
-        if (request.status === 429) {
-            throw new SessionError("TOO_MANY_REQUESTS");
-        }
-        if (!request.ok) {
-            throw new SessionError("UNKNOWN_ERROR");
-        }
+        throwErrors(request);
         const response: { success: null; continueToken: string } | { success: true; continueToken: null; } = await request.json();
         if (response.continueToken) {
             return async (code: string) => {
@@ -86,15 +83,7 @@ export class Client {
             },
             body: JSON.stringify({ ...profile }),
         });
-        if (request.status === 401) {
-            throw new SessionError("INVALID_CREDENTIALS");
-        }
-        if (request.status === 429) {
-            throw new SessionError("TOO_MANY_REQUESTS");
-        }
-        if (!request.ok) {
-            throw new SessionError("UNKNOWN_ERROR");
-        }
+        throwErrors(request);
     }
 
     async getAllSessions(): Promise<Session[]> {
@@ -104,15 +93,7 @@ export class Client {
                 "Content-Type": "application/json",
             },
         });
-        if (request.status === 401) {
-            throw new SessionError("SESSION_EXPIRED");
-        }
-        if (request.status === 429) {
-            throw new SessionError("TOO_MANY_REQUESTS");
-        }
-        if (!request.ok) {
-            throw new SessionError("UNKNOWN_ERROR");
-        }
+        throwErrors(request);
         return await request.json();
     }
 
@@ -124,15 +105,7 @@ export class Client {
                 "Content-Type": "application/json",
             },
         });
-        if (request.status === 401) {
-            throw new SessionError("SESSION_EXPIRED");
-        }
-        if (request.status === 429) {
-            throw new SessionError("TOO_MANY_REQUESTS");
-        }
-        if (!request.ok) {
-            throw new SessionError("UNKNOWN_ERROR");
-        }
+        throwErrors(request);
     }
 
     async logout(id?: string): Promise<void> {
@@ -143,35 +116,81 @@ export class Client {
                 "Content-Type": "application/json",
             },
         });
-        if (request.status === 401) {
-            throw new SessionError("SESSION_EXPIRED");
-        }
-        if (request.status === 429) {
-            throw new SessionError("TOO_MANY_REQUESTS");
-        }
-        if (!request.ok) {
-            throw new SessionError("UNKNOWN_ERROR");
-        }
+        throwErrors(request);
     }
 
-    async queryUser(): Promise<Settings> {
+    async deleteAccount(password: string): Promise<void | AccountUpdateContinueFunction> {
         const request = await wrappedFetch("/api/user", {
+            method: "DELETE",
             headers: {
                 Authorization: `Bearer ${this.accessToken}`,
                 "Content-Type": "application/json",
             },
+            body: JSON.stringify({ stage: 1, password }),
         });
-        if (request.status === 401) {
-            throw new SessionError("SESSION_EXPIRED");
+        throwErrors(request);
+        const response: { success: null; continueToken: string } | { success: true; continueToken: null; } = await request.json();
+        if (response.continueToken) {
+            return async (code: string) => {
+                const request = await wrappedFetch("/api/user", {
+                    method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${this.accessToken}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ code, continueToken: response.continueToken }),
+                });
+                throwErrors(request);
+            };
         }
-        if (request.status === 429) {
-            throw new SessionError("TOO_MANY_REQUESTS");
-        }
-        if (!request.ok) {
-            throw new SessionError("UNKNOWN_ERROR");
-        }
-        return await request.json();
     }
+
+    async configureMfa(password: string): Promise<MfaOperation> {
+        const request = await wrappedFetch("/api/user/mfa", {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${this.accessToken}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ stage: 1, password }),
+        });
+        throwErrors(request);
+        const response: { success: null; continueToken: string } & ({ qr: null; secret: null } | { qr: string; secret: string }) = await request.json();
+        const continueFunction = async (code: string) => {
+            const request = await wrappedFetch("/api/user/mfa", {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${this.accessToken}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ code, continueToken: response.continueToken, stage: 2 }),
+            });
+            throwErrors(request);
+        };
+        if (response.qr) {
+            return {
+                continueFunction,
+                qr: response.qr,
+                secret: response.secret,
+                pendingEnable: true,
+            };
+        } else {
+            return {
+                continueFunction,
+                pendingEnable: false,
+            };
+        }
+    }
+}
+
+export type MfaOperation = {
+    continueFunction: AccountUpdateContinueFunction;
+    pendingEnable: false;
+} | {
+    continueFunction: AccountUpdateContinueFunction;
+    qr: string;
+    secret: string;
+    pendingEnable: true;
 }
 
 export interface Session {
@@ -182,7 +201,7 @@ export interface Session {
     // lastActive: string;
 }
 
-type AccountUpdateContinueFunction = (code: string) => Promise<void>;
+export type AccountUpdateContinueFunction = (code: string) => Promise<void>;
 
 export interface Settings {
     id: string;

@@ -7,6 +7,7 @@ import { decodeTime, monotonicFactory } from "ulid";
 import { createMemo, createSignal, onMount } from "solid-js";
 import { useGlobalState } from "../../context";
 import { Session } from "../../utilities/lib/authentication";
+import { styled } from "solid-styled-components";
 
 const sample: Session[] = [{ 
     id: "01J56F2RCGRQC4SNAA02SYSED3",
@@ -14,6 +15,23 @@ const sample: Session[] = [{
     ipAddress: "192.168.0.1",
     location: "Unknown",
 }];
+
+const SessionList = styled.table`
+    margin-top: 20px;
+    border-radius: 10px;
+    border: 1px solid var(--secondary-a);
+    background-color: var(--secondary-a);
+    padding: 10px;
+    
+    & > thead > tr > th  {
+        border-bottom: 1px solid var(--secondary-light);
+    }
+`;
+
+const SessionItems = styled.tbody`
+    & > tr {
+    }
+`
 
 const Sessions = () => {
     const [ipLogging, setIpLogging] = createSignal<boolean>(false);
@@ -31,6 +49,12 @@ const Sessions = () => {
         session.logoutAll();
     };
 
+    const revoke = (id: string) => {
+        const session = state()?.session;
+        if (!session) return console.error("No session found");
+        session.logout(id);
+    }
+
     onMount(async () => {
         const session = state()?.session;
         if (!session) return console.error("No session found");
@@ -46,6 +70,8 @@ const Sessions = () => {
                     <p>
                         IP address logging is disabled by default. If you enable this feature, Nextflow will store the IP address of future active sessions. Disabling this feature will delete all such information.
                     </p>
+                    <br />
+                    <p>For now, this setting will have no effect as this feature is not yet implemented.</p>
                 </Box>
                 <SwitchContainer>
                 <Switch onChange={toggleIp} checked={ipLogging()}  /> <span>Enable IP address logging</span></SwitchContainer>
@@ -58,7 +84,7 @@ const Sessions = () => {
                 </Box>
                 <Button onClick={logoutAll}>Logout all sessions</Button>
             </Section>
-            <table>
+            <SessionList>
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -69,7 +95,7 @@ const Sessions = () => {
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <SessionItems>
                     {sessions().map(session => (
                         <tr>
                             <td>{session.id}</td>
@@ -78,12 +104,12 @@ const Sessions = () => {
                             <td>{session.ipAddress}</td>
                             <td>{session.location}</td>
                             <td>
-                                <Button>Revoke</Button>
+                                <Button onClick={() => revoke(session.id)}>Revoke</Button>
                             </td>
                         </tr>
                     ))}
-                </tbody>
-            </table>
+                </SessionItems>
+            </SessionList>
         </>
     );
 };

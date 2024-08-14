@@ -53,6 +53,8 @@ const RightPanel = styled.div`
     display: flex;
     flex-direction: column;
     width: 100%;
+    overflow: hidden;
+
 `;
 
 const Navigation = styled.nav`
@@ -90,6 +92,8 @@ const Content = styled.div`
     & > * + * {
         margin-top: 20px;
     }
+    overflow-y: auto;
+    overflow-x: auto;
 `;
 
 const LogoContainer = styled.div`
@@ -130,50 +134,52 @@ type Active = "account" | "profile" | "sessions";
 
 const ManageAccount = (props: { active: Active }) => {
     return (
-        <Dialog>
-            <Popover placement="bottom-start">
-                <MainDesktop>
-                    <ManageBase>
-                        <LeftPanel>
-                            <LogoContainer>
-                                <Logo />
-                            </LogoContainer>
-                            <Navigation>
-                                <MenuItem Icon={RiUserFacesAccountBoxLine} BoldIcon={RiUserFacesAccountBoxFill} name="Account" id="account" active={props.active} />
-                                <MenuItem Icon={RiBusinessProfileLine} BoldIcon={RiBusinessProfileFill} name="Profile" id="profile" active={props.active} />
-                                <MenuItem Icon={RiSystemShieldKeyholeLine} BoldIcon={RiSystemShieldKeyholeFill} name="Sessions" id="sessions" active={props.active} />
-                            </Navigation>
-                        </LeftPanel>
-                        <RightPanel>
-                            <TopBar>
-                                
-                                <SearchBar />
-                                <AccountContainer />
-                            </TopBar>
-                            <Content>
-                                <Switch>
-                                    <Match when={props.active === "account"}>
+        <Popover placement="bottom-start">
+            <MainDesktop>
+                <ManageBase>
+                    <LeftPanel>
+                        <LogoContainer>
+                            <Logo />
+                        </LogoContainer>
+                        <Navigation>
+                            <MenuItem Icon={RiUserFacesAccountBoxLine} BoldIcon={RiUserFacesAccountBoxFill} name="Account" id="account" active={props.active} />
+                            <MenuItem Icon={RiBusinessProfileLine} BoldIcon={RiBusinessProfileFill} name="Profile" id="profile" active={props.active} />
+                            <MenuItem Icon={RiSystemShieldKeyholeLine} BoldIcon={RiSystemShieldKeyholeFill} name="Sessions" id="sessions" active={props.active} />
+                        </Navigation>
+                    </LeftPanel>
+                    <RightPanel>
+                        <TopBar>
+                            
+                            <SearchBar />
+                            <AccountContainer />
+                        </TopBar>
+                        <Content>
+                            <Switch>
+                                <Match when={props.active === "account"}>
+                                    <Dialog>
                                         <Account />
-                                    </Match>
-                                    <Match when={props.active === "profile"}>
+                                    </Dialog>
+                                </Match>
+                                <Match when={props.active === "profile"}>
+                                    <Dialog>
                                         <Profile />
-                                    </Match>
-                                    <Match when={props.active === "sessions"}>
-                                        <Sessions />
-                                    </Match>
-                                </Switch>
-                            </Content>
-                        </RightPanel>
-                    </ManageBase>
-                </MainDesktop>
-                <Popover.Portal>
-                    <Overlay />
-                    <PopoverContent>
-                        <Button>Logout</Button>
-                    </PopoverContent>
-                </Popover.Portal>
-            </Popover>
-        </Dialog>
+                                    </Dialog>
+                                </Match>
+                                <Match when={props.active === "sessions"}>
+                                    <Sessions />
+                                </Match>
+                            </Switch>
+                        </Content>
+                    </RightPanel>
+                </ManageBase>
+            </MainDesktop>
+            <Popover.Portal>
+                <Overlay />
+                <PopoverContent>
+                    <Button>Logout</Button>
+                </PopoverContent>
+            </Popover.Portal>
+        </Popover>
     );
 }
 

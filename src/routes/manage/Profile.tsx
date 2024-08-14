@@ -2,9 +2,10 @@ import { styled } from "solid-styled-components";
 import Input from "../../components/primitive/Input";
 import { Section } from "../ManageAccount";
 import AvatarPicker from "../../components/AvatarPicker";
-import { createMemo, createSignal, onMount } from "solid-js";
+import { createEffect, createMemo, createSignal, onMount } from "solid-js";
 import Dialog from "@corvu/dialog";
 import { useGlobalState } from "../../context";
+import Button from "../../components/primitive/Button";
 
 const AvatarContainer = styled.div`
     display: flex;
@@ -21,6 +22,14 @@ export interface Image {
     file: File,
     url: string,
 }
+
+const AvatarConfigurator = styled.div`
+display:flex;
+flex-direction:column;
+& > * + * {
+    margin-top: 10px;
+}
+`;
 
 
 const Profile = () => {
@@ -54,18 +63,30 @@ const Profile = () => {
     onMount(async () => {
         const session = state()?.session;
         if (!session) return console.error("No session found");
-        const user = await session.queryUser();
+        const user = await session.getSettings();
         setDisplayName(user.displayName);
         setDescription(user.description);
+    });
+
+    createEffect(() => {
+        const session = state()?.session;
+        if (!session) return console.error("No session found");
+        session.commitProfile({
+            displayName: displayName(),
+            description: description(),
+        });
     });
     
     return (
         <>
             <h1>Profile</h1>
             <Section>
-                <AvatarContainer onClick={handleAvatarChange}>
-                    <img src={`https://cdn.nextflow.cloud/stores/avatars/files/1.png`} alt="avatar" />
-                </AvatarContainer>
+                <AvatarConfigurator>
+                    <AvatarContainer onClick={handleAvatarChange}>
+                        <img src={`https://cdn.nextflow.cloud/stores/avatars/files/1.png`} alt="avatar" />
+                    </AvatarContainer>
+                    <Button>Remove avatar</Button>
+                </AvatarConfigurator>
             </Section>
             <Section>
                 <Input placeholder="Display name" loading={false} value={displayName()} onChange={e => setDisplayName((e.target as HTMLInputElement).value)}  />
