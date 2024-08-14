@@ -52,7 +52,12 @@ const Sessions = () => {
     const revoke = (id: string) => {
         const session = state().session;
         if (!session) return console.error("No session found");
-        session.logout(id);
+        session.logout(id).then(() => {
+            const newSessions = sessions().filter(s => s.id !== id);
+            setSessions(newSessions);
+        }).catch(() => {
+            console.error("Failed to revoke session");
+        });
     }
 
     onMount(async () => {

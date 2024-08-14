@@ -7,22 +7,17 @@ import Box from "../../components/primitive/Box";
 import { createEffect, createMemo, createSignal, onMount } from "solid-js";
 import { useGlobalState } from "../../context";
 import UpdateAuthenticator, { AuthenticateType } from "../../components/UpdateAuthenticator";
+import Dialog from "@corvu/dialog";
 
 const Account = () => {
     const [username, setUsername] = createSignal<string>("");
     const [newPassword, setNewPassword] = createSignal<string>("");
-    const [twoFactor, setTwoFactor] = createSignal<boolean>(false);
+    const [twoFactor, setTwoFactor] = createSignal<boolean>();
     const [dialogType, setDialogType] = createSignal<AuthenticateType>();
     const state = createMemo(() => useGlobalState());
-    createEffect(() => {
-        let settings = state()?.settings;
-        if (!settings) return;
-        if (twoFactor() !== settings.mfaEnabled) {
-            // open password dialog
-            setDialogType(twoFactor() ? "ENABLE_MFA" : "DISABLE_MFA");
-        }
-    });
+    const dialogContext = createMemo(() => Dialog.useContext());
 
+    // TODO: block interaction until settings are loaded
     onMount(async () => {
         let settings = state().settings;
         if (!settings) {
@@ -32,6 +27,18 @@ const Account = () => {
         }
         setTwoFactor(settings.mfaEnabled);
         setUsername(settings.username);
+    });
+
+    createEffect(() => {
+        let settings = state().settings;
+        if (!settings) return;
+        let mfa = twoFactor();
+        if (mfa !== undefined && mfa !== settings.mfaEnabled) {
+            // open password dialog
+            console.log(twoFactor(), settings.mfaEnabled);
+            setDialogType(twoFactor() ? "ENABLE_MFA" : "DISABLE_MFA");
+            dialogContext().setOpen(true);
+        }
     });
 
     const updateAccount = () => {
@@ -46,7 +53,7 @@ const Account = () => {
             newPassword: newPasswordUnwrap,
         });
         setDialogType("UPDATE_ACCOUNT");
-        // TODO: open dialog
+        dialogContext().setOpen(true);
     };
 
     const deleteAccount = () => {

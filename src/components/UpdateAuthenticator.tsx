@@ -62,6 +62,9 @@ const UpdateAuthenticator = (props: { type?: AuthenticateType }) => {
             if (!cf) return console.error("No continue function found");
             await cf(mfaCode());
             dialogContext().setOpen(false);
+            if (props.type === "ENABLE_MFA") state().updateSettings({ mfaEnabled: true });
+            else if (props.type === "DISABLE_MFA") state().updateSettings({ mfaEnabled: false });
+            else if (props.type === "UPDATE_ACCOUNT") state().setStagedAccountSettings();
         }
     }
     return (
@@ -82,7 +85,7 @@ const UpdateAuthenticator = (props: { type?: AuthenticateType }) => {
                         </Match>
                         <Match when={stage() === "ONBOARD"}>
                             <h1>Set up two factor authentication</h1>
-                            <img src={qrCode()} alt="qr code" />
+                            <img src={`data:image/png;base64,${qrCode()}`} alt="QR code" width="300" height="300" />
                             <p>Scan the QR code or enter the following secret into your preferred authenticator app.</p>
                             <p>{secret()}</p>
                             <p>Additionally, here are some backup codes in case you ever lose access. They can only be used once. Please be mindful that they can be used to gain access to your account in place of the authenticator app.</p>

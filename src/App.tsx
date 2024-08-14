@@ -34,24 +34,24 @@ const App = () => {
           )} />
           <Route path="/manage">
             <Route path="/" component={() => (
-              // <Authenticated>
+              <Authenticated>
               <Navigate href="/manage/account" />
-              // </Authenticated>
+              </Authenticated>
             )} />
             <Route path="/account" component={() => (
-              // <Authenticated>
+              <Authenticated>
                 <ManageAccount active="account" />
-              // </Authenticated>
+              </Authenticated>
             )} />
             <Route path="/profile" component={() => (
-              // <Authenticated>
+              <Authenticated>
                 <ManageAccount active="profile" />
-              // </Authenticated>
+              </Authenticated>
             )} />
             <Route path="/sessions" component={() => (
-              // <Authenticated>
+              <Authenticated>
                 <ManageAccount active="sessions" />
-              // </Authenticated>
+              </Authenticated>
             )} />
           </Route>
           <Route path="/logout" component={() => (

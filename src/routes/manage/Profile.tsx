@@ -70,6 +70,11 @@ const Profile = () => {
     });
 
     createEffect(() => {
+        // TODO: above: check for meeting conditions
+        let existingSettings = state().settings;
+        if (!existingSettings) return;
+        console.log(existingSettings, displayName(), description());
+        if (existingSettings.displayName === displayName() && existingSettings.description === description()) return;
         const session = state().session;
         if (!session) return console.error("No session found");
         session.commitProfile({
