@@ -1,4 +1,4 @@
-import { createEffect, createSignal, JSX } from "solid-js";
+import { Accessor, Setter, JSX } from "solid-js";
 import { styled } from "solid-styled-components";
 
 const SwitchBase = styled.label`
@@ -40,19 +40,15 @@ const Slider = styled.span`
         ` : ""}
     }
 `
-
-const Switch = (props: { checked?: boolean; onChange?: JSX.ChangeEventHandlerUnion<HTMLInputElement, Event> }) => {
-    const [checked, setChecked] = createSignal(props.checked ?? false);
-    createEffect(() => {
-        setChecked(props.checked ?? false);
-    });
+/** A switch component. An Accessor and Setter managing the checked state must be passed down for proper state management. */
+const Switch = ({ checked, setChecked, onChange }: { checked: Accessor<boolean|undefined>|Accessor<boolean>; setChecked: Setter<boolean|undefined>|Setter<boolean>; onChange?: JSX.ChangeEventHandlerUnion<HTMLInputElement, Event> }) => {
     return (
         <SwitchBase>
             <input type="checkbox" checked={checked()} onChange={e => {
-                setChecked(e.currentTarget.checked);
-                (props.onChange as Function | undefined)?.(e);
+                (setChecked as Setter<boolean>)(e.currentTarget.checked);
+                (onChange as Function | undefined)?.(e);
             }} />
-            <Slider checked={checked()} />
+            <Slider checked={checked()??false} />
         </SwitchBase>
     )
 };

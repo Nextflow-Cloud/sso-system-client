@@ -39,7 +39,6 @@ const Sessions = () => {
     const state = createMemo(() => useGlobalState());
 
     const toggleIp = (e: Event) => {
-        (e.target as HTMLInputElement).checked ? setIpLogging(true) : setIpLogging(false);
         // TODO: implement this
     };
 
@@ -79,7 +78,7 @@ const Sessions = () => {
                     <p>For now, this setting will have no effect as this feature is not yet implemented.</p>
                 </Box>
                 <SwitchContainer>
-                <Switch onChange={toggleIp} checked={ipLogging()}  /> <span>Enable IP address logging</span></SwitchContainer>
+                <Switch onChange={toggleIp} checked={ipLogging} setChecked={setIpLogging}  /> <span>Enable IP address logging</span></SwitchContainer>
             </Section>
             <Section>
                 <Box type="error">

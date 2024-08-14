@@ -84,7 +84,7 @@ const Account = () => {
                     Two factor authentication is highly recommended to secure your account.
                 </Box>
                 <SwitchContainer>
-                    <Switch onChange={e => setTwoFactor((e.target as HTMLInputElement).checked)} checked={twoFactor()} />
+                    <Switch checked={twoFactor} setChecked={setTwoFactor} />
                     <span>Two factor authentication</span>
                 </SwitchContainer>
                 <Box type="error">

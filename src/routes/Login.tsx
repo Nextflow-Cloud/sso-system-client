@@ -187,7 +187,7 @@ const Login = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; setL
                                 value={password()} 
                                 onChange={v => setPassword((v.target as HTMLInputElement).value)} 
                             />
-                            <Switch checked={persist()} onChange={e => setPersist((e.target as HTMLInputElement).checked)} /> {translate(lang(), "STAY_SIGNED_IN")}
+                            <Switch checked={persist} setChecked={setPersist} /> {translate(lang(), "STAY_SIGNED_IN")}
                             
                             <Button onClick={login} disabled={loading()}>{translate(lang(), "CONTINUE")}</Button>
                         </div>
