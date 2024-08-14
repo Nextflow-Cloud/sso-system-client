@@ -1,4 +1,4 @@
-import { Accessor, createEffect, createSignal, ParentProps, Setter } from "solid-js";
+import { Accessor, createEffect, createSignal, onCleanup, ParentProps, Setter } from "solid-js";
 import { styled } from "solid-styled-components";
 import SelectMenu from "./primitive/SelectMenu";
 import { Language, translate } from "../utilities/i18n";
@@ -117,11 +117,11 @@ const Container = ({ children, loading, lang, setLang }: ParentProps<{ loading: 
             setIsDesktop(window.innerWidth >= 768);
         };
         addEventListener("resize", sizeListener);
-        return () => {
+        onCleanup(() => {
             form?.removeEventListener("submit", listener);
             removeEventListener("resize", sizeListener);
-        };
-    }, [form]);
+        });
+    });
 
     if (isDesktop()) {
         return (
