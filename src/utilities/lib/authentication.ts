@@ -147,7 +147,7 @@ export class Client {
 
     async configureMfa(password: string): Promise<MfaOperation> {
         const request = await wrappedFetch("/api/user/mfa", {
-            method: "POST",
+            method: "PATCH",
             headers: {
                 Authorization: `Bearer ${this.accessToken}`,
                 "Content-Type": "application/json",
@@ -155,10 +155,10 @@ export class Client {
             body: JSON.stringify({ stage: 1, password }),
         });
         throwErrors(request);
-        const response: { success: null; continueToken: string } & ({ qr: null; secret: null } | { qr: string; secret: string }) = await request.json();
+        const response: { success: null; continueToken: string } & ({ qr: null; secret: null; codes: null } | { qr: string; secret: string; codes: string[] }) = await request.json();
         const continueFunction = async (code: string) => {
             const request = await wrappedFetch("/api/user/mfa", {
-                method: "POST",
+                method: "PATCH",
                 headers: {
                     Authorization: `Bearer ${this.accessToken}`,
                     "Content-Type": "application/json",
@@ -173,6 +173,7 @@ export class Client {
                 qr: response.qr,
                 secret: response.secret,
                 pendingEnable: true,
+                codes: response.codes,
             };
         } else {
             return {
@@ -191,6 +192,7 @@ export type MfaOperation = {
     qr: string;
     secret: string;
     pendingEnable: true;
+    codes: string[];
 }
 
 export interface Session {

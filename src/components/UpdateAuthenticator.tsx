@@ -14,6 +14,7 @@ type AuthenticateStage = "PASSWORD" | "ONBOARD" | "DELETE" | "MFA";
 const UpdateAuthenticator = (props: { type?: AuthenticateType }) => {
     const [stage, setStage] = createSignal<AuthenticateStage>("PASSWORD");
     const [qrCode, setQrCode] = createSignal<string>("");
+    const [codes, setCodes] = createSignal<string[]>([]);
     const [secret, setSecret] = createSignal<string>("");
     const [password, setPassword] = createSignal<string>("");
     const [mfaCode, setMfaCode] = createSignal<string>("");
@@ -31,6 +32,7 @@ const UpdateAuthenticator = (props: { type?: AuthenticateType }) => {
                 if (!result.pendingEnable) throw new Error("State is out of sync!");
                 setQrCode(result.qr);
                 setSecret(result.secret);
+                setCodes(result.codes);
                 setContinueFunction(() => result.continueFunction); 
 
                 setStage("ONBOARD");
@@ -109,6 +111,7 @@ const UpdateAuthenticator = (props: { type?: AuthenticateType }) => {
                             <p>Scan the QR code or enter the following secret into your preferred authenticator app.</p>
                             <p>{secret()}</p>
                             <p>Additionally, here are some backup codes in case you ever lose access. They can only be used once. Please be mindful that they can be used to gain access to your account in place of the authenticator app.</p>
+                            <p>{codes().join("\n")}</p>
                             <p>This information will never be shown again, so please store them securely.</p>
                             <Button onClick={next}>Continue</Button>
                         </Match>
