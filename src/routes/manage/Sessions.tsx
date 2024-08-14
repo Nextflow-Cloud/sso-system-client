@@ -9,13 +9,6 @@ import { useGlobalState } from "../../context";
 import { Session } from "../../utilities/lib/authentication";
 import { styled } from "solid-styled-components";
 
-const sample: Session[] = [{ 
-    id: "01J56F2RCGRQC4SNAA02SYSED3",
-    friendlyName: "Nextflow Desktop",
-    ipAddress: "192.168.0.1",
-    location: "Unknown",
-}];
-
 const SessionList = styled.table`
     margin-top: 20px;
     border-radius: 10px;
@@ -35,7 +28,7 @@ const SessionItems = styled.tbody`
 
 const Sessions = () => {
     const [ipLogging, setIpLogging] = createSignal<boolean>(false);
-    const [sessions, setSessions] = createSignal<Session[]>(sample);
+    const [sessions, setSessions] = createSignal<Session[]>([]);
     const state = createMemo(() => useGlobalState());
 
     const toggleIp = (e: Event) => {

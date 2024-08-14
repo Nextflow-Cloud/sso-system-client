@@ -2,7 +2,7 @@ import { styled } from "solid-styled-components";
 import Input from "../../components/primitive/Input";
 import { Section } from "../ManageAccount";
 import AvatarPicker from "../../components/AvatarPicker";
-import { createEffect, createMemo, createSignal, onMount } from "solid-js";
+import { createMemo, createSignal, onMount } from "solid-js";
 import Dialog from "@corvu/dialog";
 import { useGlobalState } from "../../context";
 import Button from "../../components/primitive/Button";
@@ -36,8 +36,8 @@ const Profile = () => {
     const [stagedImage, setStagedImage] = createSignal<Image>();
     const dialogContext = createMemo(() => Dialog.useContext());
     const state = createMemo(() => useGlobalState());
-    const [displayName, setDisplayName] = createSignal<string>("");
-    const [description, setDescription] = createSignal<string>("");
+    const [displayName, setDisplayName] = createSignal<string>();
+    const [description, setDescription] = createSignal<string>();
     const handleAvatarChange = () => {
         const input = document.createElement("input");
         input.type = "file";

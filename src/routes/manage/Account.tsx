@@ -10,7 +10,7 @@ import UpdateAuthenticator, { AuthenticateType } from "../../components/UpdateAu
 import Dialog from "@corvu/dialog";
 
 const Account = () => {
-    const [username, setUsername] = createSignal<string>("");
+    const [username, setUsername] = createSignal<string>();
     const [newPassword, setNewPassword] = createSignal<string>("");
     const [twoFactor, setTwoFactor] = createSignal<boolean>();
     const [dialogType, setDialogType] = createSignal<AuthenticateType>();
@@ -77,7 +77,7 @@ const Account = () => {
             <h1>Manage account</h1>
             <Section>
                 <Input placeholder="Username" loading={false} value={username()} onChange={e => setUsername((e.target as HTMLInputElement).value)} />
-                <Input placeholder="New password" loading={false} value={newPassword()} onChange={e => setNewPassword((e.target as HTMLInputElement).value)} />
+                <Input placeholder="New password" loading={false} password value={newPassword()} onChange={e => setNewPassword((e.target as HTMLInputElement).value)} />
                 <Button onClick={updateAccount}>Commit</Button>
             </Section>
             <Section>
