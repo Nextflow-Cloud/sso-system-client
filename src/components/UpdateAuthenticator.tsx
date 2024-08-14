@@ -5,9 +5,10 @@ import Input from "./primitive/Input";
 import Button from "./primitive/Button";
 import { AccountUpdateContinueFunction } from "../utilities/lib/authentication";
 import { useGlobalState } from "../context";
+import Box from "./primitive/Box";
 
-export type AuthenticateType = "ENABLE_MFA" | "DISABLE_MFA" | "UPDATE_ACCOUNT";
-type AuthenticateStage = "PASSWORD" | "ONBOARD" | "MFA";
+export type AuthenticateType = "ENABLE_MFA" | "DISABLE_MFA" | "UPDATE_ACCOUNT" | "DELETE_ACCOUNT";
+type AuthenticateStage = "PASSWORD" | "ONBOARD" | "DELETE" | "MFA";
 
 
 const UpdateAuthenticator = (props: { type?: AuthenticateType }) => {
@@ -51,11 +52,26 @@ const UpdateAuthenticator = (props: { type?: AuthenticateType }) => {
                 else setContinueFunction(() => result);
 
                 setStage("MFA");
+            } else if (props.type === "DELETE_ACCOUNT") {
+                setStage("DELETE");
             }
         } else
         if (stage() === "ONBOARD") {            
             //transition to next stage
             setStage("MFA");
+        } else
+        if (stage() === "DELETE") {
+            const session = state().get("session");
+            if (!session) return console.error("No session found");
+            const result = await session.deleteAccount(password());
+            if (!result) {
+                dialogContext().setOpen(false);
+                localStorage.removeItem("token");
+                window.location.href = "/";               
+            } else {
+                setContinueFunction(() => result);
+                setStage("MFA");
+            }
         } else
         if (stage() === "MFA") {
             const cf = continueFunction();
@@ -65,6 +81,10 @@ const UpdateAuthenticator = (props: { type?: AuthenticateType }) => {
             if (props.type === "ENABLE_MFA") state().update("settings", { mfaEnabled: true });
             else if (props.type === "DISABLE_MFA") state().update("settings", { mfaEnabled: false });
             else if (props.type === "UPDATE_ACCOUNT") state().set("stagedAccountSettings", undefined);
+            else if (props.type === "DELETE_ACCOUNT") {
+                localStorage.removeItem("token");
+                window.location.href = "/";
+            }
         }
     }
     return (
@@ -91,6 +111,14 @@ const UpdateAuthenticator = (props: { type?: AuthenticateType }) => {
                             <p>Additionally, here are some backup codes in case you ever lose access. They can only be used once. Please be mindful that they can be used to gain access to your account in place of the authenticator app.</p>
                             <p>This information will never be shown again, so please store them securely.</p>
                             <Button onClick={next}>Continue</Button>
+                        </Match>
+                        <Match when={stage() === "DELETE"}>
+                            <h1>Are you sure you want to delete your account and all associated data?</h1>
+                            <p>This action is irreversible.</p>
+                            <Box type="error">
+                                <h1>This is your last warning.</h1>
+                            </Box>
+                            <Button onClick={next}>Delete</Button>
                         </Match>
                         <Match when={stage() === "MFA"}>
                             <h1>Enter your two factor authentication code</h1>

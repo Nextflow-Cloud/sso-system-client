@@ -68,8 +68,9 @@ const Account = () => {
     };
 
     const deleteAccount = () => {
-
-    }
+        setDialogType("DELETE_ACCOUNT");
+        dialogContext().setOpen(true);
+    };
     return (
         <>
         
