@@ -7,7 +7,7 @@ import Input from "../components/primitive/Input";
 import Button from "../components/primitive/Button";
 import Link from "../components/primitive/Link";
 import Switch from "../components/primitive/Switch";
-import { createSessionPasskey } from "../utilities/lib/authenticationExperimental";
+// import { createSessionPasskey } from "../utilities/lib/authenticationExperimental";
 import { Switch as ConditionalSwitch } from "solid-js";
 import { createSession, PartialClient, SessionError, SessionErrorType, validateSession } from "../utilities/lib/authentication";
 import OtpInput from "../components/primitive/OtpInput";
@@ -144,11 +144,13 @@ const Login = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; setL
         }
     };
 
+    // TODO: don't copy this code
     const checkToken = async () => {
         const token = localStorage.getItem("token");
         if (token) {
             const session = await validateSession(token);
             if (session) {
+                // however, need to handle this somehow
                 setStage("skip");
                 await continueToRegisteredService(token);
             }
@@ -166,10 +168,10 @@ const Login = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; setL
                 <Match when={stage() === "credentials"}>
                     <Fade hiding={hiding()}>
                         <Title>{translate(lang(), "LOGIN")}</Title>
-                        <div>
+                        {/* <div>
                             <Button onClick={createSessionPasskey} disabled={loading()}>{translate(lang(), "LOGIN_WITH_PASSKEY")}</Button>
                         </div>
-                        <span style={{ "align-self": "center"}}>OR</span>
+                        <span style={{ "align-self": "center"}}>OR</span> */}
                         <div>
                             <Input
                                 placeholder={translate(lang(), "EMAIL")}
