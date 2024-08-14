@@ -5,10 +5,10 @@ const wrappedFetch = async (input: RequestInfo, init?: RequestInit): Promise<Res
     new Promise((_, reject) => setTimeout(() => reject(new SessionError("TIMED_OUT")), 5000))
 ]) as Promise<Response>;
 
-export class Session {
+export class Client {
     constructor(private id: string | null, private accessToken: string) {}
-    needsContinuation(): this is PartialSession {
-        return this instanceof PartialSession;
+    needsContinuation(): this is PartialClient {
+        return this instanceof PartialClient;
     }
 
     get token(): string {
@@ -96,6 +96,90 @@ export class Session {
             throw new SessionError("UNKNOWN_ERROR");
         }
     }
+
+    async getAllSessions(): Promise<Session[]> {
+        const request = await wrappedFetch("/api/session", {
+            headers: {
+                Authorization: `Bearer ${this.accessToken}`,
+                "Content-Type": "application/json",
+            },
+        });
+        if (request.status === 401) {
+            throw new SessionError("SESSION_EXPIRED");
+        }
+        if (request.status === 429) {
+            throw new SessionError("TOO_MANY_REQUESTS");
+        }
+        if (!request.ok) {
+            throw new SessionError("UNKNOWN_ERROR");
+        }
+        return await request.json();
+    }
+
+    async logoutAll(): Promise<void> {
+        const request = await wrappedFetch("/api/session/all", {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${this.accessToken}`,
+                "Content-Type": "application/json",
+            },
+        });
+        if (request.status === 401) {
+            throw new SessionError("SESSION_EXPIRED");
+        }
+        if (request.status === 429) {
+            throw new SessionError("TOO_MANY_REQUESTS");
+        }
+        if (!request.ok) {
+            throw new SessionError("UNKNOWN_ERROR");
+        }
+    }
+
+    async logout(id?: string): Promise<void> {
+        const request = await wrappedFetch(`/api/session/${id}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${this.accessToken}`,
+                "Content-Type": "application/json",
+            },
+        });
+        if (request.status === 401) {
+            throw new SessionError("SESSION_EXPIRED");
+        }
+        if (request.status === 429) {
+            throw new SessionError("TOO_MANY_REQUESTS");
+        }
+        if (!request.ok) {
+            throw new SessionError("UNKNOWN_ERROR");
+        }
+    }
+
+    async queryUser(): Promise<Settings> {
+        const request = await wrappedFetch("/api/user", {
+            headers: {
+                Authorization: `Bearer ${this.accessToken}`,
+                "Content-Type": "application/json",
+            },
+        });
+        if (request.status === 401) {
+            throw new SessionError("SESSION_EXPIRED");
+        }
+        if (request.status === 429) {
+            throw new SessionError("TOO_MANY_REQUESTS");
+        }
+        if (!request.ok) {
+            throw new SessionError("UNKNOWN_ERROR");
+        }
+        return await request.json();
+    }
+}
+
+export interface Session {
+    id: string;
+    friendlyName: string;
+    ipAddress?: string;
+    location?: string;
+    // lastActive: string;
 }
 
 type AccountUpdateContinueFunction = (code: string) => Promise<void>;
@@ -120,13 +204,13 @@ export interface Profile {
     avatar: string;
 }
 
-export class PartialSession {
+export class PartialClient {
     constructor(private continuation: string) {}
-    needsContinuation(): this is PartialSession {
-        return this instanceof PartialSession;
+    needsContinuation(): this is PartialClient {
+        return this instanceof PartialClient;
     }
 
-    async continue(code: string): Promise<Session> {
+    async continue(code: string): Promise<Client> {
         const request = await wrappedFetch("/api/session", {
             method: "POST",
             headers: {
@@ -147,7 +231,7 @@ export class PartialSession {
             throw new SessionError("UNKNOWN_ERROR");
         }
         const response: { id: string; token: string } = await request.json();
-        return new Session(response.id, response.token);
+        return new Client(response.id, response.token);
     };
 }
 
@@ -172,7 +256,7 @@ export class SessionError extends Error {
     }
 }
 
-export const createSession = async (email: string, password: string, persist?: boolean): Promise<Session | PartialSession> => {
+export const createSession = async (email: string, password: string, persist?: boolean): Promise<Client | PartialClient> => {
     const request = await wrappedFetch("/api/session", {
         method: "POST",
         headers: {
@@ -191,13 +275,13 @@ export const createSession = async (email: string, password: string, persist?: b
     }
     const response: { mfaEnabled: true; continueToken: string } | { mfaEnabled: false; id: string; token: string } = await request.json();
     if (response.mfaEnabled) {
-        return new PartialSession(response.continueToken);
+        return new PartialClient(response.continueToken);
     } else {
-        return new Session(response.id, response.token);
+        return new Client(response.id, response.token);
     }
 };
 
-export const validateSession = async (token: string): Promise<Session | undefined> => {
+export const validateSession = async (token: string): Promise<Client | undefined> => {
     const request = await Promise.race([
         fetch("/api/validate", {
             method: "POST",
@@ -211,7 +295,7 @@ export const validateSession = async (token: string): Promise<Session | undefine
     if (!request || !request.ok) {
         return;
     }
-    return new Session(null, token);
+    return new Client(null, token);
 };
 
 export interface Credentials {
@@ -222,7 +306,7 @@ export interface Credentials {
     captchaToken: string;
 }
 
-export const createAccount = async (credentials: Credentials): Promise<Session> => {
+export const createAccount = async (credentials: Credentials): Promise<Client> => {
     const request = await wrappedFetch("/api/user", {
         method: "POST",
         headers: {
@@ -244,5 +328,5 @@ export const createAccount = async (credentials: Credentials): Promise<Session> 
         throw new SessionError("UNKNOWN_ERROR");
     }
     const response: { id: string; token: string } = await request.json();
-    return new Session(response.id, response.token);
+    return new Client(response.id, response.token);
 }

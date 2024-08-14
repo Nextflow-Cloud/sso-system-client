@@ -9,7 +9,7 @@ import Link from "../components/primitive/Link";
 import Switch from "../components/primitive/Switch";
 import { createSessionPasskey } from "../utilities/lib/authenticationExperimental";
 import { Switch as ConditionalSwitch } from "solid-js";
-import { createSession, PartialSession, SessionError, SessionErrorType, validateSession } from "../utilities/lib/authentication";
+import { createSession, PartialClient, SessionError, SessionErrorType, validateSession } from "../utilities/lib/authentication";
 import OtpInput from "../components/primitive/OtpInput";
 import { useNavigate } from "@solidjs/router";
 import { TRUSTED_SERVICES } from "../constants";
@@ -26,7 +26,7 @@ const Login = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; setL
     const [password, setPassword] = createSignal("");
     const [code, setCode] = createSignal("");
     const [persist, setPersist] = createSignal(false);
-    const [partialSession, setPartialSession] = createSignal<PartialSession>();
+    const [partialSession, setPartialSession] = createSignal<PartialClient>();
 
     const [hiding, setHiding] = createSignal(false);
 
