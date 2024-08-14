@@ -4,14 +4,9 @@ import Box from "../../components/primitive/Box";
 import Switch, { SwitchContainer } from "../../components/primitive/Switch";
 import Button from "../../components/primitive/Button";
 import { decodeTime, monotonicFactory } from "ulid";
-import { createSignal } from "solid-js";
-
-interface Session {
-    id: string,
-    friendlyName: string,
-    ipAddress: string,
-    location: string,
-}
+import { createMemo, createSignal, onMount } from "solid-js";
+import { useGlobalState } from "../../context";
+import { Session } from "../../utilities/lib/authentication";
 
 const sample: Session[] = [{ 
     id: "01J56F2RCGRQC4SNAA02SYSED3",
@@ -23,15 +18,25 @@ const sample: Session[] = [{
 const Sessions = () => {
     const [ipLogging, setIpLogging] = createSignal<boolean>(false);
     const [sessions, setSessions] = createSignal<Session[]>(sample);
+    const state = createMemo(() => useGlobalState());
 
     const toggleIp = (e: Event) => {
         (e.target as HTMLInputElement).checked ? setIpLogging(true) : setIpLogging(false);
-        // TODO: context for current session    
-    }
+        // TODO: implement this
+    };
 
     const logoutAll = () => {
-        // logout all
-    }
+        const session = state()?.session;
+        if (!session) return console.error("No session found");
+        session.logoutAll();
+    };
+
+    onMount(async () => {
+        const session = state()?.session;
+        if (!session) return console.error("No session found");
+        const sessions = await session.getAllSessions();
+        setSessions(sessions);
+    });
 
     return (
         <>
@@ -43,7 +48,7 @@ const Sessions = () => {
                     </p>
                 </Box>
                 <SwitchContainer>
-                <Switch onChange={toggleIp} checked={ipLogging()} /> <span>Enable IP address logging</span></SwitchContainer>
+                <Switch onChange={toggleIp} checked={ipLogging()}  /> <span>Enable IP address logging</span></SwitchContainer>
             </Section>
             <Section>
                 <Box type="error">

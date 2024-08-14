@@ -2,8 +2,9 @@ import { styled } from "solid-styled-components";
 import Input from "../../components/primitive/Input";
 import { Section } from "../ManageAccount";
 import AvatarPicker from "../../components/AvatarPicker";
-import { createMemo, createSignal } from "solid-js";
+import { createMemo, createSignal, onMount } from "solid-js";
 import Dialog from "@corvu/dialog";
+import { useGlobalState } from "../../context";
 
 const AvatarContainer = styled.div`
     display: flex;
@@ -25,6 +26,9 @@ export interface Image {
 const Profile = () => {
     const [stagedImage, setStagedImage] = createSignal<Image>();
     const dialogContext = createMemo(() => Dialog.useContext());
+    const state = createMemo(() => useGlobalState());
+    const [displayName, setDisplayName] = createSignal<string>("");
+    const [description, setDescription] = createSignal<string>("");
     const handleAvatarChange = () => {
         const input = document.createElement("input");
         input.type = "file";
@@ -46,6 +50,14 @@ const Profile = () => {
         })
         input.click(); 
     };
+
+    onMount(async () => {
+        const session = state()?.session;
+        if (!session) return console.error("No session found");
+        const user = await session.queryUser();
+        setDisplayName(user.displayName);
+        setDescription(user.description);
+    });
     
     return (
         <>
@@ -56,8 +68,8 @@ const Profile = () => {
                 </AvatarContainer>
             </Section>
             <Section>
-                <Input placeholder="Display name" loading={false} />
-                <Input placeholder="Profile description" loading={false} />
+                <Input placeholder="Display name" loading={false} value={displayName()} onChange={e => setDisplayName((e.target as HTMLInputElement).value)}  />
+                <Input placeholder="Profile description" loading={false} value={description()} onChange={e => setDescription((e.target as HTMLInputElement).value)}  />
             </Section>
             <AvatarPicker stagedImage={stagedImage} />
         </>
