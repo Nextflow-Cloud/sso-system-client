@@ -4,12 +4,13 @@ import Input from "../../components/primitive/Input";
 import { Section } from "../ManageAccount";
 import Switch, { SwitchContainer } from "../../components/primitive/Switch";
 import Box from "../../components/primitive/Box";
-import { createEffect, createMemo, createSignal, onMount } from "solid-js";
+import { Accessor, createEffect, createMemo, createSignal, onMount, Setter } from "solid-js";
 import { useGlobalState } from "../../context";
 import UpdateAuthenticator, { AuthenticateType } from "../../components/UpdateAuthenticator";
 import Dialog from "@corvu/dialog";
+import { calculateEntropy } from "../../utilities/client";
 
-const Account = () => {
+const Account = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoading: Setter<boolean>; }) => {
     const [username, setUsername] = createSignal<string>();
     const [newPassword, setNewPassword] = createSignal<string>("");
     const [twoFactor, setTwoFactor] = createSignal<boolean>();
@@ -17,8 +18,8 @@ const Account = () => {
     const state = createMemo(() => useGlobalState());
     const dialogContext = createMemo(() => Dialog.useContext());
 
-    // TODO: block interaction until settings are loaded
     onMount(async () => {
+        setLoading(true);
         let settings = state().get("settings");
         if (!settings) {
             const session = state().get("session");
@@ -28,6 +29,7 @@ const Account = () => {
         }
         setTwoFactor(settings.mfaEnabled);
         setUsername(settings.username);
+        setLoading(false);
     });
 
     createEffect(() => {
@@ -53,12 +55,19 @@ const Account = () => {
     });
 
     const updateAccount = () => {
-        // TODO: check for invalid passwords
-        let newUsername: string|undefined = username();
+        let newUsername: string|undefined = username()?.trim();
         if (newUsername === state().get("settings")?.username || !newUsername) newUsername = undefined;
+        if (newUsername && !(/^[0-9A-Za-z_.-]{3,32}$/).test(newUsername)) {
+            // TODO: show error
+            return;
+        }
         let newPasswordUnwrap: string|undefined = newPassword();
         if (!newPasswordUnwrap) newPasswordUnwrap = undefined;
-        if (!newUsername && !newPasswordUnwrap) return;
+        if (calculateEntropy(newPasswordUnwrap) < 64) {
+            // TODO: show error
+            return;
+        }
+        if (!newUsername && !newPasswordUnwrap) return; // nothing to do
         state().set("stagedAccountSettings", {
             username: newUsername,
             newPassword: newPasswordUnwrap,
@@ -76,9 +85,9 @@ const Account = () => {
         
             <h1>Manage account</h1>
             <Section>
-                <Input placeholder="Username" loading={false} value={username()} onChange={e => setUsername((e.target as HTMLInputElement).value)} />
-                <Input placeholder="New password" loading={false} password value={newPassword()} onChange={e => setNewPassword((e.target as HTMLInputElement).value)} />
-                <Button onClick={updateAccount}>Commit</Button>
+                <Input placeholder="Username" loading={loading()} value={username()} onChange={e => setUsername((e.target as HTMLInputElement).value)} />
+                <Input placeholder="New password" loading={loading()} password value={newPassword()} onChange={e => setNewPassword((e.target as HTMLInputElement).value)} />
+                <Button onClick={updateAccount} disabled={loading()}>Commit</Button>
             </Section>
             <Section>
                 <Box type="warning">
@@ -96,7 +105,7 @@ const Account = () => {
                 </Box>
                 <Button onClick={deleteAccount}>Delete account</Button>
             </Section>
-            <UpdateAuthenticator type={dialogType()} />
+            <UpdateAuthenticator type={dialogType()} loading={loading} setLoading={setLoading} />
         </>
     )
 };

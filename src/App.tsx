@@ -34,7 +34,7 @@ const App = () => {
           )} />
           <Route path="/manage/:category?" matchFilters={{ category: ["account", "profile", "sessions"] }} component={() => (
             <Authenticated>
-              <ManageAccount />
+              <ManageAccount loading={loading} setLoading={setLoading} />
             </Authenticated>
           )} />
           <Route path="/logout" component={() => (

@@ -6,7 +6,7 @@ import Button from "../components/primitive/Button";
 import { RiBusinessProfileFill, RiBusinessProfileLine, RiSystemShieldKeyholeFill, RiSystemShieldKeyholeLine, RiUserFacesAccountBoxFill, RiUserFacesAccountBoxLine } from "solid-icons/ri";
 import MenuItem from "../components/MenuItem";
 import { Navigate, useNavigate, useParams } from "@solidjs/router";
-import { createSignal, Match, Switch } from "solid-js";
+import { Accessor, createSignal, Match, Setter, Switch } from "solid-js";
 import Account from "./manage/Account";
 import Profile from "./manage/Profile";
 import Dialog from "@corvu/dialog";
@@ -134,7 +134,7 @@ const PopoverContent = styled(Popover.Content)`
 
 type Active = "account" | "profile" | "sessions";
 
-const ManageAccount = () => {
+const ManageAccount = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoading: Setter<boolean>; }) => {
     const params = useParams();
     const navigate = useNavigate();
     const logout = () => {
@@ -167,12 +167,12 @@ const ManageAccount = () => {
                                 <Switch>
                                     <Match when={params.category === "account"}>
                                         <Dialog>
-                                            <Account />
+                                            <Account loading={loading} setLoading={setLoading} />
                                         </Dialog>
                                     </Match>
                                     <Match when={params.category === "profile"}>
                                         <Dialog>
-                                            <Profile />
+                                            <Profile loading={loading} setLoading={setLoading} />
                                         </Dialog>
                                     </Match>
                                     <Match when={params.category === "sessions"}>

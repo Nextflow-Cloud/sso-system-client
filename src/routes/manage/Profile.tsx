@@ -2,7 +2,7 @@ import { styled } from "solid-styled-components";
 import Input from "../../components/primitive/Input";
 import { Section } from "../ManageAccount";
 import AvatarPicker from "../../components/AvatarPicker";
-import { createMemo, createSignal, onMount } from "solid-js";
+import { Accessor, createMemo, createSignal, onMount, Setter } from "solid-js";
 import Dialog from "@corvu/dialog";
 import { useGlobalState } from "../../context";
 import Button from "../../components/primitive/Button";
@@ -32,7 +32,7 @@ flex-direction:column;
 `;
 
 
-const Profile = () => {
+const Profile = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoading: Setter<boolean>; }) => {
     const [stagedImage, setStagedImage] = createSignal<Image>();
     const dialogContext = createMemo(() => Dialog.useContext());
     const state = createMemo(() => useGlobalState());
@@ -61,6 +61,7 @@ const Profile = () => {
     };
 
     onMount(async () => {
+        setLoading(true);
         let settings = state().get("settings");
         if (!settings) {
             const session = state().get("session");
@@ -71,13 +72,23 @@ const Profile = () => {
         }
         setDisplayName(settings.displayName);
         setDescription(settings.description);
+        setLoading(false);
     });
 
     const save = () => {
-        // TODO: above: check for meeting conditions
         let existingSettings = state().get("settings");
         if (!existingSettings) return;
-        if (existingSettings.displayName === displayName() && existingSettings.description === description()) return;
+        let dn = displayName()?.trim();
+        let desc = description()?.trim();
+        if (existingSettings.displayName === dn && existingSettings.description === desc) return;
+        if (!dn) return;
+        if (dn.length > 64) { // TODO: errors
+            return;
+        }
+        // 256 for now, but 2048 server side
+        if (desc && desc.length > 256) { // TODO: make this a constant
+            return;
+        }
         const session = state().get("session");
         if (!session) return console.error("No session found");
         session.commitProfile({
@@ -87,8 +98,7 @@ const Profile = () => {
         state().update("settings", {
             displayName: displayName(),
             description: description(),
-        })
-
+        });
     };
     
     return (
@@ -103,9 +113,9 @@ const Profile = () => {
                 </AvatarConfigurator>
             </Section>
             <Section>
-                <Input placeholder="Display name" loading={false} value={displayName()} onChange={e => setDisplayName((e.target as HTMLInputElement).value)}  />
-                <Input placeholder="Profile description" loading={false} value={description()} onChange={e => setDescription((e.target as HTMLInputElement).value)}  />
-                <Button onClick={save}>Save</Button>
+                <Input placeholder="Display name" loading={loading()} value={displayName()} onChange={e => setDisplayName((e.target as HTMLInputElement).value)}  />
+                <Input placeholder="Profile description" loading={loading()} value={description()} onChange={e => setDescription((e.target as HTMLInputElement).value)}  />
+                <Button onClick={save} disabled={loading()}>Save</Button>
             </Section>
             <AvatarPicker stagedImage={stagedImage} />
         </>

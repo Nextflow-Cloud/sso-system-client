@@ -1,6 +1,6 @@
 import Dialog from "@corvu/dialog";
 import { Content, Overlay } from "./Dialog";
-import { createMemo, createSignal, Match, Show, Switch } from "solid-js";
+import { Accessor, createMemo, createSignal, Match, Setter, Show, Switch } from "solid-js";
 import Input from "./primitive/Input";
 import Button from "./primitive/Button";
 import { AccountUpdateContinueFunction } from "../utilities/lib/authentication";
@@ -10,8 +10,8 @@ import Box from "./primitive/Box";
 export type AuthenticateType = "ENABLE_MFA" | "DISABLE_MFA" | "UPDATE_ACCOUNT" | "DELETE_ACCOUNT";
 type AuthenticateStage = "PASSWORD" | "ONBOARD" | "DELETE" | "MFA";
 
-
-const UpdateAuthenticator = (props: { type?: AuthenticateType }) => {
+// TODO: replace this with state.set("loading", true)
+const UpdateAuthenticator = (props: { type?: AuthenticateType, loading: Accessor<boolean>; setLoading: Setter<boolean> }) => {
     const [stage, setStage] = createSignal<AuthenticateStage>("PASSWORD");
     const [qrCode, setQrCode] = createSignal<string>("");
     const [codes, setCodes] = createSignal<string[]>([]);
@@ -23,6 +23,7 @@ const UpdateAuthenticator = (props: { type?: AuthenticateType }) => {
     const dialogContext = createMemo(() => Dialog.useContext());
     
     const next = async () => {
+        props.setLoading(true);
         if (stage() === "PASSWORD") {
             if (props.type === "ENABLE_MFA") {
                 const session = state().get("session");
@@ -88,6 +89,7 @@ const UpdateAuthenticator = (props: { type?: AuthenticateType }) => {
                 window.location.href = "/";
             }
         }
+        props.setLoading(false);
     }
     return (
         <>
@@ -102,8 +104,8 @@ const UpdateAuthenticator = (props: { type?: AuthenticateType }) => {
                     }>
                         <Match when={stage() === "PASSWORD"}>
                             <h1>Enter your password</h1>
-                            <Input password placeholder="Password" loading={false} onChange={e => setPassword((e.target as HTMLInputElement).value)} value={password()} />
-                            <Button onClick={next}>Continue</Button>
+                            <Input password placeholder="Password" loading={props.loading()} onChange={e => setPassword((e.target as HTMLInputElement).value)} value={password()} />
+                            <Button onClick={next} disabled={props.loading()}>Continue</Button>
                         </Match>
                         <Match when={stage() === "ONBOARD"}>
                             <h1>Set up two factor authentication</h1>
@@ -113,7 +115,7 @@ const UpdateAuthenticator = (props: { type?: AuthenticateType }) => {
                             <p>Additionally, here are some backup codes in case you ever lose access. They can only be used once. Please be mindful that they can be used to gain access to your account in place of the authenticator app.</p>
                             <p>{codes().join("\n")}</p>
                             <p>This information will never be shown again, so please store them securely.</p>
-                            <Button onClick={next}>Continue</Button>
+                            <Button onClick={next} disabled={props.loading()}>Continue</Button>
                         </Match>
                         <Match when={stage() === "DELETE"}>
                             <h1>Are you sure you want to delete your account and all associated data?</h1>
@@ -121,15 +123,15 @@ const UpdateAuthenticator = (props: { type?: AuthenticateType }) => {
                             <Box type="error">
                                 <h1>This is your last warning.</h1>
                             </Box>
-                            <Button onClick={next}>Delete</Button>
+                            <Button onClick={next} disabled={props.loading()}>Delete</Button>
                         </Match>
                         <Match when={stage() === "MFA"}>
                             <h1>Enter your two factor authentication code</h1>
-                            <Input placeholder="Code" loading={false} onChange={e => setMfaCode((e.target as HTMLInputElement).value)} value={mfaCode()} />
+                            <Input placeholder="Code" loading={props.loading()} onChange={e => setMfaCode((e.target as HTMLInputElement).value)} value={mfaCode()} />
                             <Show when={props.type === "ENABLE_MFA"}>
-                                <Button onClick={() => setStage("ONBOARD")}>Back</Button>
+                                <Button onClick={() => setStage("ONBOARD")} disabled={props.loading()}>Back</Button>
                             </Show>
-                            <Button onClick={next}>Finish</Button>
+                            <Button onClick={next} disabled={props.loading()}>Finish</Button>
                         </Match>
                     </Switch>
                 </Content>
