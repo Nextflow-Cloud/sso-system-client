@@ -1,4 +1,4 @@
-import { createSignal, JSX } from "solid-js";
+import { createEffect, createSignal, JSX } from "solid-js";
 import { styled } from "solid-styled-components";
 
 const SwitchBase = styled.label`
@@ -42,10 +42,13 @@ const Slider = styled.span`
 `
 
 const Switch = (props: { checked?: boolean; onChange?: JSX.ChangeEventHandlerUnion<HTMLInputElement, Event> }) => {
-    const [checked, setChecked] = createSignal(false);
+    const [checked, setChecked] = createSignal(props.checked ?? false);
+    createEffect(() => {
+        setChecked(props.checked ?? false);
+    });
     return (
         <SwitchBase>
-            <input type="checkbox" checked={props.checked} onChange={e => {
+            <input type="checkbox" checked={checked()} onChange={e => {
                 setChecked(e.currentTarget.checked);
                 (props.onChange as Function | undefined)?.(e);
             }} />
