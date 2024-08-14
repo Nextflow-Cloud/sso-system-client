@@ -23,7 +23,7 @@ const UpdateAuthenticator = (props: { type?: AuthenticateType }) => {
     const next = async () => {
         if (stage() === "PASSWORD") {
             if (props.type === "ENABLE_MFA") {
-                const session = state().session;
+                const session = state().get("session");
                 if (!session) return console.error("No session found");
                 // FIXME: potential state out of sync issue if MFA is enabled elsewhere
                 const result = await session.configureMfa(password());
@@ -34,17 +34,17 @@ const UpdateAuthenticator = (props: { type?: AuthenticateType }) => {
 
                 setStage("ONBOARD");
             } else if (props.type === "DISABLE_MFA") {
-                const session = state().session;
+                const session = state().get("session");
                 if (!session) return console.error("No session found");
                 const result = await session.configureMfa(password());
                 if (result.pendingEnable) throw new Error("State is out of sync!");
                 setContinueFunction(() => result.continueFunction);
 
                 setStage("MFA");
-            } else {
-                const session = state().session;
+            } else if (props.type === "UPDATE_ACCOUNT") {
+                const session = state().get("session");
                 if (!session) return console.error("No session found");
-                const stagedAccountSettings = state().stagedAccountSettings;
+                const stagedAccountSettings = state().get("stagedAccountSettings");
                 if (!stagedAccountSettings) return console.error("No staged account settings found");
                 const result = await session.commitAccountSettings(password(), stagedAccountSettings); // FIXME: get the state somehow
                 if (!result) dialogContext().setOpen(false); // we're finished here since user doesn't use MFA
@@ -62,9 +62,9 @@ const UpdateAuthenticator = (props: { type?: AuthenticateType }) => {
             if (!cf) return console.error("No continue function found");
             await cf(mfaCode());
             dialogContext().setOpen(false);
-            if (props.type === "ENABLE_MFA") state().updateSettings({ mfaEnabled: true });
-            else if (props.type === "DISABLE_MFA") state().updateSettings({ mfaEnabled: false });
-            else if (props.type === "UPDATE_ACCOUNT") state().setStagedAccountSettings();
+            if (props.type === "ENABLE_MFA") state().update("settings", { mfaEnabled: true });
+            else if (props.type === "DISABLE_MFA") state().update("settings", { mfaEnabled: false });
+            else if (props.type === "UPDATE_ACCOUNT") state().set("stagedAccountSettings", undefined);
         }
     }
     return (

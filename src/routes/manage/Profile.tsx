@@ -61,27 +61,35 @@ const Profile = () => {
     };
 
     onMount(async () => {
-        const session = state().session;
-        if (!session) return console.error("No session found");
-        const user = await session.getSettings();
-        state().updateSettings(user);
-        setDisplayName(user.displayName);
-        setDescription(user.description);
+        let settings = state().get("settings");
+        if (!settings) {
+            const session = state().get("session");
+            if (!session) return console.error("No session found");
+            const user = await session.getSettings();
+            settings = user;
+            state().set("settings", user);
+        }
+        setDisplayName(settings.displayName);
+        setDescription(settings.description);
     });
 
-    createEffect(() => {
+    const save = () => {
         // TODO: above: check for meeting conditions
-        let existingSettings = state().settings;
+        let existingSettings = state().get("settings");
         if (!existingSettings) return;
-        console.log(existingSettings, displayName(), description());
         if (existingSettings.displayName === displayName() && existingSettings.description === description()) return;
-        const session = state().session;
+        const session = state().get("session");
         if (!session) return console.error("No session found");
         session.commitProfile({
             displayName: displayName(),
             description: description(),
         });
-    });
+        state().update("settings", {
+            displayName: displayName(),
+            description: description(),
+        })
+
+    };
     
     return (
         <>
@@ -97,6 +105,7 @@ const Profile = () => {
             <Section>
                 <Input placeholder="Display name" loading={false} value={displayName()} onChange={e => setDisplayName((e.target as HTMLInputElement).value)}  />
                 <Input placeholder="Profile description" loading={false} value={description()} onChange={e => setDescription((e.target as HTMLInputElement).value)}  />
+                <Button onClick={save}>Save</Button>
             </Section>
             <AvatarPicker stagedImage={stagedImage} />
         </>

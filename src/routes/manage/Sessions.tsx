@@ -44,13 +44,13 @@ const Sessions = () => {
     };
 
     const logoutAll = () => {
-        const session = state().session;
+        const session = state().get("session");
         if (!session) return console.error("No session found");
         session.logoutAll();
     };
 
     const revoke = (id: string) => {
-        const session = state().session;
+        const session = state().get("session");
         if (!session) return console.error("No session found");
         session.logout(id).then(() => {
             const newSessions = sessions().filter(s => s.id !== id);
@@ -61,7 +61,7 @@ const Sessions = () => {
     }
 
     onMount(async () => {
-        const session = state().session;
+        const session = state().get("session");
         if (!session) return console.error("No session found");
         const sessions = await session.getAllSessions();
         setSessions(sessions);

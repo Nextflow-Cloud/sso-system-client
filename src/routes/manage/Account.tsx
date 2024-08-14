@@ -19,36 +19,47 @@ const Account = () => {
 
     // TODO: block interaction until settings are loaded
     onMount(async () => {
-        let settings = state().settings;
+        let settings = state().get("settings");
         if (!settings) {
-            const session = state().session;
+            const session = state().get("session");
             if (!session) return console.error("No session found");
             settings = await session.getSettings();
+            state().set("settings", settings);
         }
         setTwoFactor(settings.mfaEnabled);
         setUsername(settings.username);
     });
 
     createEffect(() => {
-        let settings = state().settings;
-        if (!settings) return;
-        let mfa = twoFactor();
-        if (mfa !== undefined && mfa !== settings.mfaEnabled) {
-            // open password dialog
-            console.log(twoFactor(), settings.mfaEnabled);
-            setDialogType(twoFactor() ? "ENABLE_MFA" : "DISABLE_MFA");
-            dialogContext().setOpen(true);
+        let settings = state().get("settings");
+        if (settings) {
+            let mfa = twoFactor();
+            if (mfa !== undefined && mfa !== settings.mfaEnabled) {
+                // open password dialog
+                setDialogType(twoFactor() ? "ENABLE_MFA" : "DISABLE_MFA");
+                dialogContext().setOpen(true);
+            }
+        }
+    });
+
+    
+    createEffect(() => {
+        if (!dialogContext().open()) {
+            let settings = state().get("settings");
+            if (settings) {
+                setTwoFactor(settings.mfaEnabled);
+            }
         }
     });
 
     const updateAccount = () => {
         // TODO: check for invalid passwords
         let newUsername: string|undefined = username();
-        if (newUsername === state().settings?.username || !newUsername) newUsername = undefined;
+        if (newUsername === state().get("settings")?.username || !newUsername) newUsername = undefined;
         let newPasswordUnwrap: string|undefined = newPassword();
         if (!newPasswordUnwrap) newPasswordUnwrap = undefined;
-        if (!newUsername && !newPassword) return;
-        state().setStagedAccountSettings({
+        if (!newUsername && !newPasswordUnwrap) return;
+        state().set("stagedAccountSettings", {
             username: newUsername,
             newPassword: newPasswordUnwrap,
         });
