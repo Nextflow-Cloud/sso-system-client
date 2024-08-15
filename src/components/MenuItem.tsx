@@ -1,6 +1,6 @@
 import { useNavigate } from "@solidjs/router";
 import { IconTypes } from "solid-icons";
-import { Match, Show, Switch } from "solid-js";
+import { Show } from "solid-js";
 import { styled } from "solid-styled-components";
 
 const MenuItemBase = styled.div`

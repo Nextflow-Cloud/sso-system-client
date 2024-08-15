@@ -40,6 +40,7 @@ const Slider = styled.span`
         ` : ""}
     }
 `
+// TODO: add a disabled state
 /** A switch component. An Accessor and Setter managing the checked state must be passed down for proper state management. */
 const Switch = ({ checked, setChecked, onChange }: { checked: Accessor<boolean|undefined>|Accessor<boolean>; setChecked: Setter<boolean|undefined>|Setter<boolean>; onChange?: JSX.ChangeEventHandlerUnion<HTMLInputElement, Event> }) => {
     return (

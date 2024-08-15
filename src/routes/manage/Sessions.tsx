@@ -3,7 +3,7 @@ import { Section } from "../ManageAccount";
 import Box from "../../components/primitive/Box";
 import Switch, { SwitchContainer } from "../../components/primitive/Switch";
 import Button from "../../components/primitive/Button";
-import { decodeTime, monotonicFactory } from "ulid";
+import { decodeTime } from "ulid";
 import { createMemo, createSignal, onMount } from "solid-js";
 import { useGlobalState } from "../../context";
 import { Session } from "../../utilities/lib/authentication";

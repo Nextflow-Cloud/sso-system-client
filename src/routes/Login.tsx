@@ -33,15 +33,6 @@ const Login = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; setL
     const navigate = useNavigate();
 
     const login = async () => {
-        // setHiding(true);
-        // await new Promise(r => setTimeout(r, 1000));
-        // setStage("done");
-        // setHiding(false);
-        // if ("__TAURI_INTERNALS__" in window) {
-        //     const tauri = (window as any).__TAURI_INTERNALS__;
-        //     const response = await tauri.invoke("login", { email: email(), password: password() });
-        //     console.log(response);
-        // }
         setError();
         if (stage() === "credentials") {
             if (!email().trim()) {
@@ -76,7 +67,7 @@ const Login = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; setL
                 setLoading(false);
             }
         } else if (stage() === "2fa") {
-            if (!code().trim()) {
+            if (!code()) {
                 setError("EMPTY_CODE");
                 return;
             }
@@ -84,10 +75,6 @@ const Login = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; setL
                 setError("INVALID_CODE");
                 return;
             }
-            // if (!code().trim().match(/^\d+$/)) {
-            //     setError("INVALID_CODE_NUMBER");
-            //     return;
-            // }
             setLoading(true);
             try {
                 const session = await partialSession()!.continue(code());
@@ -95,7 +82,8 @@ const Login = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; setL
                 localStorage.setItem("token", session.token);
                 await continueToRegisteredService(session.token);
             } catch (e) {
-                setError((e as SessionError).toString());
+                const error = (e as SessionError).toString();
+                setError(error === "INVALID_CREDENTIALS" ? "INVALID_CODE" : error);
                 setLoading(false);
             }
         }

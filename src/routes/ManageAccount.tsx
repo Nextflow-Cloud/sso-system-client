@@ -1,12 +1,10 @@
 import { styled } from "solid-styled-components";
 import SearchBar from "../components/primitive/Search";
 import Logo from "../components/Logo";
-import Input from "../components/primitive/Input";
-import Button from "../components/primitive/Button";
 import { RiBusinessProfileFill, RiBusinessProfileLine, RiSystemShieldKeyholeFill, RiSystemShieldKeyholeLine, RiUserFacesAccountBoxFill, RiUserFacesAccountBoxLine } from "solid-icons/ri";
 import MenuItem from "../components/MenuItem";
 import { Navigate, useNavigate, useParams } from "@solidjs/router";
-import { Accessor, createSignal, Match, Setter, Switch } from "solid-js";
+import { Accessor, Match, Setter, Switch } from "solid-js";
 import Account from "./manage/Account";
 import Profile from "./manage/Profile";
 import Dialog from "@corvu/dialog";
@@ -26,8 +24,6 @@ const MainDesktop = styled.main`
     width: 100%;
     height: 100%;
     justify-content: center;
-
-    /* backdrop-filter: brightness(1.5) */
 `;
 
 // import wallpaper from '../assets/test.jpg';
@@ -35,7 +31,7 @@ const MainDesktop = styled.main`
 const ManageBase = styled.div`
     display:flex;
     background-color: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(5px   );
+    backdrop-filter: blur(5px);
     border-radius: 5px;
     padding-left: 10px;
     padding-right:10px;
@@ -63,20 +59,6 @@ const Navigation = styled.nav`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-`;
-
-const Category = styled.a`
-    color: black;
-    text-decoration: none;
-    font-size: 1em;
-    padding: 10px;
-    & > * + * {
-        margin-left: 5px;
-    }
-    display: flex;
-    align-items: center;
-    background-color: var(--secondary-a);
-    border-radius: 5px;
 `;
 
 const TopBar = styled.div`
@@ -131,8 +113,6 @@ const PopoverContent = styled(Popover.Content)`
     z-index: 1001;
     box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.4);
 `;
-
-type Active = "account" | "profile" | "sessions";
 
 const ManageAccount = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoading: Setter<boolean>; }) => {
     const params = useParams();
