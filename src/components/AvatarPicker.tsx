@@ -1,5 +1,5 @@
 import Dialog from "@corvu/dialog";
-import { Accessor, createMemo, onMount } from "solid-js";
+import { Accessor, createMemo } from "solid-js";
 import { styled } from "solid-styled-components";
 import Button from "./primitive/Button";
 import { uploadAvatar } from "../utilities/lib/cdn";
@@ -11,7 +11,6 @@ const StagedImage = styled.img`
     height: 200px;
     border-radius: 10px;
     object-fit: cover;
-
 `;
 
 
@@ -33,8 +32,8 @@ const AvatarPicker = (props: { stagedImage: Accessor<Image | undefined>; }) => {
             <Content>
                 <h1>Avatar Picker</h1>
                 <StagedImage src={props.stagedImage()?.url} alt="staged avatar" />
-                <Button onClick={closeDialog}>Cancel</Button>
                 <Button onClick={save}>Save</Button>
+                <Button onClick={closeDialog}>Cancel</Button>
             </Content>
         </Dialog.Portal>
     );
