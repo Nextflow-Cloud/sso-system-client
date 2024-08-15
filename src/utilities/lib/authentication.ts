@@ -138,7 +138,7 @@ export class Client {
                         Authorization: `Bearer ${this.accessToken}`,
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ code, continueToken: response.continueToken }),
+                    body: JSON.stringify({ code, continueToken: response.continueToken, stage: 2 }),
                 });
                 throwErrors(request);
             };
