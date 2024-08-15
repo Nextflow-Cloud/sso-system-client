@@ -84,8 +84,8 @@ const Account = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoadi
         
             <h1>Manage account</h1>
             <Section>
-                <Input placeholder="Username" loading={loading()} value={username()} onChange={e => setUsername((e.target as HTMLInputElement).value)} />
-                <Input placeholder="New password" loading={loading()} password value={newPassword()} onChange={e => setNewPassword((e.target as HTMLInputElement).value)} />
+                <Input placeholder="Username" loading={loading() || dialogContext().open()} value={username()} onChange={e => setUsername((e.target as HTMLInputElement).value)} />
+                <Input placeholder="New password" loading={loading() || dialogContext().open()} password value={newPassword()} onChange={e => setNewPassword((e.target as HTMLInputElement).value)} />
                 <Button onClick={updateAccount} disabled={loading()}>Commit</Button>
             </Section>
             <Section>

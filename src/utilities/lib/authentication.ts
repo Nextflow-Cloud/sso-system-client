@@ -17,6 +17,7 @@ const throwErrors = (response: Response) => {
     }
 }
 
+// TODO: fix inaccurate error messages by using the ones provided by server
 export class Client {
     constructor(private id: string | null, private accessToken: string) {}
     needsContinuation(): this is PartialClient {
