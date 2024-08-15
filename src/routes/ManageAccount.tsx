@@ -166,12 +166,12 @@ const ManageAccount = ({ loading, setLoading }: { loading: Accessor<boolean>; se
                             <Content>
                                 <Switch>
                                     <Match when={params.category === "account"}>
-                                        <Dialog>
+                                        <Dialog closeOnOutsidePointer={false}>
                                             <Account loading={loading} setLoading={setLoading} />
                                         </Dialog>
                                     </Match>
                                     <Match when={params.category === "profile"}>
-                                        <Dialog>
+                                        <Dialog closeOnOutsidePointer={false}>
                                             <Profile loading={loading} setLoading={setLoading} />
                                         </Dialog>
                                     </Match>
