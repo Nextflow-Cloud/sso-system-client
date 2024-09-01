@@ -352,3 +352,31 @@ export const createAccount = async (credentials: Credentials): Promise<Client> =
     const response: { id: string; token: string } = await request.json();
     return new Client(response.id, response.token);
 }
+
+export const forgotPassword = async (email: string): Promise<void> => {
+    const request = await wrappedFetch("/api/forgot", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ stage: 1, email })
+    });
+    if (request.status === 405) {
+        throw new SessionError("UNKNOWN_ERROR"); // FIXME: add strings and use "UNSUPPORTED" instead
+    }
+    throwErrors(request);
+}
+
+export const finishResetPassword = async (password: string, continueToken: string): Promise<void> => {
+    const request = await wrappedFetch("/api/forgot", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ stage: 2, newPassword: password, continueToken: continueToken })
+    });
+    if (request.status === 405) {
+        throw new SessionError("UNKNOWN_ERROR"); // FIXME: add strings and use "UNSUPPORTED" instead
+    }
+    throwErrors(request);
+}

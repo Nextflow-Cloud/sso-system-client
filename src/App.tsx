@@ -8,6 +8,7 @@ import Register from "./routes/Register";
 import Authenticated from "./components/Authenticated";
 import { StateProvider } from "./context";
 import Logout from "./routes/Logout";
+import Forgot from "./routes/Forgot";
 
 const App = () => {
   const [loading, setLoading] = createSignal(false);
@@ -40,6 +41,11 @@ const App = () => {
           <Route path="/logout" component={() => (
             <FormBase loading={loading} lang={lang} setLang={setLang}>
               <Logout />
+            </FormBase>
+          )} />
+          <Route path="/forgot" component={() => (
+            <FormBase loading={loading} lang={lang} setLang={setLang}>
+              <Forgot loading={loading} setLoading={setLoading} lang={lang} />
             </FormBase>
           )} />
         </Router>
