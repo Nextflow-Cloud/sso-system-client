@@ -22,7 +22,7 @@ jobs:
       run: bun install --frozen-lockfile
 
     - name: Check types
-      uses: andoshin11/typescript-error-reporter-action@v1.0.2
+      run: tsc --noEmit
 
     - name: Build
       run: bun run build
