@@ -227,7 +227,7 @@ const Register = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; s
                             </Box>
                             <Box type="information">
                                 <HCaptcha 
-                                    config={{ hl: lang() }}
+                                    languageOverride={lang()}
                                     theme="light"
                                     sitekey={CAPTCHA_KEY}
                                     onVerify={setCaptchaToken}
