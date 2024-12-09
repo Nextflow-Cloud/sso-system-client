@@ -2,7 +2,6 @@ import { boolean, Infer, nullable, object, omit, optional, string } from "supers
 import { ApiRequest, ApiResponse, callEndpoint, Method, Route } from "./routes";
 import { PartialClient } from "./login";
 import { client } from "@serenity-kit/opaque";
-import { fromUint8Array, toUint8Array } from "js-base64";
 import { create } from "@github/webauthn-json";
 
 export const CurrentUser = object({
@@ -160,11 +159,8 @@ export class ElevatedClient extends Client {
 
     async createPasskey(): Promise<void> {
         const result = await this.callEndpoint("REGISTER_PASSKEYS_1", { escalationToken: this.escalationToken, stage: "BEGIN_REGISTER" });
-        // ccr: result.message
         const credential = await create(result.message as any);
         if (credential) {
-            console.log(credential);
-            // eval("window.credential = credential");
             await this.callEndpoint("REGISTER_PASSKEYS_2", { stage: "FINISH_REGISTER", continueToken: result.continueToken, message: credential as any });
         } else {
             throw new Error("No passkey provided");

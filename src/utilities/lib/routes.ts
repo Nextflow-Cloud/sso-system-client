@@ -1,7 +1,6 @@
 import { object, string, literal, boolean, optional, Infer, is, Struct, nullable, union, array, partial } from "superstruct";
-import { ClientError, ServerError } from "./errors";
+import { ClientError, RequestError, ServerError } from "./errors";
 import { Profile, Session, CurrentUser, Passkey } from "./manage";
-import { RequestChallengeResponse } from "./authentication";
 
 const routes = {
     LOGIN_1: { 
@@ -210,8 +209,11 @@ const routes = {
         types: {
             request: object({
                 token: string(),
+                escalationToken: optional(string()),
             }),
-            response: object({})
+            response: object({
+                escalated: boolean(),
+            })
         }
     },
     GET_SESSIONS: {
@@ -373,22 +375,25 @@ export const callEndpoint = async <T extends Route>(
             return acc.replace(`{${val}}`, replace[val]);
         }, routes[route].route);
     }
-    const request = await Promise.race([fetch(dynamicRoute, {
-        method: routes[route].method,
-        headers,
-        body: routes[route].method === "GET" ? undefined : JSON.stringify(body),
-    }), new Promise((_, reject) => setTimeout(() => reject(new ClientError("TIMED_OUT")), 5000))]) as Response;
-    // try {
-        const response: GenericResponse<ApiResponse<T>> = await request.json();
+    try {
+        const response: GenericResponse<ApiResponse<T>> = await (Promise.race([fetch(dynamicRoute, {
+            method: routes[route].method,
+            headers,
+            body: routes[route].method === "GET" ? undefined : JSON.stringify(body),
+        }), new Promise((_, reject) => setTimeout(() => reject("TIMED_OUT"), 5000))]) as Promise<Response>).then(r => r.json());
         if ("error" in response) {
-            throw ClientError.fromError(response.error);
+            throw response.error;
         }
-        if (is(response, routes[route].types.response as Struct)) {
-            return response;
+        if (!is(response, routes[route].types.response as Struct)) {
+            throw "INVALID_RESPONSE";
         }
-        throw new ClientError("UNKNOWN_ERROR");
-    // } catch {
-    //     throw new ClientError("UNKNOWN_ERROR");
-    // }
+        return response;
+    } catch (e) {
+        if (typeof e !== "string") {
+            throw new ClientError("UNKNOWN_ERROR");
+        } else {
+            throw ClientError.fromError(e as ServerError | RequestError);
+        }
+    }
 };
 

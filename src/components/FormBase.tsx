@@ -1,9 +1,11 @@
-import { Accessor, createEffect, createSignal, onCleanup, ParentProps, Setter } from "solid-js";
+import { Accessor, createEffect, createMemo, createSignal, onCleanup, ParentProps, Setter } from "solid-js";
 import { styled } from "solid-styled-components";
 import SelectMenu from "./primitive/SelectMenu";
-import { Language, translate } from "../utilities/i18n";
+import { Language, useTranslate } from "../utilities/i18n";
 import Footer from "./Footer";
 import Logo from "./Logo";
+import { useGlobalState } from "../context";
+import LanguagePicker from "./LanguagePicker";
 
 const FormBase = styled.form`
     padding-top: 2rem;
@@ -105,8 +107,10 @@ const LogoContainerDesktop = styled.div`
 `;
 
 
-const Container = ({ children, loading, lang, setLang }: ParentProps<{ loading: Accessor<boolean>; lang: Accessor<Language>; setLang: Setter<Language> }>) => {
+const Container = ({ children, loading, }: ParentProps<{ loading: Accessor<boolean>; }>) => {
     const [isDesktop, setIsDesktop] = createSignal(window.innerWidth >= 768);
+    const state = createMemo(() => useGlobalState());
+    const t = useTranslate();
     
     let form: HTMLFormElement | undefined;
     
@@ -132,34 +136,16 @@ const Container = ({ children, loading, lang, setLang }: ParentProps<{ loading: 
                             <LogoContainerDesktop>
                                 <Logo />
                             </LogoContainerDesktop>
-                            <h2>{translate(lang(), "WELCOME")}</h2>
-                            <p>{translate(lang(), "DESCRIPTION")}</p>
+                            <h2>{t("WELCOME")}</h2>
+                            <p>{t("DESCRIPTION")}</p>
                         </div>
-                        <SelectMenu onChange={e => {
-                            setLang((e.target as HTMLSelectElement).value as Language);
-                            localStorage.setItem("lang", (e.target as HTMLSelectElement).value);
-                        }} value={lang()}>
-                            <option value="en" class="t">{translate(lang(), "ENGLISH")} (English)</option>
-                            <option value="es">{translate(lang(), "SPANISH")} (Español)</option>
-                            <option value="fr">{translate(lang(), "FRENCH")} (Français)</option>
-                            <option value="de">{translate(lang(), "GERMAN")} (Deutsch)</option>
-                            <option value="it">{translate(lang(), "ITALIAN")} (Italiano)</option>
-                            <option value="pt">{translate(lang(), "PORTUGUESE")} (Português)</option>
-                            <option value="nl">{translate(lang(), "DUTCH")} (Nederlands)</option>
-                            <option value="ru">{translate(lang(), "RUSSIAN")} (Русский)</option>
-                            <option value="uk">{translate(lang(), "UKRAINIAN")} (Українська)</option>
-                            <option value="zh_CN">{translate(lang(), "CHINESE_S")} (简体中文)</option>
-                            <option value="zh_TW">{translate(lang(), "CHINESE_T")} (繁體中文)</option>
-                            <option value="ja">{translate(lang(), "JAPANESE")} (日本語)</option>
-                            <option value="ko">{translate(lang(), "KOREAN")} (한국어)</option>
-                            <option value="vi">{translate(lang(), "VIETNAMESE")} (Tiếng Việt)</option>
-                        </SelectMenu>
+                        <LanguagePicker />
                     </SidePanel>
                     <FormBase loading={loading} ref={form}>
                         {children}
                     </FormBase>
                 </FormContainerDesktop>
-                <Footer desktop={true} lang={lang} />
+                <Footer desktop={true} />
             </MainDesktop>
         );
     } 
@@ -171,36 +157,18 @@ const Container = ({ children, loading, lang, setLang }: ParentProps<{ loading: 
                         <LogoContainerMobile>
                             <Logo />
                         </LogoContainerMobile>
-                        <h2>{translate(lang(), "WELCOME")}</h2>
-                        <p>{translate(lang(), "DESCRIPTION")}</p>
+                        <h2>{t("WELCOME")}</h2>
+                        <p>{t("DESCRIPTION")}</p>
                     </DetailsMobile>
                     <div>
                         {children}
                     </div>
                 </GroupMobile>
                 <GroupMobile>
-                    <SelectMenu onChange={e => {
-                        setLang((e.target as HTMLSelectElement).value as Language);
-                        localStorage.setItem("lang", (e.target as HTMLSelectElement).value);
-                    }} value={lang()}>
-                    <option value="en" class="t">{translate(lang(), "ENGLISH")} (English)</option>
-                    <option value="es">{translate(lang(), "SPANISH")} (Español)</option>
-                    <option value="fr">{translate(lang(), "FRENCH")} (Français)</option>
-                    <option value="de">{translate(lang(), "GERMAN")} (Deutsch)</option>
-                    <option value="it">{translate(lang(), "ITALIAN")} (Italiano)</option>
-                    <option value="pt">{translate(lang(), "PORTUGUESE")} (Português)</option>
-                    <option value="nl">{translate(lang(), "DUTCH")} (Nederlands)</option>
-                    <option value="ru">{translate(lang(), "RUSSIAN")} (Русский)</option>
-                    <option value="uk">{translate(lang(), "UKRAINIAN")} (Українська)</option>
-                    <option value="zh_CN">{translate(lang(), "CHINESE_S")} (简体中文)</option>
-                    <option value="zh_TW">{translate(lang(), "CHINESE_T")} (繁體中文)</option>
-                    <option value="ja">{translate(lang(), "JAPANESE")} (日本語)</option>
-                    <option value="ko">{translate(lang(), "KOREAN")} (한국어)</option>
-                    <option value="vi">{translate(lang(), "VIETNAMESE")} (Tiếng Việt)</option>
-                    </SelectMenu>
+                    <LanguagePicker />
                 </GroupMobile>
             </FormContainerMobile>
-            <Footer desktop={false} lang={lang} />
+            <Footer desktop={false} />
         </MainMobile>
     );
     

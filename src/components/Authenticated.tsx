@@ -2,7 +2,6 @@ import { createMemo, createSignal, Match, onMount, ParentProps, Show, Switch } f
 import { Navigate } from "@solidjs/router";
 import { useGlobalState } from "../context";
 import { validateSession } from "../utilities/lib/login";
-import { ElevatedClient } from "../utilities/lib/manage";
 
 const Authenticated = (props: ParentProps) => {
     const [checked, setChecked] = createSignal(false);
@@ -11,16 +10,12 @@ const Authenticated = (props: ParentProps) => {
     
     const checkToken = async () => {
         const token = localStorage.getItem("token");
+        const escalationToken = localStorage.getItem("escalationToken");
         if (token) {
             try {
-                const session = await validateSession(token);
+                const session = await validateSession(token, escalationToken || undefined);
                 setAuthenticated(true);
-                const escalationToken = localStorage.getItem("escalationToken");
-                if (escalationToken) {
-                    state().set("session", new ElevatedClient(null, token, escalationToken));
-                } else {
-                    state().set("session", session);
-                }
+                state().set("session", session);
             } catch {}
         }
         setChecked(true);

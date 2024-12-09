@@ -1,24 +1,7 @@
 import { client } from "@serenity-kit/opaque";
 import { callEndpoint } from "./routes";
 import { Client } from "./manage";
-
-export const getBrowser = () => {
-    if (typeof window === "undefined") {
-        return;
-    }
-    if (navigator.userAgent.includes("Edg")) {
-        return "Edge";
-    }
-    if (navigator.userAgent.includes("Firefox")) {
-        return "Firefox";
-    }
-    if (navigator.userAgent.includes("Chrome")) {
-        return "Chrome";
-    }
-    if (navigator.userAgent.includes("Safari")) {
-        return "Safari";
-    }
-}
+import { getBrowser } from "../client";
 
 export type RegistrationContinuation = {
     emailEnabled: true;
@@ -80,6 +63,7 @@ export const createAccount = async (email: string, captchaToken: string): Promis
                     message: data2.registrationRecord,
                     displayName,
                     username,
+                    friendlyName: getBrowser()
                 });
                 return new Client(null, response2.token);
             }

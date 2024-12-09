@@ -8,6 +8,7 @@ import { createMemo, createSignal, onMount } from "solid-js";
 import { useGlobalState } from "../../context";
 import { styled } from "solid-styled-components";
 import { Session } from "../../utilities/lib/manage";
+import { useTranslate } from "../../utilities/i18n";
 
 const SessionList = styled.table`
     margin-top: 20px;
@@ -30,6 +31,7 @@ const Sessions = () => {
     const [ipLogging, setIpLogging] = createSignal<boolean>(false);
     const [sessions, setSessions] = createSignal<Session[]>([]);
     const state = createMemo(() => useGlobalState());
+    const t = useTranslate();
 
     const toggleIp = (e: Event) => {
         // TODO: implement this
@@ -61,7 +63,7 @@ const Sessions = () => {
 
     return (
         <>
-            <h1>Sessions</h1>
+            <h1>{t("SESSIONS")}</h1>
             <Section>
                 <Box type="warning">
                     <p>
@@ -76,20 +78,20 @@ const Sessions = () => {
             <Section>
                 <Box type="error">
                     <p>
-                        This will log you out of all active sessions except the current one. You will need to log in again.
+                        {t("LOGOUT_ALL_DESCRIPTION")}
                     </p>
                 </Box>
-                <Button onClick={logoutAll}>Logout all sessions</Button>
+                <Button onClick={logoutAll}>{t("LOGOUT_ALL")}</Button>
             </Section>
             <SessionList>
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Friendly name</th>
+                        <th>{t("ID")}</th>
+                        <th>{t("FRIENDLY_NAME")}</th>
                         <th>Logged in</th>
                         <th>IP address</th>
                         <th>Location</th>
-                        <th>Actions</th>
+                        <th>{t("ACTIONS")}</th>
                     </tr>
                 </thead>
                 <SessionItems>

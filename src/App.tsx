@@ -12,7 +12,6 @@ import Forgot from "./routes/Forgot";
 
 const App = () => {
   const [loading, setLoading] = createSignal(false);
-  const [lang, setLang] = createSignal(localStorage.getItem("lang") as Language || "fr");
 
   return (
       <StateProvider>
@@ -23,19 +22,19 @@ const App = () => {
             </Authenticated>
           )} />
           <Route path="/login" component={() => (
-            <FormBase loading={loading} lang={lang} setLang={setLang}>
-              <Login loading={loading} setLoading={setLoading} lang={lang} />
+            <FormBase loading={loading}>
+              <Login loading={loading} setLoading={setLoading} />
             </FormBase>
           )} />
           <Route path="/register" component={() => (
-            <FormBase loading={loading} lang={lang} setLang={setLang}>
-              <Register loading={loading} setLoading={setLoading} lang={lang} />
+            <FormBase loading={loading}>
+              <Register loading={loading} setLoading={setLoading} />
             </FormBase>
           )} />
           <Route path="/escalate" component={() => (
             <Authenticated>
-              <FormBase loading={loading} lang={lang} setLang={setLang}>
-                <Login loading={loading} setLoading={setLoading} lang={lang} escalate />
+              <FormBase loading={loading}>
+                <Login loading={loading} setLoading={setLoading} escalate />
               </FormBase>
             </Authenticated>
           )} />
@@ -45,13 +44,13 @@ const App = () => {
             </Authenticated>
           )} />
           <Route path="/logout" component={() => (
-            <FormBase loading={loading} lang={lang} setLang={setLang}>
+            <FormBase loading={loading}>
               <Logout />
             </FormBase>
           )} />
           <Route path="/forgot" component={() => (
-            <FormBase loading={loading} lang={lang} setLang={setLang}>
-              <Forgot loading={loading} setLoading={setLoading} lang={lang} />
+            <FormBase loading={loading}>
+              <Forgot loading={loading} setLoading={setLoading}/>
             </FormBase>
           )} />
         </Router>

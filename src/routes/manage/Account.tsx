@@ -12,6 +12,7 @@ import { useNavigate } from "@solidjs/router";
 import Delete from "../../components/dialogs/Delete";
 import { styled } from "solid-styled-components";
 import { Passkey } from "../../utilities/lib/manage";
+import { useTranslate } from "../../utilities/i18n";
 
 type DialogType = "DELETE" | "MFA";
 
@@ -37,6 +38,7 @@ const Account = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoadi
     const escalated = createMemo(() => state().get("session")?.isElevated());
     const navigate = useNavigate();
     const [passkeys, setPasskeys] = createSignal<Passkey[]>([]);
+    const t = useTranslate();
 
     onMount(async () => {
         setLoading(true);
@@ -81,7 +83,7 @@ const Account = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoadi
         if (newUsername === state().get("settings")?.username || !newUsername) newUsername = undefined;
         if (newUsername && !(/^[0-9A-Za-z_.-]{3,32}$/).test(newUsername)) {
             // TODO: show error
-            return;
+            return alert("Invalid username");
         }
         if (!newUsername) return; // no changes
         setLoading(true);
@@ -100,13 +102,7 @@ const Account = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoadi
         const client = state().get("session");
         if (client && client.isElevated()) {
             try {
-                await client.createPasskey().catch( e=> {
-                    console.log(e)
-                    if ((e as any).toString() === "UNKNOWN_ERROR") {
-                        localStorage.removeItem("escalationToken");
-                        window.location.reload();
-                    } 
-                });
+                await client.createPasskey();
             } catch(e) {
                 console.log(e)
                 if ((e as any).toString() === "UNKNOWN_ERROR") {
@@ -122,7 +118,7 @@ const Account = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoadi
         if (!newPasswordUnwrap) newPasswordUnwrap = undefined;
         if (calculateEntropy(newPasswordUnwrap) < 64) {
             // TODO: show error
-            return;
+            return alert("Password is too weak");
         }
         if (!newPasswordUnwrap) return; // no changes
         setLoading(true);
@@ -131,6 +127,7 @@ const Account = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoadi
             try {
                 await client.updatePassword(newPasswordUnwrap);
             } catch {
+                localStorage.removeItem("escalationToken");
                 window.location.reload();
             }
         }
@@ -150,6 +147,7 @@ const Account = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoadi
                 const passkeys = await client.getPasskeys();
                 setPasskeys(passkeys);
             } catch {
+                localStorage.removeItem("escalationToken");
                 window.location.reload();
             }
         }
@@ -159,58 +157,58 @@ const Account = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoadi
     return (
         <>
         
-            <h1>Manage account</h1>
+            <h1>{t("MANAGE_ACCOUNT")}</h1>
                 <Show when={!escalated()}>
             <Section>
                     <Box type="error">
-                        <h2>Escalation required</h2>
+                        <h2>{t("ESCALATION_REQUIRED")}</h2>
                         <p>
-                            To manage your account, you must provide your password.
+                            {t("ESCALATION_REQUIRED_DESCRIPTION")}
                         </p>
                         <Button onClick={() => {
                             navigate("/escalate");
-                        }}>Continue</Button>
+                        }}>{t("CONTINUE")}</Button>
                     </Box>
             </Section>
             </Show>
 
             <Section>
-                <Input placeholder="Username" loading={loading() || dialogContext().open() || !escalated()} value={username()} onChange={e => setUsername((e.target as HTMLInputElement).value)} />
-                <Button onClick={updateAccount}  disabled={loading() || dialogContext().open() || !escalated()}>Update</Button>
+                <Input placeholder={t("USERNAME")} loading={loading() || dialogContext().open() || !escalated()} value={username()} onChange={e => setUsername((e.target as HTMLInputElement).value)} />
+                <Button onClick={updateAccount}  disabled={loading() || dialogContext().open() || !escalated()}>{t("UPDATE_ACCOUNT")}</Button>
                     
             </Section>
             <Section>
-                <Input placeholder="New password" loading={loading() || dialogContext().open() || !escalated()} password value={newPassword()} onChange={e => setNewPassword((e.target as HTMLInputElement).value)} />
-                <Button onClick={updatePassword}  disabled={loading() || dialogContext().open() || !escalated()}>Update password</Button>
+                <Input placeholder={t("NEW_PASSWORD")} loading={loading() || dialogContext().open() || !escalated()} password value={newPassword()} onChange={e => setNewPassword((e.target as HTMLInputElement).value)} />
+                <Button onClick={updatePassword}  disabled={loading() || dialogContext().open() || !escalated()}>{t("UPDATE_PASSWORD")}</Button>
             </Section>
             <Section>
                 <Box type="warning">
-                    Two-factor authentication is highly recommended to secure your account.
+                    {t("MFA_DESCRIPTION")}
                 </Box>
                 <SwitchContainer>
                     <Switch checked={twoFactor} setChecked={setTwoFactor} disabled={loading() || dialogContext().open() || !escalated()} />
-                    <span>Two-factor authentication</span>
+                    <span>{t("MFA")}</span>
                 </SwitchContainer>
             </Section>
             <Section>
                 <Box type="information">
-                    <h2>Passkeys</h2>
+                    <h2>{t("PASSKEYS")}</h2>
                     <p>
-                        You can use passkeys to securely log in to your account without a password. These can include biometric data, physical security keys, and other methods.
+                        {t("PASSKEYS_DESCRIPTION")}
                     </p>
                 </Box>
                 <Box type="error">
                     <p>
-                        Heads up! Our passkey system uses discoverable credentials. Please be mindful that some security keys may not be able to delete them.
+                        {t("PASSKEYS_WARNING")}
                     </p>
                 </Box>
-                <Button onClick={addPasskey} disabled={loading() || dialogContext().open() || !escalated()}>Add passkey</Button>
+                <Button onClick={addPasskey} disabled={loading() || dialogContext().open() || !escalated()}>{t("PASSKEYS_ADD")}</Button>
                 <PasskeyList>
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Friendly name</th>
-                            <th>Actions</th>
+                            <th>{t("ID")}</th>
+                            <th>{t("FRIENDLY_NAME")}</th>
+                            <th>{t("ACTIONS")}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -219,7 +217,7 @@ const Account = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoadi
                                 <td>{p.id}</td>
                                 <td>{p.friendlyName}</td>
                                 <td>
-                                    <Button onClick={() => deletePasskey(p.id)} disabled={loading() || dialogContext().open() || !escalated()}>Delete</Button>
+                                    <Button onClick={() => deletePasskey(p.id)} disabled={loading() || dialogContext().open() || !escalated()}>{t("PASSKEYS_DELETE")}</Button>
                                 </td>
                             </tr>
                         ))}
@@ -228,12 +226,12 @@ const Account = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoadi
             </Section>
             <Section>
                 <Box type="error">
-                    <h2>Danger zone</h2>
+                    <h2>{t("DANGER_ZONE")}</h2>
                     <p>
-                        Nextflow is committed to your privacy and security. Your data will be removed from our servers as soon as possible.
+                        {t("DELETE_ACCOUNT_DESCRIPTION")}
                     </p>
                 </Box>
-                <Button onClick={deleteAccount} disabled={loading() || dialogContext().open() || !escalated()}>Delete account</Button>
+                <Button onClick={deleteAccount} disabled={loading() || dialogContext().open() || !escalated()}>{t("DELETE_ACCOUNT")}</Button>
             </Section>
             <Show when={dialogType() === "DELETE"}>
                 <Delete loading={loading} setLoading={setLoading} />

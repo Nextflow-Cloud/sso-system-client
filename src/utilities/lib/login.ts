@@ -1,7 +1,8 @@
 import { client } from "@serenity-kit/opaque";
 import { callEndpoint } from "./routes";
 import { ClientError } from "./errors";
-import { Client } from "./manage";
+import { Client, ElevatedClient } from "./manage";
+import { getBrowser } from "../client";
 
 export class PartialClient {
     constructor(private continuation: string) {}
@@ -37,6 +38,7 @@ export const createSession = async (email: string, password: string, escalate?: 
         continueToken: response.continueToken,
         message: result.finishLoginRequest,
         persist,
+        friendlyName: getBrowser(),
     });
     if (response2.mfaEnabled) {
         return new PartialClient(response2.continueToken!);
@@ -46,7 +48,10 @@ export const createSession = async (email: string, password: string, escalate?: 
 };
 
 
-export const validateSession = async (token: string): Promise<Client> => {
-    await callEndpoint("VALIDATE", { token });
+export const validateSession = async (token: string, escalationToken?: string): Promise<Client> => {
+    const result = await callEndpoint("VALIDATE", { token, escalationToken });
+    if (result.escalated) {
+        return new ElevatedClient(null, token, escalationToken!);
+    }
     return new Client(null, token);
 };

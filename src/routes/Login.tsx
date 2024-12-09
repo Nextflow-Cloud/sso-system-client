@@ -1,6 +1,6 @@
 import { Accessor, createMemo, createSignal, JSX, Match, onMount, Setter, Show } from "solid-js";
 import Fade from "../components/Fade";
-import { Language, translate } from "../utilities/i18n";
+import { useTranslate } from "../utilities/i18n";
 import ErrorText from "../components/ErrorText";
 import Title from "../components/primitive/Title";
 import Input from "../components/primitive/Input";
@@ -18,7 +18,6 @@ import { createSessionPasskey } from "../utilities/lib/authentication";
 import { useGlobalState } from "../context";
 
 type LoginStage = "credentials" | "2fa" | "done" | "skip";
-type InputError = "EMPTY_EMAIL" | "INVALID_EMAIL" | "EMPTY_PASSWORD" | "EMPTY_CODE" | "INVALID_CODE";
 
 const LoginOr = styled.div`
     display: flex;
@@ -27,8 +26,8 @@ const LoginOr = styled.div`
     width: 100%;
 `
 
-const Login = ({ loading, setLoading, lang, escalate }: { loading: Accessor<boolean>; setLoading: Setter<boolean>; lang: Accessor<Language>; escalate?: boolean; }) => {
-    const [error, setError] = createSignal<ClientErrorType | InputError>();
+const Login = ({ loading, setLoading, escalate }: { loading: Accessor<boolean>; setLoading: Setter<boolean>; escalate?: boolean; }) => {
+    const [error, setError] = createSignal<ClientErrorType>();
     const [stage, setStage] = createSignal<LoginStage>("credentials");
     const [checked, setChecked] = createSignal(false);
 
@@ -43,6 +42,7 @@ const Login = ({ loading, setLoading, lang, escalate }: { loading: Accessor<bool
     const navigate = useNavigate();
     const state = createMemo(() => useGlobalState());
     const s = createMemo(() => state().get("session"));
+    const t = useTranslate();
 
     const login = async () => {
         setError();
@@ -178,9 +178,13 @@ const Login = ({ loading, setLoading, lang, escalate }: { loading: Accessor<bool
     const loginPasskey = async () => {
         setLoading(true);
         const session = await createSessionPasskey();
-        await switchStage("done");
-        localStorage.setItem("token", session.token);
-        await continueToRegisteredService(session.token);
+        if (session) {
+            await switchStage("done");
+            localStorage.setItem("token", session.token);
+            await continueToRegisteredService(session.token);
+        } else {
+            setLoading(false);
+        }
     };
                 
     return (
@@ -192,10 +196,10 @@ const Login = ({ loading, setLoading, lang, escalate }: { loading: Accessor<bool
                             <Title>{"Escalate"}</Title>
                         </Show>
                         <Show when={!escalate}>
-                            <Title>{translate(lang(), "LOGIN")}</Title>
+                            <Title>{t("LOGIN")}</Title>
                         </Show>
                         <div>
-                            <Button onClick={loginPasskey} disabled={loading()}>{translate(lang(), "LOGIN_WITH_PASSKEY")}</Button>
+                            <Button onClick={loginPasskey} disabled={loading()}>{t("LOGIN_WITH_PASSKEY")}</Button>
                         </div>
                         <LoginOr>
                             <hr style={{ "width": "100%", "border-radius": "1px" }} />
@@ -204,7 +208,7 @@ const Login = ({ loading, setLoading, lang, escalate }: { loading: Accessor<bool
                         </LoginOr>
                         <div>
                             <Input
-                                placeholder={translate(lang(), "EMAIL")}
+                                placeholder={t("EMAIL")}
                                 loading={loading()}
                                 onKeyDown={press}
                                 value={email()}
@@ -213,49 +217,49 @@ const Login = ({ loading, setLoading, lang, escalate }: { loading: Accessor<bool
                             
                             <Input 
                                 password={true}
-                                placeholder={translate(lang(), "PASSWORD")} 
+                                placeholder={t("PASSWORD")} 
                                 loading={loading()} 
                                 onKeyDown={press} 
                                 value={password()} 
                                 onChange={v => setPassword((v.target as HTMLInputElement).value)} 
                             />
                             <Show when={!escalate}> 
-                                <Switch checked={persist} setChecked={setPersist} /> {translate(lang(), "STAY_SIGNED_IN")}
+                                <Switch checked={persist} setChecked={setPersist} /> {t("STAY_SIGNED_IN")}
                             </Show>
                             
-                            <Button onClick={login} disabled={loading()}>{translate(lang(), "CONTINUE")}</Button>
+                            <Button onClick={login} disabled={loading()}>{t("CONTINUE")}</Button>
                         </div>
                         <Show when={!escalate}>
                             <p>
-                                {translate(lang(), "NO_ACCOUNT")} <Link href="/register" onClick={register}>{translate(lang(), "REGISTER")}</Link>
+                                {t("NO_ACCOUNT")} <Link href="/register" onClick={register}>{t("REGISTER")}</Link>
                                 </p><p>
-                                <Link href="/forgot" onClick={forgot}>{translate(lang(), "FORGOT")}</Link>
+                                <Link href="/forgot" onClick={forgot}>{t("FORGOT")}</Link>
                             </p>
                         </Show>
                         <ErrorText>
-                            {error() && translate(lang(), error()!)}
+                            {error() && t(error()!)}
                         </ErrorText>
                     </Fade>
                 </Match>
                 <Match when={stage() === "2fa"}>
                     <Fade hiding={hiding()}>
-                        <Title>{translate(lang(), "TWO_FACTOR")}</Title>
+                        <Title>{t("MFA")}</Title>
                         <div>
-                            <label>{translate(lang(), "ENTER_CODE")}</label> 
+                            <label>{t("ENTER_CODE")}</label> 
                             <OtpInput code={code} setCode={setCode} />
-                            <Button onClick={login} disabled={loading()}>{translate(lang(), "CONTINUE")}</Button>
+                            <Button onClick={login} disabled={loading()}>{t("CONTINUE")}</Button>
                         </div>
                         <ErrorText>
-                            {error() && translate(lang(), error()!)}
+                            {error() && t(error()!)}
                         </ErrorText>
                     </Fade>
                 </Match>
                 <Match when={stage() === "done"}>
                     <Fade hiding={hiding()}>
-                        <Title>{translate(lang(), "CONTINUE")}</Title>
+                        <Title>{t("CONTINUE")}</Title>
                         <div>
                             <label>
-                                {translate(lang(), "LOGGED_IN")}
+                                {t("LOGGED_IN")}
                             </label>
                         </div>
                         <ErrorText />
@@ -263,9 +267,9 @@ const Login = ({ loading, setLoading, lang, escalate }: { loading: Accessor<bool
                 </Match>
                 <Match when={stage() === "skip"}>
                     <Fade hiding={hiding()}>
-                        <Title>{translate(lang(), "CONTINUE")}</Title>
+                        <Title>{t("CONTINUE")}</Title>
                         <div>
-                            <label>{translate(lang(), "ALREADY_LOGGED_IN")}</label>
+                            <label>{t("ALREADY_LOGGED_IN")}</label>
                         </div>
                         <ErrorText />
                     </Fade>
