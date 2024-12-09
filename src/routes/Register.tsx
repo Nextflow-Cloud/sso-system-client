@@ -10,9 +10,12 @@ import { CAPTCHA_KEY, TRUSTED_SERVICES } from "../constants";
 import { styled } from "solid-styled-components";
 import { Language, translate } from "../utilities/i18n";
 import { Accessor, createSignal, Match, onMount, Setter, Show, Switch } from "solid-js";
-import { createAccount, SessionError, SessionErrorType, validateSession } from "../utilities/lib/authentication";
 import { useNavigate } from "@solidjs/router";
 import { calculateEntropy } from "../utilities/client";
+import { createAccount, RegistrationContinuation } from "../utilities/lib/registration";
+import OtpInput from "../components/primitive/OtpInput";
+import { validateSession } from "../utilities/lib/login";
+import { ClientError, ClientErrorType } from "../utilities/lib/errors";
 const ButtonContainer = styled.div`
     & > :not([hidden]) ~ :not([hidden]) {
         margin-top: 0.5rem;
@@ -21,10 +24,10 @@ const ButtonContainer = styled.div`
 `;
 
 type RegisterStage = "credentials" | "verify" | "done" | "skip";
-type InputError = "EMPTY_EMAIL" | "INVALID_EMAIL" | "WEAK_PASSWORD" | "INVALID_CAPTCHA" | "EMPTY_DISPLAY_NAME" | "EMPTY_USERNAME" | "LONG_DISPLAY_NAME" | "INVALID_USERNAME";
+type InputError = "EMPTY_EMAIL" | "INVALID_EMAIL" | "WEAK_PASSWORD" | "INVALID_CAPTCHA" | "EMPTY_DISPLAY_NAME" | "EMPTY_USERNAME" | "LONG_DISPLAY_NAME" | "INVALID_USERNAME" | "EMPTY_CODE" | "INVALID_CODE";
 
 const Register = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; setLoading: Setter<boolean>; lang: Accessor<Language>; }) => {
-    const [error, setError] = createSignal<SessionErrorType | InputError>();
+    const [error, setError] = createSignal<ClientErrorType | InputError>();
     const [stage, setStage] = createSignal<RegisterStage>("credentials");
     const [checked, setChecked] = createSignal(false);
 
@@ -34,6 +37,8 @@ const Register = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; s
     const [password, setPassword] = createSignal("");
     const [captchaToken, setCaptchaToken] = createSignal("");
     const [hiding, setHiding] = createSignal(false);
+    const [continuation, setContinuation] = createSignal<RegistrationContinuation>();
+    const [code, setCode] = createSignal("");
 
     let captcha: HCaptcha | undefined;
 
@@ -56,6 +61,25 @@ const Register = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; s
                 return;
             }
             setEmail(match[0]);
+            try {
+                const session = await createAccount(email().trim(), captchaToken());
+                setContinuation(session);
+                setLoading(false);
+                setHiding(true);
+                await new Promise(r => setTimeout(r, 1000));
+                setStage("verify");
+                setHiding(false);
+            } catch (e) {
+                setLoading(false);
+                setError((e as ClientError).toString());
+            }
+        } else
+        if (stage() === "verify") {
+            const c = continuation();
+            if (!c) {
+                setLoading(false);
+                throw new Error("Continuation is not set");
+            }
             const entropy = calculateEntropy(password());
             if (entropy < 64) {
                 setLoading(false);
@@ -82,21 +106,20 @@ const Register = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; s
                 setError("INVALID_USERNAME");
                 return;
             }
-            setLoading(false);
-            setHiding(true);
-            await new Promise(r => setTimeout(r, 1000));
-            setStage("verify");
-            setHiding(false);
-        } else
-        if (stage() === "verify") {
+            if (c.emailEnabled) {
+                if (!code().trim()) {
+                    setLoading(false);
+                    setError("INVALID_CODE");
+                    return;
+                }
+                if (code().trim().length !== 8) {
+                    setLoading(false);
+                    setError("INVALID_CODE");
+                    return;
+                }
+            }
             try {
-                const session = await createAccount({
-                    username: username().trim(),
-                    displayName: displayName().trim(),
-                    email: email().trim(),
-                    password: password(),
-                    captchaToken: captchaToken()
-                });
+                const session = await c.continue(username().trim(), password(), displayName().trim(), code().trim());
                 setLoading(false);
                 setHiding(true);
                 await new Promise(r => setTimeout(r, 1000));
@@ -107,7 +130,7 @@ const Register = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; s
                 await continueToRegisteredService(session.token);
             } catch (e) {
                 setLoading(false);
-                setError((e as SessionError).toString());
+                setError((e as ClientError).toString());
             }
         }
     };
@@ -180,34 +203,25 @@ const Register = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; s
                         <Title>{translate(lang(), "REGISTER")}</Title>
                         <div>
                             <Input
-                                placeholder={translate(lang(), "DISPLAY_NAME")}
-                                loading={loading()}
-                                onKeyDown={press}
-                                value={displayName()}
-                                onChange={v => setDisplayName((v.target as HTMLInputElement).value)}
-                            />
-                            <Input
-                                placeholder={translate(lang(), "USERNAME")}
-                                loading={loading()}
-                                onKeyDown={press}
-                                value={username()}
-                                onChange={v => setUsername((v.target as HTMLInputElement).value)}
-                            />
-                            <Input
                                 placeholder={translate(lang(), "EMAIL")}
                                 loading={loading()}
                                 onKeyDown={press}
                                 value={email()}
                                 onChange={v => setEmail((v.target as HTMLInputElement).value)}
                             />
-                            <Input 
-                                password={true}
-                                placeholder={translate(lang(), "PASSWORD")} 
-                                loading={loading()} 
-                                onKeyDown={press} 
-                                value={password()} 
-                                onChange={v => setPassword((v.target as HTMLInputElement).value)} 
-                            />
+                            <Box type="success">
+                                <p>{translate(lang(), "VERIFICATION_DESCRIPTION")}</p>
+                            </Box>
+                            <Box type="information">
+                                <HCaptcha 
+                                    languageOverride={lang()}
+                                    theme="light"
+                                    sitekey={CAPTCHA_KEY}
+                                    onVerify={setCaptchaToken}
+                                    ref={captcha}
+                                    onLoad={initCaptcha}
+                                />
+                            </Box>
                             <Button onClick={register} disabled={loading()}>{translate(lang(), "CONTINUE")}</Button>
                         </div>
                         <p>
@@ -222,19 +236,32 @@ const Register = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; s
                     <Fade hiding={hiding()}>
                         <Title>{translate(lang(), "VERIFICATION")}</Title>
                         <div>
-                            <Box type="success">
-                                <p>{translate(lang(), "VERIFICATION_DESCRIPTION")}</p>
-                            </Box>
-                            <Box type="information">
-                                <HCaptcha 
-                                    languageOverride={lang()}
-                                    theme="light"
-                                    sitekey={CAPTCHA_KEY}
-                                    onVerify={setCaptchaToken}
-                                    ref={captcha}
-                                    onLoad={initCaptcha}
-                                />
-                            </Box>
+                            <Match when={continuation()?.emailEnabled}>
+                                {/* <label>{translate(lang(), "EMAIL_SENT")}</label> */}
+                                <OtpInput code={code} setCode={setCode} />
+                            </Match>
+                            <Input
+                                placeholder={translate(lang(), "DISPLAY_NAME")}
+                                loading={loading()}
+                                onKeyDown={press}
+                                value={displayName()}
+                                onChange={v => setDisplayName((v.target as HTMLInputElement).value)}
+                            />
+                            <Input
+                                placeholder={translate(lang(), "USERNAME")}
+                                loading={loading()}
+                                onKeyDown={press}
+                                value={username()}
+                                onChange={v => setUsername((v.target as HTMLInputElement).value)}
+                            />
+                            <Input 
+                                password={true}
+                                placeholder={translate(lang(), "PASSWORD")} 
+                                loading={loading()} 
+                                onKeyDown={press} 
+                                value={password()} 
+                                onChange={v => setPassword((v.target as HTMLInputElement).value)} 
+                            />
                             <ButtonContainer>
                                 <Button onClick={back} disabled={loading()}>{translate(lang(), "BACK")}</Button>
                                 <Button onClick={register} disabled={loading()}>{translate(lang(), "CONTINUE")}</Button>

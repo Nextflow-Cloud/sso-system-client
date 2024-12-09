@@ -1,8 +1,10 @@
 import { AccountSettings, Profile } from "./lib/authentication";
+import * as opaque from "@serenity-kit/opaque";
 
 class Internals {
     accountSettings?: AccountSettings;
     profile?: Profile;
+    opaque = opaque;
 
     setAccountSettings(settings: AccountSettings) {
         this.accountSettings = settings;

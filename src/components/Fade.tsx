@@ -8,7 +8,7 @@ const FadeBase = styled.div`
     height: 100%;
     /* justify-content: space-between; */
     & > :not([hidden]) ~ :not([hidden]) {
-        margin-top: 1rem;
+        margin-top: 0.75rem;
     }
     word-wrap: break-word;
     font-size: 0.875rem;

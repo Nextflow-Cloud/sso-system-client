@@ -12,11 +12,16 @@
     "@corvu/dialog": "^0.2.2",
     "@corvu/otp-field": "^0.1.2",
     "@corvu/popover": "^0.2.0",
+    "@github/webauthn-json": "^2.1.1",
+    "@serenity-kit/opaque": "^0.8.4",
     "@solidjs/router": "^0.15.0",
+    "js-base64": "^3.7.7",
+    "jwt-decode": "^4.0.0",
     "solid-hcaptcha": "^1.0.0",
     "solid-icons": "^1.1.0",
     "solid-js": "^1.8.17",
     "solid-styled-components": "^0.28.5",
+    "superstruct": "^2.0.2",
     "ulid": "^2.3.0"
   },
   "devDependencies": {

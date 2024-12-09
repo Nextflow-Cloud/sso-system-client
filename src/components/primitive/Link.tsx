@@ -3,7 +3,7 @@ import { styled } from "solid-styled-components";
 
 
 const LinkBase = styled.a`
-    color: rgb(96 165 250);
+    color: var(--secondary);
     text-decoration: none;
 `;
 

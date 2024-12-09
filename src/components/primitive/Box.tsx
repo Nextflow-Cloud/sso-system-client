@@ -16,8 +16,8 @@ const SuccessBox = styled.div`
 const InformationBox = styled.div`
     /* background-color: rgb(30 58 138); */
     /* border-color: rgb(96 165 250); */
-    background-color: #0ea5e9;
-    border: #7dd3fc 2px solid;
+    background-color: #7dd3fc;
+    border: #0ea5e9 2px solid;
     border-radius: 0.375rem;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;

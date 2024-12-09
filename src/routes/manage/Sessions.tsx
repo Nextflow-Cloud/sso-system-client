@@ -6,8 +6,8 @@ import Button from "../../components/primitive/Button";
 import { decodeTime } from "ulid";
 import { createMemo, createSignal, onMount } from "solid-js";
 import { useGlobalState } from "../../context";
-import { Session } from "../../utilities/lib/authentication";
 import { styled } from "solid-styled-components";
+import { Session } from "../../utilities/lib/manage";
 
 const SessionList = styled.table`
     margin-top: 20px;

@@ -17,7 +17,6 @@ const App = () => {
   return (
       <StateProvider>
         <Router>
-          {/* <Route /> */}
           <Route path="/" component={() => (
             <Authenticated>
               <Navigate href="/manage" />
@@ -32,6 +31,13 @@ const App = () => {
             <FormBase loading={loading} lang={lang} setLang={setLang}>
               <Register loading={loading} setLoading={setLoading} lang={lang} />
             </FormBase>
+          )} />
+          <Route path="/escalate" component={() => (
+            <Authenticated>
+              <FormBase loading={loading} lang={lang} setLang={setLang}>
+                <Login loading={loading} setLoading={setLoading} lang={lang} escalate />
+              </FormBase>
+            </Authenticated>
           )} />
           <Route path="/manage/:category?" matchFilters={{ category: ["account", "profile", "sessions"] }} component={() => (
             <Authenticated>

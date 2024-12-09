@@ -1,4 +1,4 @@
-import { Accessor, createSignal, JSX, Match, onMount, Setter, Show } from "solid-js";
+import { Accessor, createMemo, createSignal, JSX, Match, onMount, Setter, Show } from "solid-js";
 import Fade from "../components/Fade";
 import { Language, translate } from "../utilities/i18n";
 import ErrorText from "../components/ErrorText";
@@ -7,18 +7,28 @@ import Input from "../components/primitive/Input";
 import Button from "../components/primitive/Button";
 import Link from "../components/primitive/Link";
 import Switch from "../components/primitive/Switch";
-// import { createSessionPasskey } from "../utilities/lib/authenticationExperimental";
 import { Switch as ConditionalSwitch } from "solid-js";
-import { createSession, PartialClient, SessionError, SessionErrorType, validateSession } from "../utilities/lib/authentication";
 import OtpInput from "../components/primitive/OtpInput";
 import { useNavigate } from "@solidjs/router";
 import { TRUSTED_SERVICES } from "../constants";
+import { styled } from "solid-styled-components";
+import { createSession, PartialClient, validateSession } from "../utilities/lib/login";
+import { ClientError, ClientErrorType } from "../utilities/lib/errors";
+import { createSessionPasskey } from "../utilities/lib/authentication";
+import { useGlobalState } from "../context";
 
 type LoginStage = "credentials" | "2fa" | "done" | "skip";
 type InputError = "EMPTY_EMAIL" | "INVALID_EMAIL" | "EMPTY_PASSWORD" | "EMPTY_CODE" | "INVALID_CODE";
 
-const Login = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; setLoading: Setter<boolean>; lang: Accessor<Language>; }) => {
-    const [error, setError] = createSignal<SessionErrorType | InputError>();
+const LoginOr = styled.div`
+    display: flex;
+    align-items: center;
+    align-self: center;
+    width: 100%;
+`
+
+const Login = ({ loading, setLoading, lang, escalate }: { loading: Accessor<boolean>; setLoading: Setter<boolean>; lang: Accessor<Language>; escalate?: boolean; }) => {
+    const [error, setError] = createSignal<ClientErrorType | InputError>();
     const [stage, setStage] = createSignal<LoginStage>("credentials");
     const [checked, setChecked] = createSignal(false);
 
@@ -31,6 +41,8 @@ const Login = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; setL
     const [hiding, setHiding] = createSignal(false);
 
     const navigate = useNavigate();
+    const state = createMemo(() => useGlobalState());
+    const s = createMemo(() => state().get("session"));
 
     const login = async () => {
         setError();
@@ -53,17 +65,22 @@ const Login = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; setL
             setLoading(true);
             setEmail(match[0]);
             try {
-                const session = await createSession(email().trim(), password(), persist());
+                const session = await createSession(email().trim(), password(), escalate ? s()!.token : undefined, persist());
                 if (session.needsContinuation()) {
                     setPartialSession(session);
                     await switchStage("2fa");
                 } else {
                     await switchStage("done");
-                    localStorage.setItem("token", session.token);
-                    await continueToRegisteredService(session.token);
+                    if (escalate) {
+                        localStorage.setItem("escalationToken", session.token);
+                        navigate("/manage");
+                    } else {
+                        localStorage.setItem("token", session.token);
+                        await continueToRegisteredService(session.token);
+                    }
                 }
             } catch (e) {
-                setError((e as SessionError).toString());
+                setError((e as ClientError).toString());
                 setLoading(false);
             }
         } else if (stage() === "2fa") {
@@ -79,10 +96,15 @@ const Login = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; setL
             try {
                 const session = await partialSession()!.continue(code());
                 await switchStage("done");
-                localStorage.setItem("token", session.token);
-                await continueToRegisteredService(session.token);
+                if (escalate) {
+                    localStorage.setItem("escalationToken", session.token);
+                    navigate("/manage");
+                } else {
+                    localStorage.setItem("token", session.token);
+                    await continueToRegisteredService(session.token);
+                }
             } catch (e) {
-                const error = (e as SessionError).toString();
+                const error = (e as ClientError).toString();
                 setError(error === "INVALID_CREDENTIALS" ? "INVALID_CODE" : error);
                 setLoading(false);
             }
@@ -136,12 +158,15 @@ const Login = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; setL
     const checkToken = async () => {
         const token = localStorage.getItem("token");
         if (token) {
-            const session = await validateSession(token);
-            if (session) {
-                // however, need to handle this somehow
-                setStage("skip");
-                await continueToRegisteredService(token);
+            try {
+                const session = await validateSession(token);
+                if (!escalate) {
+                    // however, need to handle this somehow
+                    setStage("skip");
+                    await continueToRegisteredService(token);
+                }
             }
+            catch {}
         }
         setChecked(true);
     };
@@ -149,17 +174,34 @@ const Login = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; setL
     onMount(() => {
         checkToken();
     });
+
+    const loginPasskey = async () => {
+        setLoading(true);
+        const session = await createSessionPasskey();
+        await switchStage("done");
+        localStorage.setItem("token", session.token);
+        await continueToRegisteredService(session.token);
+    };
                 
     return (
         <Show when={checked()} fallback={<div />}>
             <ConditionalSwitch fallback={<div />}>
                 <Match when={stage() === "credentials"}>
                     <Fade hiding={hiding()}>
-                        <Title>{translate(lang(), "LOGIN")}</Title>
-                        {/* <div>
-                            <Button onClick={createSessionPasskey} disabled={loading()}>{translate(lang(), "LOGIN_WITH_PASSKEY")}</Button>
+                        <Show when={escalate}>
+                            <Title>{"Escalate"}</Title>
+                        </Show>
+                        <Show when={!escalate}>
+                            <Title>{translate(lang(), "LOGIN")}</Title>
+                        </Show>
+                        <div>
+                            <Button onClick={loginPasskey} disabled={loading()}>{translate(lang(), "LOGIN_WITH_PASSKEY")}</Button>
                         </div>
-                        <span style={{ "align-self": "center"}}>OR</span> */}
+                        <LoginOr>
+                            <hr style={{ "width": "100%", "border-radius": "1px" }} />
+                            <span style={{ "padding-left": "10px", "padding-right": "10px" }}>or</span>
+                            <hr style={{ "width": "100%", "border-radius": "1px" }} />
+                        </LoginOr>
                         <div>
                             <Input
                                 placeholder={translate(lang(), "EMAIL")}
@@ -177,15 +219,19 @@ const Login = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; setL
                                 value={password()} 
                                 onChange={v => setPassword((v.target as HTMLInputElement).value)} 
                             />
-                            <Switch checked={persist} setChecked={setPersist} /> {translate(lang(), "STAY_SIGNED_IN")}
+                            <Show when={!escalate}> 
+                                <Switch checked={persist} setChecked={setPersist} /> {translate(lang(), "STAY_SIGNED_IN")}
+                            </Show>
                             
                             <Button onClick={login} disabled={loading()}>{translate(lang(), "CONTINUE")}</Button>
                         </div>
-                        <p>
-                            {translate(lang(), "NO_ACCOUNT")} <Link href="/register" onClick={register}>{translate(lang(), "REGISTER")}</Link>
-                            </p><p>
-                            <Link href="/forgot" onClick={forgot}>{translate(lang(), "FORGOT")}</Link>
-                        </p>
+                        <Show when={!escalate}>
+                            <p>
+                                {translate(lang(), "NO_ACCOUNT")} <Link href="/register" onClick={register}>{translate(lang(), "REGISTER")}</Link>
+                                </p><p>
+                                <Link href="/forgot" onClick={forgot}>{translate(lang(), "FORGOT")}</Link>
+                            </p>
+                        </Show>
                         <ErrorText>
                             {error() && translate(lang(), error()!)}
                         </ErrorText>

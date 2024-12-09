@@ -1,7 +1,7 @@
 import { createSignal, onMount, Show } from "solid-js";
-import { validateSession } from "../utilities/lib/authentication";
 import Fade from "../components/Fade";
 import Title from "../components/primitive/Title";
+import { validateSession } from "../utilities/lib/login";
 
 const Logout = () => {
     const [validSession, setValidSession] = createSignal(false);

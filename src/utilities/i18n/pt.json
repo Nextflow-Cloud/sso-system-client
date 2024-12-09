@@ -59,7 +59,7 @@
     "INVALID_CAPTCHA": "Captcha inválido, tente novamente",
     "ALREADY_EXISTS": "Uma conta com este e-mail já existe",
     
-    "SSO_SYSTEM": "Sistema SSO Nextflow",
-    "SSO_SYSTEM_VERSION": "Versão {} (pré-lançamento)",
-    "SSO_SYSTEM_COPYRIGHT": "Direitos autorais © {} Nextflow Cloud Technologies e colaboradores."
+    "ACCOUNT_SERVICES": "Sistema SSO Nextflow",
+    "ACCOUNT_SERVICES_VERSION": "Versão {} (pré-lançamento)",
+    "ACCOUNT_SERVICES_COPYRIGHT": "Direitos autorais © {} Nextflow Cloud Technologies e colaboradores."
 }

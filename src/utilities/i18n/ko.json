@@ -59,7 +59,7 @@
     "INVALID_CAPTCHA": "잘못된 captcha입니다. 다시 시도하십시오",
     "ALREADY_EXISTS": "이 이메일로 계정이 이미 있습니다",
 
-    "SSO_SYSTEM": "Nextflow SSO 시스템",
-    "SSO_SYSTEM_VERSION": "버전 {} (사전 릴리스)",
-    "SSO_SYSTEM_COPYRIGHT": "저작권 © {} Nextflow 클라우드 기술 및 기여자."
+    "ACCOUNT_SERVICES": "Nextflow SSO 시스템",
+    "ACCOUNT_SERVICES_VERSION": "버전 {} (사전 릴리스)",
+    "ACCOUNT_SERVICES_COPYRIGHT": "저작권 © {} Nextflow 클라우드 기술 및 기여자."
 }

@@ -59,7 +59,7 @@
     "INVALID_CAPTCHA": "无效的验证码，请重试",
     "ALREADY_EXISTS": "使用此电子邮件地址的帐户已存在",
 
-    "SSO_SYSTEM": "Nextflow SSO 系统",
-    "SSO_SYSTEM_VERSION": "版本 {} (预发布)",
-    "SSO_SYSTEM_COPYRIGHT": "版权 © {} Nextflow 云技术和贡献者。"
+    "ACCOUNT_SERVICES": "Nextflow SSO 系统",
+    "ACCOUNT_SERVICES_VERSION": "版本 {} (预发布)",
+    "ACCOUNT_SERVICES_COPYRIGHT": "版权 © {} Nextflow 云技术和贡献者。"
 }

@@ -27,7 +27,7 @@
     "EMAIL": "Email",
     "PASSWORD": "Password",
     "NO_ACCOUNT": "No account?",
-    "LOGIN_WITH_PASSKEY": "Login with passkey",
+    "LOGIN_WITH_PASSKEY": "Continue with passkey",
 
     "HAVE_AN_ACCOUNT": "Already have an account?",
     "DISPLAY_NAME": "Display name",
@@ -59,7 +59,7 @@
     "INVALID_CAPTCHA": "Invalid captcha, please try again",
     "ALREADY_EXISTS": "An account with this email already exists",
 
-    "SSO_SYSTEM": "Nextflow Account Services",
-    "SSO_SYSTEM_VERSION": "Version {} (pre-release)",
-    "SSO_SYSTEM_COPYRIGHT": "Copyright © {} Nextflow Cloud Technologies and contributors."
+    "ACCOUNT_SERVICES": "Nextania Account Services",
+    "ACCOUNT_SERVICES_VERSION": "Version {}",
+    "ACCOUNT_SERVICES_COPYRIGHT": "Copyright © {} {} and contributors."
 }

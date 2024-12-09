@@ -16,9 +16,9 @@ const FooterBase = styled.footer`
 const Footer = ({ desktop, lang }: { desktop: boolean; lang: Accessor<Language>; }) => {
     return (
         <FooterBase desktop={desktop}>
-            <p>{translate(lang(), "SSO_SYSTEM")}</p>
-            <p>{translate(lang(), "SSO_SYSTEM_VERSION").replace("{}", VERSION)}</p>
-            <p>{translate(lang(), "SSO_SYSTEM_COPYRIGHT").replace("{}", new Date().getUTCFullYear().toString())}</p>
+            <p>{translate(lang(), "ACCOUNT_SERVICES")}</p>
+            <p>{translate(lang(), "ACCOUNT_SERVICES_VERSION").replace("{}", VERSION)}</p>
+            <p>{translate(lang(), "ACCOUNT_SERVICES_COPYRIGHT").replace("{}", new Date().getUTCFullYear().toString()).replace("{}", "Nextflow Cloud Technologies")}</p>
             <p><Link href="https://nextflow.cloud/terms">{translate(lang(), "TERMS")}</Link> | <Link href="https://nextflow.cloud/privacy">{translate(lang(), "PRIVACY")}</Link></p>
         </FooterBase>
     );

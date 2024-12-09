@@ -60,7 +60,7 @@
     "INVALID_CAPTCHA": "無效的驗證碼，請重試",
     "ALREADY_EXISTS": "使用此電子郵件地址的帳戶已存在",
     
-    "SSO_SYSTEM": "Nextflow SSO 系統",
-    "SSO_SYSTEM_VERSION": "版本 {} (預發行)",
-    "SSO_SYSTEM_COPYRIGHT": "版權 © {} Nextflow 雲技術和貢獻者。"
+    "ACCOUNT_SERVICES": "Nextflow SSO 系統",
+    "ACCOUNT_SERVICES_VERSION": "版本 {} (預發行)",
+    "ACCOUNT_SERVICES_COPYRIGHT": "版權 © {} Nextflow 雲技術和貢獻者。"
 }

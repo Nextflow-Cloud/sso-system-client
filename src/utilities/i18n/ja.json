@@ -60,7 +60,7 @@
     "INVALID_CAPTCHA": "無効なキャプチャです。もう一度お試しください",
     "ALREADY_EXISTS": "このメールアドレスでアカウントがすでに存在します",
     
-    "SSO_SYSTEM": "Nextflow SSO システム",
-    "SSO_SYSTEM_VERSION": "バージョン {} (プレリリース)",
-    "SSO_SYSTEM_COPYRIGHT": "著作権 © {} Nextflow クラウドテクノロジーおよび貢献者。"
+    "ACCOUNT_SERVICES": "Nextflow SSO システム",
+    "ACCOUNT_SERVICES_VERSION": "バージョン {} (プレリリース)",
+    "ACCOUNT_SERVICES_COPYRIGHT": "著作権 © {} Nextflow クラウドテクノロジーおよび貢献者。"
 }

@@ -7,16 +7,18 @@ import Input from "../components/primitive/Input";
 import Button from "../components/primitive/Button";
 import Link from "../components/primitive/Link";
 import { Switch as ConditionalSwitch } from "solid-js";
-import { finishResetPassword, forgotPassword, SessionError, SessionErrorType, validateSession } from "../utilities/lib/authentication";
 import { useNavigate } from "@solidjs/router";
 import { TRUSTED_SERVICES } from "../constants";
 import { calculateEntropy } from "../utilities/client";
+import { validateSession } from "../utilities/lib/login";
+import { finishResetPassword, forgotPassword } from "../utilities/lib/forgot";
+import { ClientError, ClientErrorType } from "../utilities/lib/errors";
 
 type ForgotStage = "email" | "sent" | "credentials" | "done" | "skip";
 type InputError = "EMPTY_EMAIL" | "INVALID_EMAIL" | "EMPTY_PASSWORD" | "INVALID_CREDENTIALS" | "WEAK_PASSWORD";
 
 const Forgot = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; setLoading: Setter<boolean>; lang: Accessor<Language>; }) => {
-    const [error, setError] = createSignal<SessionErrorType | InputError>();
+    const [error, setError] = createSignal<ClientErrorType | InputError>();
     const [stage, setStage] = createSignal<ForgotStage>("email");
     const [checked, setChecked] = createSignal(false);
 
@@ -49,7 +51,7 @@ const Forgot = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; set
                 await switchStage("sent");
                 setLoading(false);
             } catch (e) {
-                setError((e as SessionError).toString());
+                setError((e as ClientError).toString());
                 setLoading(false);
             }
         } else if (stage() === "credentials") {   
@@ -68,7 +70,7 @@ const Forgot = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; set
                 await switchStage("done");
                 setLoading(false);
             } catch (e) {
-                setError((e as SessionError).toString());
+                setError((e as ClientError).toString());
                 setLoading(false);
             }
         }

@@ -1,5 +1,5 @@
 import { Accessor, createContext, createSignal, ParentProps, Setter, useContext } from "solid-js";
-import { AccountSettings, Client, Settings } from "./utilities/lib/authentication";
+import { Client, CurrentUser } from "./utilities/lib/manage";
 
 const StateContext = createContext<GlobalState>();
 
@@ -10,8 +10,7 @@ export const useGlobalState = () => {
 };
 interface GlobalStateKeyMap {
     session?: Client;
-    settings?: Settings;
-    stagedAccountSettings?: Partial<AccountSettings>;
+    settings?: CurrentUser;
 }
 
 class GlobalState {
