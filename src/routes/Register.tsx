@@ -238,10 +238,10 @@ const Register = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoad
                     <Fade hiding={hiding()}>
                         <Title>{t("VERIFICATION")}</Title>
                         <div>
-                            <Match when={continuation()?.emailEnabled}>
+                            <Show when={continuation()?.emailEnabled}>
                                 {/* <label>{translate(lang(), "EMAIL_SENT")}</label> */}
                                 <OtpInput code={code} setCode={setCode} />
-                            </Match>
+                            </Show>
                             <Input
                                 placeholder={t("DISPLAY_NAME")}
                                 loading={loading()}
