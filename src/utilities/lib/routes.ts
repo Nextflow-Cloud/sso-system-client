@@ -113,7 +113,6 @@ const routes = {
         types: {
             request: object({
                 username: optional(string()),
-                email: optional(string()),
                 escalationToken: string(),
             }),
             response: object({})
