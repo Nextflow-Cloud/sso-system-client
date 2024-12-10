@@ -104,5 +104,13 @@
     "LOGGED_OUT": "Desconectado",
     "LOGGED_OUT_SUCCESS": "Ha cerrado la sesión correctamente. Gracias por utilizar nuestros servicios y que tenga un día maravilloso.",
     "LOGGED_OUT_NOT_LOGGED_IN": "No has iniciado sesión.",
-    "LOGOUT": "Cerrar sesión"
+    "LOGOUT": "Cerrar sesión",
+    "OR": "o",
+    "ESCALATE": "Escalar",
+    "MFA_SETUP": "Configurar autenticación de dos factores",
+    "MFA_SETUP_SECRET": "Escanee el código QR o ingrese el siguiente secreto en su aplicación de autenticación preferida.",
+    "MFA_SETUP_BACKUP": "Guarde estos códigos de respaldo de un solo uso en un lugar seguro. Puede usarlos para iniciar sesión si pierde el acceso a su aplicación de autenticación.",
+    "MFA_SETUP_NEVER_SHOWN_AGAIN": "Estos códigos nunca se mostrarán nuevamente, así que guárdelos de forma segura.",
+    "CREATED_AT": "Creado en",
+    "REVOKE": "Revocar"
 }

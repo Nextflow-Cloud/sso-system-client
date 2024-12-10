@@ -105,7 +105,7 @@ const Profile = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoadi
     
     return (
         <>
-            <h1>Profile</h1>
+            <h1>{t("PROFILE")}</h1>
             <Section>
                 <AvatarConfigurator>
                     <AvatarContainer onClick={handleAvatarChange}>

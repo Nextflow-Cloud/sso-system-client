@@ -88,7 +88,7 @@ const Sessions = () => {
                     <tr>
                         <th>{t("ID")}</th>
                         <th>{t("FRIENDLY_NAME")}</th>
-                        <th>Logged in</th>
+                        <th>{t("CREATED_AT")}</th>
                         <th>IP address</th>
                         <th>Location</th>
                         <th>{t("ACTIONS")}</th>
@@ -103,7 +103,7 @@ const Sessions = () => {
                             <td>{session.ipAddress}</td>
                             <td>{session.location}</td>
                             <td>
-                                <Button onClick={() => revoke(session.id)}>Revoke</Button>
+                                <Button onClick={() => revoke(session.id)}>{t("REVOKE")}</Button>
                             </td>
                         </tr>
                     ))}

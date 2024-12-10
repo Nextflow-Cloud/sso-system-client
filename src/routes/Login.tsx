@@ -193,7 +193,7 @@ const Login = ({ loading, setLoading, escalate }: { loading: Accessor<boolean>; 
                 <Match when={stage() === "credentials"}>
                     <Fade hiding={hiding()}>
                         <Show when={escalate}>
-                            <Title>{"Escalate"}</Title>
+                            <Title>{t("ESCALATE")}</Title>
                         </Show>
                         <Show when={!escalate}>
                             <Title>{t("LOGIN")}</Title>
@@ -203,7 +203,7 @@ const Login = ({ loading, setLoading, escalate }: { loading: Accessor<boolean>; 
                         </div>
                         <LoginOr>
                             <hr style={{ "width": "100%", "border-radius": "1px" }} />
-                            <span style={{ "padding-left": "10px", "padding-right": "10px" }}>or</span>
+                            <span style={{ "padding-left": "10px", "padding-right": "10px" }}>{t("OR")}</span>
                             <hr style={{ "width": "100%", "border-radius": "1px" }} />
                         </LoginOr>
                         <div>

@@ -104,5 +104,13 @@
     "LOGGED_OUT": "Logged out",
     "LOGGED_OUT_SUCCESS": "You have logged out successfully. Thank you for using our services and have a wonderful day.",
     "LOGGED_OUT_NOT_LOGGED_IN": "You are not logged in.",
-    "LOGOUT": "Log out"
+    "LOGOUT": "Log out",
+    "OR": "or",
+    "ESCALATE": "Escalate",
+    "MFA_SETUP": "Set up two-factor authentication",
+    "MFA_SETUP_SECRET": "Scan the QR code or enter the following secret into your preferred authenticator app.",
+    "MFA_SETUP_BACKUP": "Save these one-time backup codes in a safe place. You can use them to log in if you lose access to your authenticator app.",
+    "MFA_SETUP_NEVER_SHOWN_AGAIN": "These codes will never be shown again, so please store them securely.",
+    "CREATED_AT": "Created at",
+    "REVOKE": "Revoke"
 }

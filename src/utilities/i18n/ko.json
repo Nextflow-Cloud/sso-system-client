@@ -103,5 +103,13 @@
     "LOGGED_OUT": "로그아웃",
     "LOGGED_OUT_SUCCESS": "로그아웃되었습니다. 저희 서비스를 이용해 주셔서 감사합니다. 행복한 하루 되세요.",
     "LOGGED_OUT_NOT_LOGGED_IN": "로그인되지 않았습니다.",
-    "LOGOUT": "로그아웃"
+    "LOGOUT": "로그아웃",
+    "OR": "또는",
+    "ESCALATE": "에스컬레이션",
+    "MFA_SETUP": "이중 인증 설정",
+    "MFA_SETUP_SECRET": "QR 코드를 스캔하거나 다음 비밀을 선호하는 인증기 앱에 입력하십시오.",
+    "MFA_SETUP_BACKUP": "이 일회용 백업 코드를 안전한 곳에 보관하십시오. 인증기 앱에 액세스를 잃은 경우에 사용할 수 있습니다.",
+    "MFA_SETUP_NEVER_SHOWN_AGAIN": "이 코드는 다시 표시되지 않으므로 안전하게 보관하십시오.",
+    "CREATED_AT": "생성 날짜",
+    "REVOKE": "철회"
 }

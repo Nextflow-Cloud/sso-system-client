@@ -104,5 +104,13 @@
     "LOGGED_OUT": "已注销",
     "LOGGED_OUT_SUCCESS": "您已成功注销。感谢您使用我们的服务，祝您有一个美好的一天。",
     "LOGGED_OUT_NOT_LOGGED_IN": "您尚未登录。",
-    "LOGOUT": "注销"
+    "LOGOUT": "注销",
+    "OR": "或",
+    "ESCALATE": "升级",
+    "MFA_SETUP": "设置双因素认证",
+    "MFA_SETUP_SECRET": "扫描 QR 码或将以下秘密输入到您首选的认证器应用中。",
+    "MFA_SETUP_BACKUP": "请将这些一次性备份代码保存在安全的地方。如果您无法访问您的认证器应用，可以使用它们登录。",
+    "MFA_SETUP_NEVER_SHOWN_AGAIN": "这些代码将不会再次显示，因此请妥善保存。",
+    "CREATED_AT": "创建于",
+    "REVOKE": "撤销"
 }

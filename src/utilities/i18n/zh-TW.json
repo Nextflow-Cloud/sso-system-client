@@ -104,5 +104,13 @@
     "LOGGED_OUT": "登出",
     "LOGGED_OUT_SUCCESS": "您已成功登出。感謝您使用我們的服務，祝您有美好的一天。",
     "LOGGED_OUT_NOT_LOGGED_IN": "您尚未登錄。",
-    "LOGOUT": "登出"
+    "LOGOUT": "登出",
+    "OR": "或",
+    "ESCALATE": "升級",
+    "MFA_SETUP": "設置雙因素認證",
+    "MFA_SETUP_SECRET": "掃描 QR 碼或將以下秘密輸入到您首選的認證器應用中。",
+    "MFA_SETUP_BACKUP": "請將這些一次性備份代碼保存在安全的地方。如果您無法訪問您的認證器應用，可以使用它們登錄。",
+    "MFA_SETUP_NEVER_SHOWN_AGAIN": "這些代碼將不會再次顯示，因此請妥善保存。",
+    "CREATED_AT": "創建於",
+    "REVOKE": "撤銷"
 }

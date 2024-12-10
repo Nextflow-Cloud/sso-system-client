@@ -7,6 +7,7 @@ import Box from "../primitive/Box";
 import OtpInput from "../primitive/OtpInput";
 import { ClientError, ClientErrorType } from "../../utilities/lib/errors";
 import { MfaContinueFunction } from "../../utilities/lib/manage";
+import { useTranslate } from "../../utilities/i18n";
 
 type AuthenticateStage =  "ONBOARD" | "MFA";
 type AuthenticateError = ClientErrorType | "EMPTY_CODE" | "INVALID_CODE";
@@ -23,6 +24,7 @@ const Mfa = (props: { loading: Accessor<boolean>; setLoading: Setter<boolean> })
     const [error, setError] = createSignal<AuthenticateError>();
     const state = createMemo(() => useGlobalState());
     const dialogContext = createMemo(() => Dialog.useContext());
+    const t = useTranslate();
 
     onMount(async () => {
         const client = state().get("session");
@@ -92,18 +94,18 @@ const Mfa = (props: { loading: Accessor<boolean>; setLoading: Setter<boolean> })
                         </>
                     }>
                         <Match when={stage() === "ONBOARD"}>
-                            <h1>Set up two factor authentication</h1>
+                            <h1>{t("MFA_SETUP")}</h1>
                             <img src={`data:image/png;base64,${qrCode()}`} alt="QR code" width="300" height="300" />
-                            <p>Scan the QR code or enter the following secret into your preferred authenticator app.</p>
+                            <p>{t("MFA_SETUP_SECRET")}</p>
                             <p>{secret()}</p>
-                            <p style={{ "text-align": "center" }}>Additionally, here are some backup codes in case you ever lose access. They can only be used once. Please be mindful that they can be used to gain access to your account in place of the authenticator app.</p>
+                            <p style={{ "text-align": "center" }}>{t("MFA_SETUP_BACKUP")}</p>
                             <p>{codes().join("\n")}</p>
-                            <p>This information will never be shown again, so please store them securely.</p>
+                            <p>{t("MFA_SETUP_NEVER_SHOWN_AGAIN")}</p>
                         </Match>
                         <Match when={stage() === "MFA"}>
-                            <h1>Enter your two factor authentication code</h1>
+                            <h1>{t("ENTER_CODE")}</h1>
                             <OtpInput code={mfaCode} setCode={setMfaCode} />
-                            <Button onClick={() => setStage("ONBOARD")} disabled={props.loading()}>Back</Button>
+                            <Button onClick={() => setStage("ONBOARD")} disabled={props.loading()}>{t("BACK")}</Button>
                         </Match>
                     </Switch>
                     <Show when={error() !== undefined}>
@@ -111,8 +113,8 @@ const Mfa = (props: { loading: Accessor<boolean>; setLoading: Setter<boolean> })
                             {error()}
                         </Box>
                     </Show>
-                    <Button onClick={next} disabled={props.loading()}>Continue</Button>
-                    <Button onClick={closeDialog} disabled={props.loading()}>Cancel</Button>
+                    <Button onClick={next} disabled={props.loading()}>{t("CONTINUE")}</Button>
+                    <Button onClick={closeDialog} disabled={props.loading()}>{t("CANCEL")}</Button>
                 </Content>
             </Dialog.Portal>
         </>

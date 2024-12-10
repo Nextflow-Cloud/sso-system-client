@@ -104,5 +104,13 @@
     "LOGGED_OUT": "Déconnecté",
     "LOGGED_OUT_SUCCESS": "Vous vous êtes déconnecté avec succès. Merci d'avoir utilisé nos services et passez une merveilleuse journée.",
     "LOGGED_OUT_NOT_LOGGED_IN": "Vous n'êtes pas connecté.",
-    "LOGOUT": "Déconnexion"
+    "LOGOUT": "Déconnexion",
+    "OR": "ou",
+    "ESCALATE": "Escalader",
+    "MFA_SETUP": "Configurer l'authentification à deux facteurs",
+    "MFA_SETUP_SECRET": "Scannez le code QR ou entrez le secret suivant dans votre application d'authentification préférée.",
+    "MFA_SETUP_BACKUP": "Conservez ces codes de secours à usage unique dans un endroit sûr. Vous pouvez les utiliser pour vous connecter si vous perdez l'accès à votre application d'authentification.",
+    "MFA_SETUP_NEVER_SHOWN_AGAIN": "Ces codes ne seront jamais affichés à nouveau, alors veuillez les stocker en toute sécurité.",
+    "CREATED_AT": "Créé à",
+    "REVOKE": "Révoquer"
 }
