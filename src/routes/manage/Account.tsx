@@ -14,7 +14,7 @@ import { styled } from "solid-styled-components";
 import { Passkey } from "../../utilities/lib/manage";
 import { useTranslate } from "../../utilities/i18n";
 
-type DialogType = "DELETE" | "MFA";
+type DialogType = "DELETE" | "MFA" | "NONE";
 
 const PasskeyList = styled.table`
     margin-top: 20px;
@@ -56,14 +56,27 @@ const Account = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoadi
         setLoading(false);
     });
 
-    createEffect(() => {
+    createEffect(async () => {
         let settings = state().get("settings");
         if (settings) {
             let mfa = twoFactor();
-            if (mfa !== undefined && settings.mfaEnabled === false && mfa === true) {
-                // open setup dialog
-                setDialogType("MFA");
-                dialogContext().setOpen(true);
+            console.log(mfa, settings.mfaEnabled);
+            if (mfa !== undefined && mfa !== settings.mfaEnabled) {
+                if (settings.mfaEnabled === false && mfa === true) {
+                    // open setup dialog
+                    setDialogType("MFA");
+                    dialogContext().setOpen(true);
+                } else {
+                    const client = state().get("session");
+                    if (client && client.isElevated()) {
+                        try {
+                            await client.configureMfa();
+                            state().update("settings", { mfaEnabled: false });
+                        } catch(e) {
+                            state().update("settings", { mfaEnabled: true });   
+                        }
+                    }
+                }
             }
         }
     });
@@ -75,6 +88,7 @@ const Account = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoadi
             if (settings) {
                 setTwoFactor(settings.mfaEnabled);
             }
+            setDialogType("NONE");
         }
     });
 
@@ -103,12 +117,8 @@ const Account = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoadi
         if (client && client.isElevated()) {
             try {
                 await client.createPasskey();
-            } catch(e) {
-                console.log(e)
-                if ((e as any).toString() === "UNKNOWN_ERROR") {
-                    localStorage.removeItem("escalationToken");
-                    window.location.reload();
-                } 
+            } catch {
+                window.location.reload();
             }
         }
     };
@@ -127,7 +137,6 @@ const Account = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoadi
             try {
                 await client.updatePassword(newPasswordUnwrap);
             } catch {
-                localStorage.removeItem("escalationToken");
                 window.location.reload();
             }
         }
@@ -147,7 +156,6 @@ const Account = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoadi
                 const passkeys = await client.getPasskeys();
                 setPasskeys(passkeys);
             } catch {
-                localStorage.removeItem("escalationToken");
                 window.location.reload();
             }
         }
