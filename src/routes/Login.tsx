@@ -180,8 +180,13 @@ const Login = ({ loading, setLoading, escalate }: { loading: Accessor<boolean>; 
         const session = await createSessionPasskey();
         if (session) {
             await switchStage("done");
-            localStorage.setItem("token", session.token);
-            await continueToRegisteredService(session.token);
+            if (escalate) {
+                localStorage.setItem("escalationToken", session.token);
+                navigate("/manage");
+            } else {
+                localStorage.setItem("token", session.token);
+                await continueToRegisteredService(session.token);
+            }
         } else {
             setLoading(false);
         }
@@ -208,6 +213,7 @@ const Login = ({ loading, setLoading, escalate }: { loading: Accessor<boolean>; 
                         </LoginOr>
                         <div>
                             <Input
+                                type="email"
                                 placeholder={t("EMAIL")}
                                 loading={loading()}
                                 onKeyDown={press}
@@ -216,7 +222,7 @@ const Login = ({ loading, setLoading, escalate }: { loading: Accessor<boolean>; 
                             />
                             
                             <Input 
-                                password={true}
+                                type="password"
                                 placeholder={t("PASSWORD")} 
                                 loading={loading()} 
                                 onKeyDown={press} 

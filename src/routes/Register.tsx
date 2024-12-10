@@ -162,18 +162,20 @@ const Register = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoad
     const checkToken = async () => {
         const token = localStorage.getItem("token");
         if (token) {
-            const session = await validateSession(token);
-            if (session) {
-                setStage("skip");
-                setTimeout(() => {
-                    const getContinueUrl = new URLSearchParams(window.location.search).get("continue");
-                    const url = new URL(getContinueUrl ? getContinueUrl : TRUSTED_SERVICES[0]);
-                    if (TRUSTED_SERVICES.some(x => x === url.origin + url.pathname)) {
-                        url.searchParams.set("token", token as string);
-                    }
-                    window.location.href = url.toString();
-                }, 1000);
-            }
+            try {
+                const session = await validateSession(token);
+                if (session) {
+                    setStage("skip");
+                    setTimeout(() => {
+                        const getContinueUrl = new URLSearchParams(window.location.search).get("continue");
+                        const url = new URL(getContinueUrl ? getContinueUrl : TRUSTED_SERVICES[0]);
+                        if (TRUSTED_SERVICES.some(x => x === url.origin + url.pathname)) {
+                            url.searchParams.set("token", token as string);
+                        }
+                        window.location.href = url.toString();
+                    }, 1000);
+                }
+            } catch {}
         }
         setChecked(true);
     };
@@ -205,6 +207,7 @@ const Register = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoad
                         <Title>{t("REGISTER")}</Title>
                         <div>
                             <Input
+                                type="email"
                                 placeholder={t("EMAIL")}
                                 loading={loading()}
                                 onKeyDown={press}
@@ -257,7 +260,7 @@ const Register = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoad
                                 onChange={v => setUsername((v.target as HTMLInputElement).value)}
                             />
                             <Input 
-                                password={true}
+                                type="password"
                                 placeholder={t("PASSWORD")} 
                                 loading={loading()} 
                                 onKeyDown={press} 

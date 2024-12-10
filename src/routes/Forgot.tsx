@@ -118,13 +118,15 @@ const Forgot = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoadin
     const checkToken = async () => {
         const token = localStorage.getItem("token");
         if (token) {
-            const session = await validateSession(token);
-            if (session) {
-                // however, need to handle this somehow
-                setStage("skip");
-                console.log("skipping login", token);
-                await continueToRegisteredService(token);
-            }
+            try {
+                const session = await validateSession(token);
+                if (session) {
+                    // however, need to handle this somehow
+                    setStage("skip");
+                    console.log("skipping login", token);
+                    await continueToRegisteredService(token);
+                }
+            } catch {}
         }
         setChecked(true);
         const search = new URLSearchParams(location.search).get("token");
@@ -145,6 +147,7 @@ const Forgot = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoadin
                         <Title>{t("FORGOT")}</Title>
                         <div>
                             <Input
+                                type="email"
                                 placeholder={t("EMAIL")}
                                 loading={loading()}
                                 onKeyDown={press}
@@ -182,7 +185,7 @@ const Forgot = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoadin
                                 onKeyDown={press}
                                 value={password()}
                                 onChange={v => setPassword((v.target as HTMLInputElement).value)}
-                                password
+                                type="password"
                             />
                             <Input
                                 placeholder={t("CONFIRM_PASSWORD")}
@@ -190,7 +193,7 @@ const Forgot = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoadin
                                 onKeyDown={press}
                                 value={confirmPassword()}
                                 onChange={v => setConfirmPassword((v.target as HTMLInputElement).value)}
-                                password
+                                type="password"
                             />
                             <Button onClick={forgot} disabled={loading()}>{t("CONTINUE")}</Button>
                         </div>

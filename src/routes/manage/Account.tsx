@@ -186,7 +186,7 @@ const Account = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoadi
                     
             </Section>
             <Section>
-                <Input placeholder={t("NEW_PASSWORD")} loading={loading() || dialogContext().open() || !escalated()} password value={newPassword()} onChange={e => setNewPassword((e.target as HTMLInputElement).value)} />
+                <Input placeholder={t("NEW_PASSWORD")} loading={loading() || dialogContext().open() || !escalated()} type="password" value={newPassword()} onChange={e => setNewPassword((e.target as HTMLInputElement).value)} />
                 <Button onClick={updatePassword}  disabled={loading() || dialogContext().open() || !escalated()}>{t("UPDATE_PASSWORD")}</Button>
             </Section>
             <Section>

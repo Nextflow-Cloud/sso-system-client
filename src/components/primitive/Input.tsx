@@ -54,7 +54,7 @@ const InputLabel = styled.label`
 
 interface Props { 
     loading: boolean;
-    password?: boolean;
+    type?: "password" | "email";
     placeholder?: string; 
     onKeyDown?: JSX.EventHandlerUnion<HTMLInputElement, KeyboardEvent>; 
     value?: string;
@@ -67,7 +67,7 @@ const Input = (props: Props) => {
     return (
         <InputContainer>
             <InputBase
-                type={props.password ? "password" : "text"}
+                type={props.type ? props.type : "text"}
                 disabled={props.loading}
                 onKeyDown={props.onKeyDown}
                 value={props.value}
