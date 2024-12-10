@@ -1,4 +1,4 @@
-<h1 align="center">Nextflow account services client</h1>
+<h1 align="center">Nextania account services client</h1>
 <div align="center">
   
 [![License](https://img.shields.io/github/license/Nextflow-Cloud/account-client)](https://github.com/Nextflow-Cloud/account-client/blob/main/LICENSE)
