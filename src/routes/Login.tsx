@@ -177,7 +177,7 @@ const Login = ({ loading, setLoading, escalate }: { loading: Accessor<boolean>; 
 
     const loginPasskey = async () => {
         setLoading(true);
-        const session = await createSessionPasskey();
+        const session = await createSessionPasskey(escalate ? s()!.token : undefined);
         if (session) {
             await switchStage("done");
             if (escalate) {

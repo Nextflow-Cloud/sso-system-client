@@ -35,8 +35,8 @@ export interface Credentials {
 }
 
 
-export const createSessionPasskey = async () => {
-    const response = await callEndpoint("LOGIN_PASSKEYS_1", { escalate: false, stage: "BEGIN_LOGIN" });
+export const createSessionPasskey = async (existingSession?: string) => {
+    const response = await callEndpoint("LOGIN_PASSKEYS_1", { escalate: false, stage: "BEGIN_LOGIN", token: existingSession });
     try {
         const credential = await get(response.message);
         if (credential) {
