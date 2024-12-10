@@ -1,7 +1,7 @@
 import { createMemo, createSignal, Match, onMount, ParentProps, Show, Switch } from "solid-js";
-import { validateSession } from "../utilities/lib/authentication";
 import { Navigate } from "@solidjs/router";
 import { useGlobalState } from "../context";
+import { validateSession } from "../utilities/lib/login";
 
 const Authenticated = (props: ParentProps) => {
     const [checked, setChecked] = createSignal(false);
@@ -10,12 +10,13 @@ const Authenticated = (props: ParentProps) => {
     
     const checkToken = async () => {
         const token = localStorage.getItem("token");
+        const escalationToken = localStorage.getItem("escalationToken");
         if (token) {
-            const session = await validateSession(token);
-            if (session) {
+            try {
+                const session = await validateSession(token, escalationToken || undefined);
                 setAuthenticated(true);
                 state().set("session", session);
-            }
+            } catch {}
         }
         setChecked(true);
     };

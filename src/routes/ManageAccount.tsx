@@ -13,6 +13,8 @@ import AccountContainer from "../components/AccountContainer";
 import Sessions from "./manage/Sessions";
 import { Show } from "solid-js";
 import ContextMenuButton from "../components/ContextMenuButton";
+import { useTranslate } from "../utilities/i18n";
+import LanguagePicker from "../components/LanguagePicker";
 
 const MainDesktop = styled.main`
     background: var(--background);
@@ -42,9 +44,11 @@ const ManageBase = styled.div`
 const LeftPanel = styled.div`
     display: flex;
     flex-direction: column;
-    width: 250px;
+    min-width: 250px;
     padding-right: 10px;
     border-right: 1px solid black;
+    justify-content: space-between;
+    padding-bottom: 20px;
 `;
 
 const RightPanel = styled.div`
@@ -114,9 +118,16 @@ const PopoverContent = styled(Popover.Content)`
     box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.4);
 `;
 
+const TopContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+`;
+
+
 const ManageAccount = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoading: Setter<boolean>; }) => {
     const params = useParams();
     const navigate = useNavigate();
+    const t = useTranslate();
     const logout = () => {
         navigate("/logout");
     };
@@ -128,14 +139,17 @@ const ManageAccount = ({ loading, setLoading }: { loading: Accessor<boolean>; se
                 <MainDesktop>
                     <ManageBase>
                         <LeftPanel>
-                            <LogoContainer>
-                                <Logo />
-                            </LogoContainer>
-                            <Navigation>
-                                <MenuItem Icon={RiUserFacesAccountBoxLine} BoldIcon={RiUserFacesAccountBoxFill} name="Account" id="account" active={params.category} />
-                                <MenuItem Icon={RiBusinessProfileLine} BoldIcon={RiBusinessProfileFill} name="Profile" id="profile" active={params.category} />
-                                <MenuItem Icon={RiSystemShieldKeyholeLine} BoldIcon={RiSystemShieldKeyholeFill} name="Sessions" id="sessions" active={params.category} />
-                            </Navigation>
+                            <TopContainer>
+                                <LogoContainer>
+                                    <Logo />
+                                </LogoContainer>
+                                <Navigation>
+                                    <MenuItem Icon={RiUserFacesAccountBoxLine} BoldIcon={RiUserFacesAccountBoxFill} name={t("MANAGE_ACCOUNT")!} id="account" active={params.category} />
+                                    <MenuItem Icon={RiBusinessProfileLine} BoldIcon={RiBusinessProfileFill} name={t("PROFILE")!} id="profile" active={params.category} />
+                                    <MenuItem Icon={RiSystemShieldKeyholeLine} BoldIcon={RiSystemShieldKeyholeFill} name={t("SESSIONS")!} id="sessions" active={params.category} />
+                                </Navigation>
+                            </TopContainer>
+                            <LanguagePicker />
                         </LeftPanel>
                         <RightPanel>
                             <TopBar>

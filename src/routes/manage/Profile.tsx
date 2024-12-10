@@ -6,6 +6,7 @@ import { Accessor, createMemo, createSignal, onMount, Setter } from "solid-js";
 import Dialog from "@corvu/dialog";
 import { useGlobalState } from "../../context";
 import Button from "../../components/primitive/Button";
+import { useTranslate } from "../../utilities/i18n";
 
 const AvatarContainer = styled.div`
     display: flex;
@@ -38,6 +39,7 @@ const Profile = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoadi
     const state = createMemo(() => useGlobalState());
     const [displayName, setDisplayName] = createSignal<string>();
     const [description, setDescription] = createSignal<string>();
+    const t = useTranslate();
     const handleAvatarChange = () => {
         const input = document.createElement("input");
         input.type = "file";
@@ -103,19 +105,19 @@ const Profile = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoadi
     
     return (
         <>
-            <h1>Profile</h1>
+            <h1>{t("PROFILE")}</h1>
             <Section>
                 <AvatarConfigurator>
                     <AvatarContainer onClick={handleAvatarChange}>
                         <img src={`https://cdn.nextflow.cloud/stores/avatars/files/1.png`} alt="avatar" />
                     </AvatarContainer>
-                    <Button>Remove avatar</Button>
+                    <Button>{t("REMOVE_AVATAR")}</Button>
                 </AvatarConfigurator>
             </Section>
             <Section>
-                <Input placeholder="Display name" loading={loading()} value={displayName()} onChange={e => setDisplayName((e.target as HTMLInputElement).value)}  />
-                <Input placeholder="Profile description" loading={loading()} value={description()} onChange={e => setDescription((e.target as HTMLInputElement).value)}  />
-                <Button onClick={save} disabled={loading()}>Save</Button>
+                <Input placeholder={t("DISPLAY_NAME")} loading={loading()} value={displayName()} onChange={e => setDisplayName((e.target as HTMLInputElement).value)}  />
+                <Input placeholder={t("PROFILE_DESCRIPTION")} loading={loading()} value={description()} onChange={e => setDescription((e.target as HTMLInputElement).value)}  />
+                <Button onClick={save} disabled={loading()}>{t("SAVE")}</Button>
             </Section>
             <AvatarPicker stagedImage={stagedImage} />
         </>

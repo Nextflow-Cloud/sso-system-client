@@ -1,11 +1,13 @@
 import { createSignal, onMount, Show } from "solid-js";
-import { validateSession } from "../utilities/lib/authentication";
 import Fade from "../components/Fade";
 import Title from "../components/primitive/Title";
+import { validateSession } from "../utilities/lib/login";
+import { useTranslate } from "../utilities/i18n";
 
 const Logout = () => {
     const [validSession, setValidSession] = createSignal(false);
     const [checked, setChecked] = createSignal(false);
+    const t = useTranslate();
 
     const checkToken = async () => {
         const token = localStorage.getItem("token");
@@ -13,7 +15,7 @@ const Logout = () => {
             const session = await validateSession(token);
             if (session) {
                 setValidSession(true);
-                await session.logout().then(() => localStorage.removeItem("token"));
+                await session.logout().then(() => localStorage.removeItem("token")).then(() => localStorage.removeItem("escalationToken"));
             }
         }
         setChecked(true);
@@ -29,13 +31,13 @@ const Logout = () => {
                 <Show when={validSession()} fallback={
                     (
                         <>
-                           <Title>Logged out</Title>
-                            <p>You are not logged in.</p>
+                           <Title>{t("LOGGED_OUT")}</Title>
+                            <p>{t("LOGGED_OUT_NOT_LOGGED_IN")}</p>
                         </>
                     )
                 }>
-                    <Title>Logged out</Title>
-                    <p>You have been logged out. Thank you for using Nextflow services, and have a wonderful day.</p>
+                    <Title>{t("LOGGED_OUT")}</Title>
+                    <p>{t("LOGGED_OUT_SUCCESS")}</p>
                 </Show>
             </Fade>
             

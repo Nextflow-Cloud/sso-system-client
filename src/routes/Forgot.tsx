@@ -1,22 +1,24 @@
 import { Accessor, createSignal, JSX, Match, onMount, Setter, Show } from "solid-js";
 import Fade from "../components/Fade";
-import { Language, translate } from "../utilities/i18n";
+import { Language, useTranslate } from "../utilities/i18n";
 import ErrorText from "../components/ErrorText";
 import Title from "../components/primitive/Title";
 import Input from "../components/primitive/Input";
 import Button from "../components/primitive/Button";
 import Link from "../components/primitive/Link";
 import { Switch as ConditionalSwitch } from "solid-js";
-import { finishResetPassword, forgotPassword, SessionError, SessionErrorType, validateSession } from "../utilities/lib/authentication";
 import { useNavigate } from "@solidjs/router";
 import { TRUSTED_SERVICES } from "../constants";
 import { calculateEntropy } from "../utilities/client";
+import { validateSession } from "../utilities/lib/login";
+import { finishResetPassword, forgotPassword } from "../utilities/lib/forgot";
+import { ClientError, ClientErrorType } from "../utilities/lib/errors";
 
 type ForgotStage = "email" | "sent" | "credentials" | "done" | "skip";
 type InputError = "EMPTY_EMAIL" | "INVALID_EMAIL" | "EMPTY_PASSWORD" | "INVALID_CREDENTIALS" | "WEAK_PASSWORD";
 
-const Forgot = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; setLoading: Setter<boolean>; lang: Accessor<Language>; }) => {
-    const [error, setError] = createSignal<SessionErrorType | InputError>();
+const Forgot = ({ loading, setLoading }: { loading: Accessor<boolean>; setLoading: Setter<boolean>; }) => {
+    const [error, setError] = createSignal<ClientErrorType | InputError>();
     const [stage, setStage] = createSignal<ForgotStage>("email");
     const [checked, setChecked] = createSignal(false);
 
@@ -27,6 +29,7 @@ const Forgot = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; set
     const [hiding, setHiding] = createSignal(false);
     
     const navigate = useNavigate();
+    const t = useTranslate();
 
     const forgot = async () => {
         setError();
@@ -49,7 +52,7 @@ const Forgot = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; set
                 await switchStage("sent");
                 setLoading(false);
             } catch (e) {
-                setError((e as SessionError).toString());
+                setError((e as ClientError).toString());
                 setLoading(false);
             }
         } else if (stage() === "credentials") {   
@@ -68,7 +71,7 @@ const Forgot = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; set
                 await switchStage("done");
                 setLoading(false);
             } catch (e) {
-                setError((e as SessionError).toString());
+                setError((e as ClientError).toString());
                 setLoading(false);
             }
         }
@@ -115,13 +118,15 @@ const Forgot = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; set
     const checkToken = async () => {
         const token = localStorage.getItem("token");
         if (token) {
-            const session = await validateSession(token);
-            if (session) {
-                // however, need to handle this somehow
-                setStage("skip");
-                console.log("skipping login", token);
-                await continueToRegisteredService(token);
-            }
+            try {
+                const session = await validateSession(token);
+                if (session) {
+                    // however, need to handle this somehow
+                    setStage("skip");
+                    console.log("skipping login", token);
+                    await continueToRegisteredService(token);
+                }
+            } catch {}
         }
         setChecked(true);
         const search = new URLSearchParams(location.search).get("token");
@@ -139,28 +144,29 @@ const Forgot = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; set
             <ConditionalSwitch fallback={<div />}>
                 <Match when={stage() === "email"}>
                     <Fade hiding={hiding()}>
-                        <Title>{translate(lang(), "FORGOT")}</Title>
+                        <Title>{t("FORGOT")}</Title>
                         <div>
                             <Input
-                                placeholder={translate(lang(), "EMAIL")}
+                                type="email"
+                                placeholder={t("EMAIL")}
                                 loading={loading()}
                                 onKeyDown={press}
                                 value={email()}
                                 onChange={v => setEmail((v.target as HTMLInputElement).value)}
                             />
-                            <Button onClick={forgot} disabled={loading()}>{translate(lang(), "CONTINUE")}</Button>
+                            <Button onClick={forgot} disabled={loading()}>{t("CONTINUE")}</Button>
                         </div>
                         <p>
-                            <Link href="/login" onClick={login}>{translate(lang(), "LOGIN")}</Link>
+                            <Link href="/login" onClick={login}>{t("LOGIN")}</Link>
                         </p>
                         <ErrorText>
-                            {error() && translate(lang(), error()!)}
+                            {error() && t(error()!)}
                         </ErrorText>
                     </Fade>
                 </Match>
                 <Match when={stage() === "sent"}>
                     <Fade hiding={hiding()}>
-                        <Title>{translate(lang(), "FORGOT")}</Title>
+                        <Title>{t("FORGOT")}</Title>
                         <div>
                             <label>
                                 If there is an account associated with that email address, we will send you an email with a link to continue the process.
@@ -171,34 +177,34 @@ const Forgot = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; set
                 </Match>
                 <Match when={stage() === "credentials"}>
                     <Fade hiding={hiding()}>
-                        <Title>{translate(lang(), "FORGOT")}</Title>
+                        <Title>{t("FORGOT")}</Title>
                         <div>
                             <Input
-                                placeholder={translate(lang(), "PASSWORD")}
+                                placeholder={t("PASSWORD")}
                                 loading={loading()}
                                 onKeyDown={press}
                                 value={password()}
                                 onChange={v => setPassword((v.target as HTMLInputElement).value)}
-                                password
+                                type="password"
                             />
                             <Input
-                                placeholder={translate(lang(), "CONFIRM_PASSWORD")}
+                                placeholder={t("CONFIRM_PASSWORD")}
                                 loading={loading()}
                                 onKeyDown={press}
                                 value={confirmPassword()}
                                 onChange={v => setConfirmPassword((v.target as HTMLInputElement).value)}
-                                password
+                                type="password"
                             />
-                            <Button onClick={forgot} disabled={loading()}>{translate(lang(), "CONTINUE")}</Button>
+                            <Button onClick={forgot} disabled={loading()}>{t("CONTINUE")}</Button>
                         </div>
                         <ErrorText>
-                            {error() && translate(lang(), error()!)}
+                            {error() && t(error()!)}
                         </ErrorText>
                     </Fade>
                 </Match>
                 <Match when={stage() === "done"}>
                     <Fade hiding={hiding()}>
-                        <Title>{translate(lang(), "FORGOT")}</Title>
+                        <Title>{t("FORGOT")}</Title>
                         <div>
                             <label>
                                 Your password has been successfully reset.
@@ -209,9 +215,9 @@ const Forgot = ({ loading, setLoading, lang }: { loading: Accessor<boolean>; set
                 </Match>
                 <Match when={stage() === "skip"}>
                     <Fade hiding={hiding()}>
-                        <Title>{translate(lang(), "CONTINUE")}</Title>
+                        <Title>{t("CONTINUE")}</Title>
                         <div>
-                            <label>{translate(lang(), "ALREADY_LOGGED_IN")}</label>
+                            <label>{t("ALREADY_LOGGED_IN")}</label>
                         </div>
                         <ErrorText />
                     </Fade>
